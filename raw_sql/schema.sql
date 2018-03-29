@@ -47,7 +47,8 @@ CREATE TABLE collection (
   name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   owner_id INT UNSIGNED NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  tags JSON NULL,
+  -- comma separated
+  tags VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
@@ -59,7 +60,7 @@ CREATE TABLE collection (
 
 DROP TABLE IF EXISTS collection_product;
 CREATE TABLE collection_product (
-  id INT UNSIGNED NOT NULL,
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   collection_id INT UNSIGNED NOT NULL,
   product_id INT UNSIGNED NOT NULL,
 
@@ -80,7 +81,8 @@ CREATE TABLE product (
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   storename VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   gender ENUM('M', 'F', 'U'),
-  tags JSON NULL,
+  -- comma separated
+  tags VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   promotional_text VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -119,7 +121,7 @@ CREATE TABLE sku_attribute (
 DROP TABLE IF EXISTS color;
 CREATE TABLE color (
   id INT UNSIGNED NOT NULL,
-  name VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  hexcode CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
@@ -131,7 +133,7 @@ CREATE TABLE color (
 DROP TABLE IF EXISTS size;
 CREATE TABLE size (
   id INT UNSIGNED NOT NULL,
-  name VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  name VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
@@ -146,8 +148,8 @@ CREATE TABLE address (
   user_id INT UNSIGNED NOT NULL,
   street_address VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   landmark VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  city VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  state VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  city VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  state VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   postal_code CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -170,12 +172,13 @@ CREATE TABLE image (
   ) NOT NULL,
   url VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   thumbnail_url VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  description VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  description VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
+  UNIQUE(entity_id, type),
   FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
 
@@ -192,6 +195,7 @@ CREATE TABLE comment (
   updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
+  UNIQUE(user_id, entity_id),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
