@@ -1,5 +1,6 @@
 -- @TODO: Revisit the existing tables after adding order, payment, cart.
 -- @TODO: Wishlist
+-- @TODO: Separate out category from product
 
 SET FOREIGN_KEY_CHECKS=0;
 
