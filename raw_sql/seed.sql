@@ -1,5 +1,17 @@
 USE looplr;
 
+INSERT INTO badge
+  (name, description)
+VALUES
+  ('verified_phonenumber', 'when a user verifies phonenumber.'),
+  ('verified_email', 'when a user verifies email.'),
+  ('added_profile_picture', 'when a user adds profile picture.'),
+  ('1st_order', 'when a user orders for the 1st time'),
+  ('1st_collection', 'when a user creates 1st collection'),
+  ('50th_collection', 'when a user creates 50th collection'),
+  ('100th_order', 'when a user orders for the 100th time'),
+  ('total_order_price_above_Rs2000', 'when a user\'s order value is more than Rs. 2000');
+
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO user
   (id, first_name, last_name, handle, phonenumber, gender, email, password, is_active)
@@ -91,3 +103,9 @@ VALUES
   (7, 'product_sizechart', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
   (1, 'user', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
   (2, 'user', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL);
+
+INSERT INTO wishlist
+  (user_id, sku_id)
+VALUES
+  (1, 1),
+  (2, 3);

@@ -1,6 +1,9 @@
--- @TODO: Revisit the existing tables after adding order, payment, cart.
--- @TODO: Wishlist
--- @TODO: Separate out category from product
+-- @TODO: Delivery will combine pincode and product to deduce
+    -- return policy,
+    -- payment method
+    -- delivery date
+
+-- @TODO: Campaigns
 
 SET FOREIGN_KEY_CHECKS=0;
 
@@ -99,8 +102,8 @@ CREATE TABLE sku (
   product_id INT UNSIGNED NOT NULL,
   sku_attribute_id INT UNSIGNED NOT NULL,
   stock SMALLINT UNSIGNED NOT NULL,
-  price DOUBLE PRECISION(10, 2) DEFAULT NULL,
-  discount DOUBLE PRECISION(10, 2) DEFAULT NULL,
+  price DOUBLE PRECISION(10, 2) NULL,
+  discount DOUBLE PRECISION(10, 2) NULL,
   is_active TINYINT NOT NULL DEFAULT 1,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -207,7 +210,172 @@ CREATE TABLE follow (
   follower_id INT UNSIGNED NOT NULL,
   followed_id INT UNSIGNED NOT NULL,
 
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (follower_id) REFERENCES user(id),
   FOREIGN KEY (followed_id) REFERENCES user(id)
 );
+
+DROP TABLE IF EXISTS wishlist;
+CREATE TABLE wishlist (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INT UNSIGNED NOT NULL,
+  sku_id INT UNSIGNED NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (sku_id) REFERENCES sku(id)
+);
+
+DROP TABLE IF EXISTS cart;
+CREATE TABLE cart (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INT UNSIGNED NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES user(id)
+);
+
+DROP TABLE IF EXISTS cart_item;
+CREATE TABLE cart_item (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  cart_id INT UNSIGNED NOT NULL,
+  sku_id INT UNSIGNED NOT NULL,
+  quantity TINYINT UNSIGNED NOT NULL DEFAULT 1,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  UNIQUE(cart_id, sku_id),
+  FOREIGN KEY (cart_id) REFERENCES cart(id),
+  FOREIGN KEY (sku_id) REFERENCES sku(id)
+);
+
+DROP TABLE IF EXISTS orders;
+CREATE TABLE orders (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INT UNSIGNED NOT NULL,
+  address_id INT UNSIGNED NOT NULL,
+  coupon_id INT UNSIGNED NOT NULL,
+  -- For now, shipping_charge is based on total order value
+  shipping_charge DOUBLE PRECISION(10, 2) NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (address_id) REFERENCES address(id),
+  FOREIGN KEY (coupon_id) REFERENCES coupon(id)
+);
+
+-- Remove user's entry from cart after the order has been placed
+DROP TABLE IF EXISTS order_item;
+CREATE TABLE order_item (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  order_id INT UNSIGNED NOT NULL,
+  sku_id INT UNSIGNED NOT NULL,
+  quantity TINYINT UNSIGNED NOT NULL DEFAULT 1,
+  status ENUM(
+    'ON_HOLD',
+    'PLACED',
+    'CANCELLED',
+    'REJECTED',
+    'CONFIRMED',
+    'OUT_FOR_DELIVERY',
+    'DELIVERED'
+  ) NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (order_id) REFERENCES orders(id),
+  FOREIGN KEY (sku_id) REFERENCES sku(id)
+);
+
+DROP TABLE IF EXISTS coupon;
+CREATE TABLE coupon (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  code CHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  max_uses INT UNSIGNED NULL,
+  max_uses_per_user TINYINT UNSIGNED NULL,
+  min_order INT UNSIGNED NULL,
+  is_percentage TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  discount DOUBLE PRECISION(10, 2) NULL,
+  starts_at TIMESTAMP NULL,
+  expires_at TIMESTAMP NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS badge;
+CREATE TABLE badge (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id)
+);
+
+DROP TABLE IF EXISTS user_badge;
+CREATE TABLE user_badge (
+  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id INT UNSIGNED NOT NULL,
+  badge_id INT UNSIGNED NOT NULL,
+
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (user_id) REFERENCES user(id),
+  FOREIGN KEY (badge_id) REFERENCES badge(id)
+);
+
+DELIMITER //
+CREATE TRIGGER tr_badge_user_insert
+AFTER INSERT ON user
+FOR EACH ROW BEGIN
+  IF NEW.phonenumber IS NOT NULL
+  THEN
+    INSERT INTO user_badge (
+      user_id, badge_id
+    ) VALUES (
+      NEW.id,
+      1
+    );
+  END IF;
+END;//
+DELIMITER ;
+
+DELIMITER //
+CREATE TRIGGER tr_badge_user_update
+AFTER UPDATE ON user
+FOR EACH ROW BEGIN
+  IF OLD.phonenumber IS NULL AND NEW.phonenumber IS NOT NULL
+  THEN
+    INSERT INTO user_badge (
+      user_id, badge_id
+    ) VALUES (
+      NEW.id,
+      1
+    );
+  END IF;
+END;//
+DELIMITER ;
