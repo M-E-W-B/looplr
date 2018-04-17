@@ -49,11 +49,11 @@ CREATE TABLE user (
 DROP TABLE IF EXISTS collection;
 CREATE TABLE collection (
   id INT UNSIGNED NOT NULL,
-  name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  -- owner can be a user or the company
   owner_id INT UNSIGNED NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  -- comma separated
-  tags VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  tags JSON NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),

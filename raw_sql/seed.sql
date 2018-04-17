@@ -28,8 +28,8 @@ INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO collection
   (id, name, owner_id, description, tags)
 VALUES
-  (3, 'Winter Collection', 1, 'Gear up for a warm and cosy winter with winter wear online.', 'men, women, kids'),
-  (4, 'Summer Collection', 1, 'Select from our unique summer collection.', 'men, women, kids');
+  (3, 'Winter Collection', 1, 'Gear up for a warm and cosy winter with winter wear online.', JSON_ARRAY("men", "women", "kids")),
+  (4, 'Summer Collection', 1, 'Select from our unique summer collection.', JSON_ARRAY("men", "women", "kids"));
 
 INSERT INTO sku_attribute(id) VALUES (NULL), (NULL);
 INSERT INTO color
