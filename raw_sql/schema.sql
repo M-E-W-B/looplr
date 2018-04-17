@@ -16,7 +16,7 @@ CREATE TABLE entity (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id)
 );
@@ -24,25 +24,26 @@ CREATE TABLE entity (
 DROP TABLE IF EXISTS user;
 CREATE TABLE user (
   id INT UNSIGNED NOT NULL,
-  first_name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  first_name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   last_name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   handle VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  email VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  gender ENUM('M','F'),
-  password BINARY(60) NULL,
-  phonenumber CHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  email VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  gender ENUM('M','F') NULL,
+  password BINARY(60) NOT NULL,
+  phonenumber CHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   about VARCHAR(800) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   reset_password_token VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   reset_password_expires_at TIMESTAMP NULL,
   is_active BOOLEAN NOT NULL DEFAULT 1,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
   UNIQUE(phonenumber),
-  UNIQUE(email)
+  UNIQUE(email),
+  UNIQUE(handle)
 );
 
 DROP TABLE IF EXISTS collection;
@@ -55,7 +56,7 @@ CREATE TABLE collection (
   tags VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
@@ -69,7 +70,7 @@ CREATE TABLE collection_product (
   product_id INT UNSIGNED NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (collection_id) REFERENCES collection(id),
@@ -90,7 +91,7 @@ CREATE TABLE product (
   promotional_text VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id)
@@ -107,7 +108,7 @@ CREATE TABLE sku (
   is_active TINYINT NOT NULL DEFAULT 1,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id)
 );
@@ -117,7 +118,7 @@ CREATE TABLE sku_attribute (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY(id)
 );
@@ -128,7 +129,7 @@ CREATE TABLE color (
   hexcode CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES sku_attribute(id)
@@ -140,7 +141,7 @@ CREATE TABLE size (
   name VARCHAR(20) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES sku_attribute(id)
@@ -157,7 +158,7 @@ CREATE TABLE address (
   postal_code CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY(id),
   FOREIGN KEY (user_id) REFERENCES user(id)
@@ -179,7 +180,7 @@ CREATE TABLE image (
   description VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   UNIQUE(entity_id, type),
@@ -196,7 +197,7 @@ CREATE TABLE comment (
   txt VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   UNIQUE(user_id, entity_id),
@@ -211,7 +212,7 @@ CREATE TABLE follow (
   followed_id INT UNSIGNED NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (follower_id) REFERENCES user(id),
@@ -225,7 +226,7 @@ CREATE TABLE wishlist (
   sku_id INT UNSIGNED NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id),
@@ -238,7 +239,7 @@ CREATE TABLE cart (
   user_id INT UNSIGNED NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id)
@@ -252,7 +253,7 @@ CREATE TABLE cart_item (
   quantity TINYINT UNSIGNED NOT NULL DEFAULT 1,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   UNIQUE(cart_id, sku_id),
@@ -270,7 +271,7 @@ CREATE TABLE orders (
   shipping_charge DOUBLE PRECISION(10, 2) NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id),
@@ -296,7 +297,7 @@ CREATE TABLE order_item (
   ) NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (order_id) REFERENCES orders(id),
@@ -317,7 +318,7 @@ CREATE TABLE coupon (
   expires_at TIMESTAMP NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id)
 );
@@ -329,7 +330,7 @@ CREATE TABLE badge (
   description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id)
 );
@@ -341,7 +342,7 @@ CREATE TABLE user_badge (
   badge_id INT UNSIGNED NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NOT NULL DEFAULT NOW() ON UPDATE NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id),

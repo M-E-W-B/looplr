@@ -1,0 +1,38 @@
+{
+  "name": "looplr",
+  "version": "1.0.0",
+  "description": "Basic implementation of an e-commerce service",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/M-E-W-B/looplr.git"
+  },
+  "keywords": [
+    "e-commerce",
+    "mysql",
+    "nodejs"
+  ],
+  "author": "kshirish",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/M-E-W-B/looplr/issues"
+  },
+  "homepage": "https://github.com/M-E-W-B/looplr#readme",
+  "dependencies": {
+    "apollo-errors": "^1.8.0",
+    "apollo-server-express": "^1.3.4",
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.18.2",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "graphql": "^0.13.2",
+    "graphql-iso-date": "^3.5.0",
+    "graphql-tools": "^2.24.0",
+    "knex": "^0.14.6",
+    "mysql": "^2.15.0"
+  }
+}
