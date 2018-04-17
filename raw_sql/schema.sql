@@ -80,14 +80,13 @@ CREATE TABLE collection_product (
 DROP TABLE IF EXISTS product;
 CREATE TABLE product (
   id INT UNSIGNED NOT NULL,
-  name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   category VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   subcategory VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   storename VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  gender ENUM('M', 'F', 'U'),
-  -- comma separated
-  tags VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  gender ENUM('M', 'F', 'U') NOT NULL DEFAULT 'U',
+  tags JSON NULL,
   promotional_text VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),

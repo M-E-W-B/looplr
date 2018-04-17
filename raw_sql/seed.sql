@@ -28,8 +28,8 @@ INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO collection
   (id, name, owner_id, description, tags)
 VALUES
-  (3, 'Winter Collection', 1, 'Gear up for a warm and cosy winter with winter wear online.', JSON_ARRAY("men", "women", "kids")),
-  (4, 'Summer Collection', 1, 'Select from our unique summer collection.', JSON_ARRAY("men", "women", "kids"));
+  (3, 'Winter Collection', 1, 'Gear up for a warm and cosy winter with winter wear online.', JSON_ARRAY('men', 'women', 'kids')),
+  (4, 'Summer Collection', 1, 'Select from our unique summer collection.', JSON_ARRAY('men', 'women', 'kids'));
 
 INSERT INTO sku_attribute(id) VALUES (NULL), (NULL);
 INSERT INTO color
@@ -60,9 +60,9 @@ INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO product
   (id, name, category, subcategory, description, storename, gender, tags, promotional_text)
 VALUES
-  (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', 'joggers, blue', 'This offer is only for a couple of days.'),
-  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', 'tshirt, slim', NULL),
-  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', 'tshirt, slim', NULL);
+  (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
+  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', JSON_ARRAY('tshirt', 'slim'), NULL),
+  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', JSON_ARRAY('tshirt', 'slim'), NULL);
 
 INSERT INTO sku
   (product_id, sku_attribute_id, stock, price, discount)
