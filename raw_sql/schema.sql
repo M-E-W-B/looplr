@@ -125,7 +125,7 @@ CREATE TABLE sku_attribute (
 DROP TABLE IF EXISTS color;
 CREATE TABLE color (
   id INT UNSIGNED NOT NULL,
-  hexcode CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  hexcode CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -150,11 +150,11 @@ DROP TABLE IF EXISTS address;
 CREATE TABLE address (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id INT UNSIGNED NOT NULL,
-  street_address VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  street_address VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   landmark VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  city VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  state VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  postal_code CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  city VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  state VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  postal_code CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -192,7 +192,7 @@ CREATE TABLE comment (
   user_id INT UNSIGNED NOT NULL,
   -- collection, product, order
   entity_id INT UNSIGNED NOT NULL,
-  rating TINYINT UNSIGNED NULL,
+  rating TINYINT UNSIGNED NULL CHECK(rating >= 0 AND rating <= 10),
   txt VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -306,7 +306,7 @@ CREATE TABLE order_item (
 DROP TABLE IF EXISTS coupon;
 CREATE TABLE coupon (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  code CHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  code CHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   max_uses INT UNSIGNED NULL,
   max_uses_per_user TINYINT UNSIGNED NULL,
@@ -325,7 +325,7 @@ CREATE TABLE coupon (
 DROP TABLE IF EXISTS badge;
 CREATE TABLE badge (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
