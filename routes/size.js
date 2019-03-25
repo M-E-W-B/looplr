@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ sizeRepository }) => {
   // { name }
   router.post('/', async (req, res, next) => {
-    const { sizeRepository } = ctx;
-
     try {
       const id = await sizeRepository.create(fields);
       const size = await sizeRepository.getSizeById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { sizeRepository } = ctx;
     try {
       await sizeRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { name }
   router.put('/:id', async (req, res, next) => {
-    const { sizeRepository } = ctx;
     try {
       await sizeRepository.update(id, fields);
       const size = await sizeRepository.getSizeById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, name, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { sizeRepository } = ctx;
     let size;
 
     try {
@@ -79,11 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { sizeRepository } = ctx;
-
     try {
-      const sizes = await sizeRepository.getSizes();
-      return res.json(sizes);
+      const edges = await sizeRepository.getSizes(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = sizeRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

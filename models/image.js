@@ -1,11 +1,14 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'image';
   }
 
-  getImages = (entity_id, type) => {
-    const query = knexClient
+  getImages = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select([
         'id',
         'entity_id',
@@ -16,15 +19,16 @@ class Repository {
         'created_at',
         'updated_at'
       ])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
 
-    // @TODO
-    if (entity_id) query.where('entity_id', entity_id);
-    if (type) query.where('type', type);
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
 
-    return query;
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getImages(null, orderings, filters);
+    return pageInfo(pagination, query);
   };
 
   getImageById = id =>

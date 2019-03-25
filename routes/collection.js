@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ collectionRepository }) => {
   // { name, description, owner_id, tags }
   router.post('/', async (req, res, next) => {
-    const { collectionRepository } = ctx;
-
     try {
       const id = await collectionRepository.create(fields);
       const collection = await collectionRepository.getCollectionById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { collectionRepository } = ctx;
     try {
       await collectionRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { name, description, tags }
   router.put('/:id', async (req, res, next) => {
-    const { collectionRepository } = ctx;
     try {
       await collectionRepository.update(id, fields);
       const collection = await collectionRepository.getCollectionById(id);
@@ -56,7 +52,6 @@ module.exports = ctx => {
   router.put(
     '/:collectionId/add-product/:productId',
     async (req, res, next) => {
-      const { collectionRepository } = ctx;
       try {
         await collectionRepository.addProductIntoCollection(
           collection_id,
@@ -77,7 +72,6 @@ module.exports = ctx => {
   router.put(
     '/:collectionId/remove-product/:productId',
     async (req, res, next) => {
-      const { collectionRepository } = ctx;
       try {
         await collectionRepository.removeProductFromCollection(
           collection_id,
@@ -96,7 +90,6 @@ module.exports = ctx => {
 
   // { id, name, description, owner_id, tags, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { collectionRepository } = ctx;
     let collection;
 
     try {
@@ -120,18 +113,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { collectionRepository } = ctx;
-
     try {
-      let collections;
+      const edges = await collectionRepository.getCollections(
+        pagination,
+        orderings,
+        filters
+      );
 
-      if (user_id)
-        collections = await collectionRepository.getCollectionsByUserId(
-          user_id
-        );
-      else collections = await collectionRepository.getCollections();
+      const pageInfo = collectionRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
 
-      return res.json(collections);
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ userRepository }) => {
   // { first_name, last_name, handle, email, gender, phonenumber, about }
   router.post('/', async (req, res, next) => {
-    const { userRepository } = ctx;
-
     // email validation
     if (!/(.+)@(.+){2,}\.(.+){2,}/.test(fields.email)) {
       next(
@@ -48,7 +46,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       await userRepository.delete(id);
       return res.status(200).end();
@@ -64,7 +61,6 @@ module.exports = ctx => {
 
   // { first_name, last_name, handle, email, gender, phonenumber, about }
   router.put('/:id', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       await userRepository.update(id, fields);
       const user = await userRepository.getUserById(id);
@@ -81,7 +77,6 @@ module.exports = ctx => {
 
   // { id, first_name, last_name, handle, email, gender, phonenumber, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { userRepository } = ctx;
     let user;
 
     try {
@@ -106,11 +101,23 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { userRepository } = ctx;
-
     try {
-      const users = await userRepository.getUsers();
-      return res.json(users);
+      const edges = await userRepository.getUsers(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = userRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return {
+        edges,
+        pageInfo
+      };
     } catch (err) {
       next(
         new Error({
@@ -122,7 +129,6 @@ module.exports = ctx => {
   });
 
   router.post('/follow', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       await userRepository.followUser(user_id, to_follow_user_id);
       return res.status(200).end();
@@ -136,7 +142,6 @@ module.exports = ctx => {
   });
 
   router.post('/unfollow', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       await userRepository.unfollowUser(user_id, to_unfollow_user_id);
       return res.status(200).end();
@@ -150,7 +155,6 @@ module.exports = ctx => {
   });
 
   router.get('/followings', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       const users = await userRepository.getFollowings(user_id);
       return res.json(users);
@@ -165,7 +169,6 @@ module.exports = ctx => {
   });
 
   router.get('/followers', async (req, res, next) => {
-    const { userRepository } = ctx;
     try {
       const users = await userRepository.getFollowers(user_id);
       return res.json(users);

@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ couponRepository }) => {
   // { code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at }
   router.post('/', async (req, res, next) => {
-    const { couponRepository } = ctx;
-
     try {
       const [id] = await couponRepository.create(fields);
       const coupon = await couponRepository.getCouponById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { couponRepository } = ctx;
     try {
       await couponRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at }
   router.put('/:id', async (req, res, next) => {
-    const { couponRepository } = ctx;
     try {
       await couponRepository.update(id, fields);
       const coupon = await couponRepository.getCouponById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { couponRepository } = ctx;
     let coupon;
 
     try {
@@ -79,11 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { couponRepository } = ctx;
-
     try {
-      const coupons = await couponRepository.getCoupons();
-      return res.json(coupons);
+      const edges = await couponRepository.getCoupons(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = couponRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

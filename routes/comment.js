@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ commentRepository }) => {
   // { user_id, entity_id, rating, txt }
   router.post('/', async (req, res, next) => {
-    const { commentRepository } = ctx;
-
     try {
       const [id] = await commentRepository.create(fields);
       const comment = await commentRepository.getCommentById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { commentRepository } = ctx;
     try {
       await commentRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { rating, txt }
   router.put('/:id', async (req, res, next) => {
-    const { commentRepository } = ctx;
     try {
       await commentRepository.update(id, fields);
       const comment = await commentRepository.getCommentById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, user_id, entity_id, rating, txt, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { commentRepository } = ctx;
     let comment;
 
     try {
@@ -79,17 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { commentRepository } = ctx;
-
     try {
-      let comments;
+      const edges = await commentRepository.getComments(
+        pagination,
+        orderings,
+        filters
+      );
 
-      // @TODO
-      if (user_id)
-        comments = await commentRepository.getCommentsByUserId(user_id);
-      if (entity_id)
-        comments = await commentRepository.getCommentsOn(entity_id);
-      else comments = await commentRepository.getComments();
+      const pageInfo = commentRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
 
       return res.json(comments);
     } catch (err) {

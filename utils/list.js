@@ -1,14 +1,14 @@
 // @TODO: Support multiple operators for filtering
-const partialMatchColumns = ["first_name", "last_name", "description"];
+const partialMatchColumns = ['first_name', 'last_name', 'description'];
 const operatorMapping = {
-  GREATER_THAN: ">",
-  GREATER_THAN_OR_EQUAL: ">=",
-  LESSER_THAN: "<",
-  LESSER_THAN_OR_EQUAL: "<=",
-  EQUAL: "=",
-  NOT_EQUAL: "<>",
-  IN: "in",
-  LIKE: "like"
+  GREATER_THAN: '>',
+  GREATER_THAN_OR_EQUAL: '>=',
+  LESSER_THAN: '<',
+  LESSER_THAN_OR_EQUAL: '<=',
+  EQUAL: '=',
+  NOT_EQUAL: '<>',
+  IN: 'in',
+  LIKE: 'like'
 };
 
 module.exports = (
@@ -24,19 +24,18 @@ module.exports = (
         acc.concat([
           `${tableName}.${column}`,
           `${operatorMapping[operator]}`,
-          `${operatorMapping[operator] === "in" ? value : value[0]}`
+          `${operatorMapping[operator] === 'in' ? value : value[0]}`
         ]),
       []
     );
 
     const filterQuery = filters
-      .map(
-        ({ column, value }) =>
-          partialMatchColumns.indexOf(column) !== -1
-            ? `( ?? ? %?% )`
-            : `( ?? ? ? )`
+      .map(({ column, value }) =>
+        partialMatchColumns.indexOf(column) !== -1
+          ? `( ?? ? %?% )`
+          : `( ?? ? ? )`
       )
-      .join(" and ");
+      .join(' and ');
 
     query.joinRaw(`and ${filterQuery}`, filterParams);
   }
@@ -49,8 +48,8 @@ module.exports = (
     );
 
     const orderingsQuery = orderings
-      .map(({ column, direction }) => "?? ?")
-      .join(", ");
+      .map(({ column, direction }) => '?? ?')
+      .join(', ');
 
     query.joinRaw(`order by ${orderingsQuery}`, orderingParams);
   }
@@ -59,8 +58,8 @@ module.exports = (
     const { pageNumber, pageSize } = pagination;
     const offset = (pageNumber - 1) * pageSize;
 
-    query.joinRaw("limit ?", [pageSize]);
-    query.joinRaw("offset ?", [offset]);
+    query.joinRaw('limit ?', [pageSize]);
+    query.joinRaw('offset ?', [offset]);
   }
 
   // console.log(query.toString());

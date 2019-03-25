@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ imageRepository }) => {
   // { entity_id, type, url, thumbnail_url, description }
   router.post('/', async (req, res, next) => {
-    const { imageRepository } = ctx;
-
     try {
       const [id] = await imageRepository.create(fields);
       const image = await imageRepository.getImageById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { imageRepository } = ctx;
     try {
       await imageRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { entity_id, type, url, thumbnail_url, description }
   router.put('/:id', async (req, res, next) => {
-    const { imageRepository } = ctx;
     try {
       await imageRepository.update(id, fields);
       const image = await imageRepository.getImageById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, entity_id, type, url, thumbnail_url, description, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { imageRepository } = ctx;
     let image;
 
     try {
@@ -79,12 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { imageRepository } = ctx;
-
     try {
-      // @TODO
-      const images = await imageRepository.getImages(entity_id, type);
-      return res.json(images);
+      const edges = await imageRepository.getImages(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = imageRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

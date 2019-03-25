@@ -1,11 +1,9 @@
 const router = require('express').Router();
 // @TODO: delegation: skus, images, sizechart
 
-module.exports = ctx => {
+module.exports = ({ productRepository }) => {
   // { name, category, subcategory, description, storename, gender, tags, promotional_text }
   router.post('/', async (req, res, next) => {
-    const { productRepository } = ctx;
-
     try {
       const id = await productRepository.create(fields);
       const product = await productRepository.getProductById(id);
@@ -22,7 +20,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { productRepository } = ctx;
     try {
       await productRepository.delete(id);
       return res.status(200).end();
@@ -38,7 +35,6 @@ module.exports = ctx => {
 
   // { name, category, subcategory, description, storename, gender, tags, promotional_text }
   router.put('/:id', async (req, res, next) => {
-    const { productRepository } = ctx;
     try {
       await productRepository.update(id, fields);
       const product = await productRepository.getProductById(id);
@@ -55,7 +51,6 @@ module.exports = ctx => {
 
   // { id, name, category, subcategory, description, storename, gender, tags, promotional_text, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { productRepository } = ctx;
     let product;
 
     try {
@@ -81,18 +76,35 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { productRepository } = ctx;
-
     try {
-      let products;
+      let edges;
+      let pageInfo = null;
 
-      if (collection_id)
-        products = await productRepository.getProductsByCollectionId(
-          collection_id
+      if (collection_id) {
+        edges = await productRepository.getProductsByCollectionId(
+          collection_id,
+          pagination,
+          orderings,
+          filters
         );
-      else products = await productRepository.getProducts();
+      } else {
+        edges = await productRepository.getProducts(
+          pagination,
+          orderings,
+          filters
+        );
 
-      return res.json(products);
+        pageInfo = productRepository.getPageInfo(
+          pagination,
+          orderings,
+          filters
+        );
+      }
+
+      return {
+        edges,
+        pageInfo
+      };
     } catch (err) {
       next(
         new Error({

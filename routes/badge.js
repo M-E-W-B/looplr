@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ badgeRepository }) => {
   // { name, description }
   router.post('/', async (req, res, next) => {
-    const { badgeRepository } = ctx;
-
     try {
       const [id] = await badgeRepository.create(fields);
       const badge = await badgeRepository.getBadgeById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { badgeRepository } = ctx;
     try {
       await badgeRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { name, description }
   router.put('/:id', async (req, res, next) => {
-    const { badgeRepository } = ctx;
     try {
       await badgeRepository.update(id, fields);
       const badge = await badgeRepository.getBadgeById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, name, description, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { badgeRepository } = ctx;
     let badge;
 
     try {
@@ -79,11 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { badgeRepository } = ctx;
-
     try {
-      const badges = await badgeRepository.getBadges();
-      return res.json(badges);
+      const edges = await badgeRepository.getBadges(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = badgeRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

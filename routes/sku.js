@@ -1,11 +1,9 @@
 const router = require('express').Router();
 // @TODO: delegation: size, color
 
-module.exports = ctx => {
+module.exports = ({ skuRepository }) => {
   // { product_id, sku_attribute_id, stock, price, discount, is_active }
   router.post('/', async (req, res, next) => {
-    const { skuRepository } = ctx;
-
     try {
       const [id] = await skuRepository.create(fields);
       const sku = await skuRepository.getSkuById(id);
@@ -22,7 +20,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { skuRepository } = ctx;
     try {
       await skuRepository.delete(id);
       return res.status(200).end();
@@ -38,7 +35,6 @@ module.exports = ctx => {
 
   // { product_id, sku_attribute_id, stock, price, discount, is_active }
   router.put('/:id', async (req, res, next) => {
-    const { skuRepository } = ctx;
     try {
       await skuRepository.update(id, fields);
       const sku = await skuRepository.getSkuById(id);
@@ -55,7 +51,6 @@ module.exports = ctx => {
 
   // { id, product_id, sku_attribute_id, stock, price, discount, is_active, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { skuRepository } = ctx;
     let sku;
 
     try {
@@ -80,15 +75,19 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { skuRepository } = ctx;
-
     try {
-      let skus;
+      const edges = await skuRepository.getSkus(pagination, orderings, filters);
 
-      if (product_id) skus = await skuRepository.getSkusByProductId(product_id);
-      else skus = await skuRepository.getSkus();
+      const pageInfo = skuRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
 
-      return res.json(skus);
+      return {
+        edges,
+        pageInfo
+      };
     } catch (err) {
       next(
         new Error({

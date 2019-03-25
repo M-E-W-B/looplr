@@ -1,11 +1,14 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'comment';
   }
 
-  getComments = () =>
-    this.knexClient
+  getComments = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select([
         'id',
         'user_id',
@@ -15,41 +18,49 @@ class Repository {
         'created_at',
         'updated_at'
       ])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
 
-  getCommentsByUserId = userId =>
-    this.knexClient
-      .select([
-        'id',
-        'user_id',
-        'entity_id',
-        'rating',
-        'txt',
-        'created_at',
-        'updated_at'
-      ])
-      .from(this.tableName)
-      .where('user_id', userId)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
 
-  getCommentsOn = entityId =>
-    this.knexClient
-      .select([
-        'id',
-        'user_id',
-        'entity_id',
-        'rating',
-        'txt',
-        'created_at',
-        'updated_at'
-      ])
-      .from(this.tableName)
-      .where('entity_id', entityId)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getComments(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
+
+  // getCommentsByUserId = userId =>
+  //   this.knexClient
+  //     .select([
+  //       'id',
+  //       'user_id',
+  //       'entity_id',
+  //       'rating',
+  //       'txt',
+  //       'created_at',
+  //       'updated_at'
+  //     ])
+  //     .from(this.tableName)
+  //     .where('user_id', userId)
+  //     .whereNull('deleted_at')
+  //     .orderBy('created_at', 'desc');
+
+  // getCommentsOn = entityId =>
+  //   this.knexClient
+  //     .select([
+  //       'id',
+  //       'user_id',
+  //       'entity_id',
+  //       'rating',
+  //       'txt',
+  //       'created_at',
+  //       'updated_at'
+  //     ])
+  //     .from(this.tableName)
+  //     .where('entity_id', entityId)
+  //     .whereNull('deleted_at')
+  //     .orderBy('created_at', 'desc');
 
   getCommentById = id =>
     this.knexClient

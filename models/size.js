@@ -1,15 +1,26 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'size';
   }
 
-  getSizes = () =>
-    this.knexClient
+  getSizes = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select(['id', 'name', 'created_at', 'updated_at'])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
+
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getSizes(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
 
   getSizeById = id =>
     this.knexClient

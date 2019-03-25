@@ -1,11 +1,14 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'sku';
   }
 
-  getSkus = () =>
-    this.knexClient
+  getSkus = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select([
         'id',
         'product_id',
@@ -17,45 +20,17 @@ class Repository {
         'created_at',
         'updated_at'
       ])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
 
-  getSkusByProductId = productId =>
-    this.knexClient
-      .select([
-        'id',
-        'product_id',
-        'sku_attribute_id',
-        'stock',
-        'price',
-        'discount',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
-      .from(this.tableName)
-      .where('product_id', productId)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
 
-  getInactiveSkus = () =>
-    this.knexClient
-      .select([
-        'id',
-        'product_id',
-        'sku_attribute_id',
-        'stock',
-        'price',
-        'discount',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
-      .from(this.tableName)
-      .where('is_active', false)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getSkus(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
 
   getSkuById = id =>
     this.knexClient

@@ -1,11 +1,14 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'product';
   }
 
-  getProducts = () =>
-    this.knexClient
+  getProducts = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select([
         'id',
         'name',
@@ -19,12 +22,25 @@ class Repository {
         'created_at',
         'updated_at'
       ])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
 
-  getProductsByCollectionId = id =>
-    this.knexClient
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getProducts(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
+
+  getProductsByCollectionId = (
+    collectionId,
+    pagination,
+    orderings,
+    filters
+  ) => {
+    const query = this.knexClient
       .select([
         'product.id AS id',
         'product.name AS name',
@@ -39,59 +55,63 @@ class Repository {
         'product.updated_at AS updated_at'
       ])
       .from('collection_product')
-      .innerJoin(this.tableName, 'product.id', 'collection_product.product_id')
-      .where('collection_product.collection_id', id)
-      .whereNull('collection_product.deleted_at')
-      .whereNull('product.deleted_at')
-      .orderBy('collection_product.created_at', 'desc');
+      .innerJoin(this.tableName, 'product.id', 'collection_product.product_id');
 
-  getFullProducts = () => {
-    const productSkuPromise = knexClient
-      .select([
-        'product.id AS id',
-        'product.name AS name',
-        'product.category AS',
-        'product.subcategory AS subcategory',
-        'product.description AS description',
-        'product.storename AS storename',
-        'product.gender AS gender',
-        'product.tags AS tags',
-        'product.promotional_text AS promotional_text',
-        'product.created_at AS created_at',
-        'product.updated_at AS updated_at',
-        'sku.id AS sku_id',
-        'sku.stock AS stock',
-        'sku.price AS price',
-        'sku.discount AS discount',
-        'sku.is_active AS is_active',
-        'color.hexcode AS color',
-        'size.name AS size'
-      ])
-      .from(this.tableName)
-      .leftJoin('sku', 'product.id', 'sku.product_id')
-      .leftJoin('color', 'color.id', 'sku.sku_attribute_id')
-      .leftJoin('size', 'size.id', 'sku.sku_attribute_id')
-      .whereNull('product.deleted_at')
-      .whereNull('sku.deleted_at')
-      .whereNull('color.deleted_at')
-      .whereNull('size.deleted_at')
-      .orderBy('sku.created_at', 'desc');
+    query.joinRaw(
+      'where collection_product.collection_id = ? and collection_product.deleted_at is null and product.deleted_at is null',
+      [collectionId]
+    );
 
-    const productImagePromise = knexClient
-      .select([
-        'product.id AS id',
-        'image.type',
-        'image.url',
-        'image.thumbnail_url'
-      ])
-      .from(this.tableName)
-      .leftJoin('image', 'image.entity_id', 'product.id')
-      .whereNull('product.deleted_at')
-      .whereNull('image.deleted_at')
-      .orderBy('image.created_at', 'desc');
-
-    return Promise.all([productSkuPromise, productImagePromise]);
+    return list(pagination, orderings, filters, query, this.tableName);
   };
+
+  // getFullProducts = () => {
+  //   const productSkuPromise = knexClient
+  //     .select([
+  //       'product.id AS id',
+  //       'product.name AS name',
+  //       'product.category AS',
+  //       'product.subcategory AS subcategory',
+  //       'product.description AS description',
+  //       'product.storename AS storename',
+  //       'product.gender AS gender',
+  //       'product.tags AS tags',
+  //       'product.promotional_text AS promotional_text',
+  //       'product.created_at AS created_at',
+  //       'product.updated_at AS updated_at',
+  //       'sku.id AS sku_id',
+  //       'sku.stock AS stock',
+  //       'sku.price AS price',
+  //       'sku.discount AS discount',
+  //       'sku.is_active AS is_active',
+  //       'color.hexcode AS color',
+  //       'size.name AS size'
+  //     ])
+  //     .from(this.tableName)
+  //     .leftJoin('sku', 'product.id', 'sku.product_id')
+  //     .leftJoin('color', 'color.id', 'sku.sku_attribute_id')
+  //     .leftJoin('size', 'size.id', 'sku.sku_attribute_id')
+  //     .whereNull('product.deleted_at')
+  //     .whereNull('sku.deleted_at')
+  //     .whereNull('color.deleted_at')
+  //     .whereNull('size.deleted_at')
+  //     .orderBy('sku.created_at', 'desc');
+
+  //   const productImagePromise = knexClient
+  //     .select([
+  //       'product.id AS id',
+  //       'image.type',
+  //       'image.url',
+  //       'image.thumbnail_url'
+  //     ])
+  //     .from(this.tableName)
+  //     .leftJoin('image', 'image.entity_id', 'product.id')
+  //     .whereNull('product.deleted_at')
+  //     .whereNull('image.deleted_at')
+  //     .orderBy('image.created_at', 'desc');
+
+  //   return Promise.all([productSkuPromise, productImagePromise]);
+  // };
 
   getFullProductById(id) {}
 

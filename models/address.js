@@ -1,5 +1,5 @@
-const list = require('../../utils/list');
-const pageInfo = require('../../utils/page-info');
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
 
 class Repository {
   constructor(knexClient) {
@@ -21,6 +21,8 @@ class Repository {
         'updated_at'
       ])
       .from(this.tableName);
+
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
 
     return list(pagination, orderings, filters, query, this.tableName);
   };

@@ -1,11 +1,14 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'collection';
   }
 
-  getCollections = () =>
-    this.knexClient
+  getCollections = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select([
         'id',
         'name',
@@ -15,25 +18,33 @@ class Repository {
         'created_at',
         'updated_at'
       ])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
 
-  getCollectionsByUserId = userId =>
-    this.knexClient
-      .select([
-        'id',
-        'name',
-        'owner_id',
-        'description',
-        'tags',
-        'created_at',
-        'updated_at'
-      ])
-      .from(this.tableName)
-      .where('owner_id', userId)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getCollections(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
+
+  // getCollectionsByUserId = userId =>
+  //   this.knexClient
+  //     .select([
+  //       'id',
+  //       'name',
+  //       'owner_id',
+  //       'description',
+  //       'tags',
+  //       'created_at',
+  //       'updated_at'
+  //     ])
+  //     .from(this.tableName)
+  //     .where('owner_id', userId)
+  //     .whereNull('deleted_at')
+  //     .orderBy('created_at', 'desc');
 
   getCollectionById = id =>
     this.knexClient

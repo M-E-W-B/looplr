@@ -1,15 +1,26 @@
+const list = require('../utils/list');
+const pageInfo = require('../utils/page-info');
+
 class Repository {
   constructor(knexClient) {
     this.knexClient = knexClient;
     this.tableName = 'color';
   }
 
-  getColors = () =>
-    this.knexClient
+  getColors = (pagination, orderings, filters) => {
+    const query = this.knexClient
       .select(['id', 'hexcode', 'created_at', 'updated_at'])
-      .from(this.tableName)
-      .whereNull('deleted_at')
-      .orderBy('created_at', 'desc');
+      .from(this.tableName);
+
+    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+
+    return list(pagination, orderings, filters, query, this.tableName);
+  };
+
+  getPageInfo = (pagination, orderings, filters) => {
+    const query = this.getColors(null, orderings, filters);
+    return pageInfo(pagination, query);
+  };
 
   getColorById = id =>
     this.knexClient

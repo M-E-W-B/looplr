@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ colorRepository }) => {
   // { hexcode }
   router.post('/', async (req, res, next) => {
-    const { colorRepository } = ctx;
-
     try {
       const id = await colorRepository.create(fields);
       const color = await colorRepository.getColorById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { colorRepository } = ctx;
     try {
       await colorRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { hexcode }
   router.put('/:id', async (req, res, next) => {
-    const { colorRepository } = ctx;
     try {
       await colorRepository.update(id, fields);
       const color = await colorRepository.getColorById(id);
@@ -54,7 +50,6 @@ module.exports = ctx => {
 
   // { id, hexcode, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { colorRepository } = ctx;
     let color;
 
     try {
@@ -79,11 +74,20 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { colorRepository } = ctx;
-
     try {
-      const colors = await colorRepository.getColors();
-      return res.json(colors);
+      const edges = await colorRepository.getColors(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = colorRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
     } catch (err) {
       next(
         new Error({

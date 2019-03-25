@@ -1,10 +1,8 @@
 const router = require('express').Router();
 
-module.exports = ctx => {
+module.exports = ({ addressRepository }) => {
   // { user_id, street_address, landmark, city, state, postal_code }
   router.post('/', async (req, res, next) => {
-    const { addressRepository } = ctx;
-
     try {
       const [id] = await addressRepository.create(fields);
       const address = await addressRepository.getAddressById(id);
@@ -21,7 +19,6 @@ module.exports = ctx => {
 
   // { id }
   router.delete('/:id', async (req, res, next) => {
-    const { addressRepository } = ctx;
     try {
       await addressRepository.delete(id);
       return res.status(200).end();
@@ -37,7 +34,6 @@ module.exports = ctx => {
 
   // { user_id, street_address, landmark, city, state, postal_code }
   router.put('/:id', async (req, res, next) => {
-    const { addressRepository } = ctx;
     try {
       await addressRepository.update(id, fields);
       const address = await addressRepository.getAddressById(id);
@@ -52,7 +48,6 @@ module.exports = ctx => {
 
   // { id, user_id, street_address, landmark, state, postal_code, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
-    const { addressRepository } = ctx;
     let address;
 
     try {
@@ -77,8 +72,6 @@ module.exports = ctx => {
   });
 
   router.get('/', async (req, res, next) => {
-    const { addressRepository } = ctx;
-
     try {
       const edges = await addressRepository.getAddresses(
         pagination,
