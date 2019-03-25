@@ -14,30 +14,32 @@ const userRouter = require('./user');
 const imageRouter = require('./image');
 
 // repositories
-const AddressRepositoryFactory = require('../models/address');
-const badgeRepositoryFactory = require('../models/badge');
-const colorRepositoryFactory = require('../models/color');
-const commentRepositoryFactory = require('../models/comment');
-const collectionRepositoryFactory = require('../models/collection');
-const productRepositoryFactory = require('../models/product');
-const sizeRepositoryFactory = require('../models/size');
-const skuRepositoryFactory = require('../models/sku');
-const couponRepositoryFactory = require('../models/coupon');
-const userRepositoryFactory = require('../models/user');
-const imageRepositoryFactory = require('../models/image');
+const {
+  AddressRepositoryFactory,
+  BadgeRepositoryFactory,
+  ColorRepositoryFactory,
+  CommentRepositoryFactory,
+  CollectionRepositoryFactory,
+  ProductRepositoryFactory,
+  SizeRepositoryFactory,
+  SkuRepositoryFactory,
+  CouponRepositoryFactory,
+  UserRepositoryFactory,
+  ImageRepositoryFactory
+} = require('../models');
 
 module.exports = knexClient => {
   const addressRepository = AddressRepositoryFactory(knexClient);
-  const badgeRepository = badgeRepositoryFactory(knexClient);
-  const colorRepository = colorRepositoryFactory(knexClient);
-  const commentRepository = commentRepositoryFactory(knexClient);
-  const collectionRepository = collectionRepositoryFactory(knexClient);
-  const productRepository = productRepositoryFactory(knexClient);
-  const sizeRepository = sizeRepositoryFactory(knexClient);
-  const skuRepository = skuRepositoryFactory(knexClient);
-  const couponRepository = couponRepositoryFactory(knexClient);
-  const userRepository = userRepositoryFactory(knexClient);
-  const imageRepository = imageRepositoryFactory(knexClient);
+  const badgeRepository = BadgeRepositoryFactory(knexClient);
+  const colorRepository = ColorRepositoryFactory(knexClient);
+  const commentRepository = CommentRepositoryFactory(knexClient);
+  const collectionRepository = CollectionRepositoryFactory(knexClient);
+  const productRepository = ProductRepositoryFactory(knexClient);
+  const sizeRepository = SizeRepositoryFactory(knexClient);
+  const skuRepository = SkuRepositoryFactory(knexClient);
+  const couponRepository = CouponRepositoryFactory(knexClient);
+  const userRepository = UserRepositoryFactory(knexClient);
+  const imageRepository = ImageRepositoryFactory(knexClient);
 
   const ctx = {
     addressRepository,
