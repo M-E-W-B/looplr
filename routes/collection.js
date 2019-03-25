@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const id = await collectionRepository.create(fields);
       const collection = await collectionRepository.getCollectionById(id);
-      return collection;
+      return res.json(collection);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { collectionRepository } = ctx;
     try {
       await collectionRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await collectionRepository.update(id, fields);
       const collection = await collectionRepository.getCollectionById(id);
-      return collection;
+      return res.json(collection);
     } catch (err) {
       next(
         new Error({
@@ -62,7 +62,7 @@ module.exports = ctx => {
           collection_id,
           product_id
         );
-        return true;
+        return res.stautus(200).end();
       } catch (err) {
         next(
           new Error({
@@ -83,7 +83,7 @@ module.exports = ctx => {
           collection_id,
           product_id
         );
-        return true;
+        return res.status(200).end();
       } catch (err) {
         next(
           new Error({
@@ -110,7 +110,7 @@ module.exports = ctx => {
       );
     }
 
-    if (collection) return collection;
+    if (collection) return res.json(collection);
     else
       next(
         new Error({
@@ -131,7 +131,7 @@ module.exports = ctx => {
         );
       else collections = await collectionRepository.getCollections();
 
-      return collections;
+      return res.json(collections);
     } catch (err) {
       next(
         new Error({

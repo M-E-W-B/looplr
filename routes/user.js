@@ -35,7 +35,7 @@ module.exports = ctx => {
     try {
       const id = await userRepository.create(fields);
       const user = await userRepository.getUserById(id);
-      return user;
+      return res.json(user);
     } catch (err) {
       next(
         new Error({
@@ -51,7 +51,7 @@ module.exports = ctx => {
     const { userRepository } = ctx;
     try {
       await userRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
     try {
       await userRepository.update(id, fields);
       const user = await userRepository.getUserById(id);
-      return user;
+      return res.json(user);
     } catch (err) {
       next(
         new Error({
@@ -95,7 +95,7 @@ module.exports = ctx => {
       );
     }
 
-    if (user) return user;
+    if (user) return res.json(user);
     else
       next(
         new Error({
@@ -110,7 +110,7 @@ module.exports = ctx => {
 
     try {
       const users = await userRepository.getUsers();
-      return users;
+      return res.json(users);
     } catch (err) {
       next(
         new Error({
@@ -125,7 +125,7 @@ module.exports = ctx => {
     const { userRepository } = ctx;
     try {
       await userRepository.followUser(user_id, to_follow_user_id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -139,7 +139,7 @@ module.exports = ctx => {
     const { userRepository } = ctx;
     try {
       await userRepository.unfollowUser(user_id, to_unfollow_user_id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -153,7 +153,7 @@ module.exports = ctx => {
     const { userRepository } = ctx;
     try {
       const users = await userRepository.getFollowings(user_id);
-      return users;
+      return res.json(users);
     } catch (err) {
       next(
         new Error({
@@ -168,7 +168,7 @@ module.exports = ctx => {
     const { userRepository } = ctx;
     try {
       const users = await userRepository.getFollowers(user_id);
-      return users;
+      return res.json(users);
     } catch (err) {
       next(
         new Error({

@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const [id] = await couponRepository.create(fields);
       const coupon = await couponRepository.getCouponById(id);
-      return coupon;
+      return res.json(coupon);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { couponRepository } = ctx;
     try {
       await couponRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await couponRepository.update(id, fields);
       const coupon = await couponRepository.getCouponById(id);
-      return coupon;
+      return res.json(coupon);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (coupon) return coupon;
+    if (coupon) return res.json(coupon);
     else
       next(
         new Error({
@@ -83,7 +83,7 @@ module.exports = ctx => {
 
     try {
       const coupons = await couponRepository.getCoupons();
-      return coupons;
+      return res.json(coupons);
     } catch (err) {
       next(
         new Error({

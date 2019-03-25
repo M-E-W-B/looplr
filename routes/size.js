@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const id = await sizeRepository.create(fields);
       const size = await sizeRepository.getSizeById(id);
-      return size;
+      return res.json(size);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { sizeRepository } = ctx;
     try {
       await sizeRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await sizeRepository.update(id, fields);
       const size = await sizeRepository.getSizeById(id);
-      return size;
+      return res.json(size);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (size) return size;
+    if (size) return res.json(size);
     else
       next(
         new Error({
@@ -83,7 +83,7 @@ module.exports = ctx => {
 
     try {
       const sizes = await sizeRepository.getSizes();
-      return sizes;
+      return res.json(sizes);
     } catch (err) {
       next(
         new Error({

@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const [id] = await addressRepository.create(fields);
       const address = await addressRepository.getAddressById(id);
-      return address;
+      return res.json(address);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { addressRepository } = ctx;
     try {
       await addressRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await addressRepository.update(id, fields);
       const address = await addressRepository.getAddressById(id);
-      return address;
+      return res.json(address);
     } catch (err) {
       throw new Error({
         message: 'Unable to update the address.',
@@ -66,7 +66,7 @@ module.exports = ctx => {
       );
     }
 
-    if (address) return address;
+    if (address) return res.json(address);
     else
       next(
         new Error({
@@ -92,10 +92,10 @@ module.exports = ctx => {
         filters
       );
 
-      return {
+      return res.json({
         edges,
         pageInfo
-      };
+      });
     } catch (err) {
       next(
         new Error({

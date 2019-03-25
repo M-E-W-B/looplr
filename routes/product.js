@@ -9,7 +9,7 @@ module.exports = ctx => {
     try {
       const id = await productRepository.create(fields);
       const product = await productRepository.getProductById(id);
-      return product;
+      return res.json(product);
     } catch (err) {
       next(
         new Error({
@@ -25,7 +25,7 @@ module.exports = ctx => {
     const { productRepository } = ctx;
     try {
       await productRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -42,7 +42,7 @@ module.exports = ctx => {
     try {
       await productRepository.update(id, fields);
       const product = await productRepository.getProductById(id);
-      return product;
+      return res.json(product);
     } catch (err) {
       next(
         new Error({
@@ -70,7 +70,7 @@ module.exports = ctx => {
       );
     }
 
-    if (product) return product;
+    if (product) return res.json(product);
     else
       next(
         new Error({
@@ -92,7 +92,7 @@ module.exports = ctx => {
         );
       else products = await productRepository.getProducts();
 
-      return products;
+      return res.json(products);
     } catch (err) {
       next(
         new Error({

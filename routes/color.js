@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const id = await colorRepository.create(fields);
       const color = await colorRepository.getColorById(id);
-      return color;
+      return res.json(color);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { colorRepository } = ctx;
     try {
       await colorRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await colorRepository.update(id, fields);
       const color = await colorRepository.getColorById(id);
-      return color;
+      return res.json(color);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (color) return color;
+    if (color) return res.json(color);
     else
       next(
         new Error({
@@ -83,7 +83,7 @@ module.exports = ctx => {
 
     try {
       const colors = await colorRepository.getColors();
-      return colors;
+      return res.json(colors);
     } catch (err) {
       next(
         new Error({

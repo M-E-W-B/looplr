@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const [id] = await badgeRepository.create(fields);
       const badge = await badgeRepository.getBadgeById(id);
-      return badge;
+      return res.json(badge);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { badgeRepository } = ctx;
     try {
       await badgeRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await badgeRepository.update(id, fields);
       const badge = await badgeRepository.getBadgeById(id);
-      return badge;
+      return res.json(badge);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (badge) return badge;
+    if (badge) return res.json(badge);
     else
       next(
         new Error({
@@ -83,7 +83,7 @@ module.exports = ctx => {
 
     try {
       const badges = await badgeRepository.getBadges();
-      return badges;
+      return res.json(badges);
     } catch (err) {
       next(
         new Error({

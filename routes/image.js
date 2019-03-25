@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const [id] = await imageRepository.create(fields);
       const image = await imageRepository.getImageById(id);
-      return image;
+      return res.json(image);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { imageRepository } = ctx;
     try {
       await imageRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await imageRepository.update(id, fields);
       const image = await imageRepository.getImageById(id);
-      return image;
+      return res.json(image);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (image) return image;
+    if (image) return res.json(image);
     else
       next(
         new Error({
@@ -84,7 +84,7 @@ module.exports = ctx => {
     try {
       // @TODO
       const images = await imageRepository.getImages(entity_id, type);
-      return images;
+      return res.json(images);
     } catch (err) {
       next(
         new Error({

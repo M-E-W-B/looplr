@@ -8,7 +8,7 @@ module.exports = ctx => {
     try {
       const [id] = await commentRepository.create(fields);
       const comment = await commentRepository.getCommentById(id);
-      return comment;
+      return res.json(comment);
     } catch (err) {
       next(
         new Error({
@@ -24,7 +24,7 @@ module.exports = ctx => {
     const { commentRepository } = ctx;
     try {
       await commentRepository.delete(id);
-      return true;
+      return res.status(200).end();
     } catch (err) {
       next(
         new Error({
@@ -41,7 +41,7 @@ module.exports = ctx => {
     try {
       await commentRepository.update(id, fields);
       const comment = await commentRepository.getCommentById(id);
-      return comment;
+      return res.json(comment);
     } catch (err) {
       next(
         new Error({
@@ -68,7 +68,7 @@ module.exports = ctx => {
       );
     }
 
-    if (comment) return comment;
+    if (comment) return res.json(comment);
     else
       next(
         new Error({
@@ -91,7 +91,7 @@ module.exports = ctx => {
         comments = await commentRepository.getCommentsOn(entity_id);
       else comments = await commentRepository.getComments();
 
-      return comments;
+      return res.json(comments);
     } catch (err) {
       next(
         new Error({
