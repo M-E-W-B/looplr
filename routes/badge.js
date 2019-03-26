@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
 
+const Error = require('../utils/errors');
+
 module.exports = ({ badgeRepository }) => {
   router.post('/', async (req, res, next) => {
     const fields = pick(req.body, ['name', 'description']);
@@ -11,7 +13,7 @@ module.exports = ({ badgeRepository }) => {
       return res.json(badge);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the badge.',
           data: { extra: err.message }
         })
@@ -27,7 +29,7 @@ module.exports = ({ badgeRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the badge.',
           data: { extra: err.message }
         })
@@ -45,7 +47,7 @@ module.exports = ({ badgeRepository }) => {
       return res.json(badge);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the badge.',
           data: { extra: err.message }
         })
@@ -62,7 +64,7 @@ module.exports = ({ badgeRepository }) => {
       badge = await badgeRepository.getBadgeById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the badge.',
           data: { extra: err.message }
         })
@@ -72,7 +74,7 @@ module.exports = ({ badgeRepository }) => {
     if (badge) return res.json(badge);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Badge not found.',
           data: { extra: err.message }
         })
@@ -96,7 +98,7 @@ module.exports = ({ badgeRepository }) => {
       return res.json({ edges, pageInfo });
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch badges.',
           data: { extra: err.message }
         })

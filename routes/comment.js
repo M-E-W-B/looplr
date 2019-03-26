@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
 
+const Error = require('../utils/errors');
+
 module.exports = ({ commentRepository }) => {
   router.post('/', async (req, res, next) => {
     const fields = pick(req.body, ['user_id', 'entity_id', 'rating', 'txt']);
@@ -11,7 +13,7 @@ module.exports = ({ commentRepository }) => {
       return res.json(comment);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the comment.',
           data: { extra: err.message }
         })
@@ -28,7 +30,7 @@ module.exports = ({ commentRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the comment.',
           data: { extra: err.message }
         })
@@ -46,7 +48,7 @@ module.exports = ({ commentRepository }) => {
       return res.json(comment);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the comment.',
           data: { extra: err.message }
         })
@@ -63,7 +65,7 @@ module.exports = ({ commentRepository }) => {
       comment = await commentRepository.getCommentById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the comment.',
           data: { extra: err.message }
         })
@@ -73,7 +75,7 @@ module.exports = ({ commentRepository }) => {
     if (comment) return res.json(comment);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Comment not found.',
           data: { extra: err.message }
         })
@@ -99,7 +101,7 @@ module.exports = ({ commentRepository }) => {
       return res.json(comments);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch comments.',
           data: { extra: err.message }
         })

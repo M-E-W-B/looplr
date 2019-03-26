@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
 
+const Error = require('../utils/errors');
+
 module.exports = ({ sizeRepository }) => {
   router.post('/', async (req, res, next) => {
     const fields = pick(req.body, ['name']);
@@ -11,7 +13,7 @@ module.exports = ({ sizeRepository }) => {
       return res.json(size);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the size.',
           data: { extra: err.message }
         })
@@ -27,7 +29,7 @@ module.exports = ({ sizeRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the size.',
           data: { extra: err.message }
         })
@@ -45,7 +47,7 @@ module.exports = ({ sizeRepository }) => {
       return res.json(size);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the size.',
           data: { extra: err.message }
         })
@@ -62,7 +64,7 @@ module.exports = ({ sizeRepository }) => {
       size = await sizeRepository.getSizeById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the size.',
           data: { extra: err.message }
         })
@@ -72,7 +74,7 @@ module.exports = ({ sizeRepository }) => {
     if (size) return res.json(size);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Size not found.',
           data: { extra: err.message }
         })
@@ -96,7 +98,7 @@ module.exports = ({ sizeRepository }) => {
       return res.json({ edges, pageInfo });
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch sizes.',
           data: { extra: err.message }
         })

@@ -30,22 +30,6 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
-  // getCollectionsByUserId = userId =>
-  //   this.knexClient
-  //     .select([
-  //       'id',
-  //       'name',
-  //       'owner_id',
-  //       'description',
-  //       'tags',
-  //       'created_at',
-  //       'updated_at'
-  //     ])
-  //     .from(this.tableName)
-  //     .where('owner_id', userId)
-  //     .whereNull('deleted_at')
-  //     .orderBy('created_at', 'desc');
-
   getCollectionById = id =>
     this.knexClient
       .select([

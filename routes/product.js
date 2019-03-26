@@ -1,5 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
+
+const Error = require('../utils/errors');
+
 // @TODO: delegation: skus, images, sizechart
 
 module.exports = ({ productRepository }) => {
@@ -21,7 +24,7 @@ module.exports = ({ productRepository }) => {
       return res.json(product);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the product.',
           data: { extra: err.message }
         })
@@ -37,7 +40,7 @@ module.exports = ({ productRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the product.',
           data: { extra: err.message }
         })
@@ -64,7 +67,7 @@ module.exports = ({ productRepository }) => {
       return res.json(product);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the product.',
           data: { extra: err.message }
         })
@@ -82,7 +85,7 @@ module.exports = ({ productRepository }) => {
       product = await productRepository.getProductById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the product.',
           data: { extra: err.message }
         })
@@ -92,7 +95,7 @@ module.exports = ({ productRepository }) => {
     if (product) return res.json(product);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Product not found.',
           data: { extra: err.message }
         })
@@ -131,7 +134,7 @@ module.exports = ({ productRepository }) => {
       };
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch products.',
           data: { extra: err.message }
         })

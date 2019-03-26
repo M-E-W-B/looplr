@@ -1,51 +1,47 @@
 // Refer: https://medium.com/learn-with-talkrise/custom-errors-with-node-express-27b91fe2d947
 
-const { createError } = require('apollo-errors');
+class ApplicationError extends Error {
+  constructor({ message, data }) {
+    super();
 
-module.exports.ListFetchError = createError('ListFetchError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    Error.captureStackTrace(this, this.constructor);
 
-module.exports.ItemDoesNotExistError = createError('ItemDoesNotExistError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    this.name = this.constructor.name;
 
-module.exports.ItemFetchError = createError('ItemFetchError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    this.data = data;
+    this.message =
+      message ||
+      'Something went wrong in our backyard. Contact the lazy admin.';
+    this.status = 500;
+  }
+}
 
-module.exports.CreateError = createError('CreateError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+class BadRequestError extends Error {
+  constructor({ message, data }) {
+    super();
 
-module.exports.UpdateError = createError('UpdateError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    Error.captureStackTrace(this, this.constructor);
 
-module.exports.DeleteError = createError('DeleteError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    this.name = this.constructor.name;
 
-module.exports.ValidationError = createError('ValidationError', {
-  message: '',
-  showPath: true,
-  showLocations: true
-});
+    this.data = data;
+    this.message = message || 'Please check your query and try again.';
+    this.status = 400;
+  }
+}
 
-module.exports.UnknownError = createError('UnknownError', {
-  message: 'Something has gone wrong on the server.',
-  showPath: true,
-  showLocations: true
-});
+class AuthenticationError extends Error {
+  constructor({ message, data }) {
+    super();
+
+    Error.captureStackTrace(this, this.constructor);
+
+    this.name = this.constructor.name;
+
+    this.message = message || 'You are not permitted to access this data.';
+    this.data = data;
+    this.status = 403;
+  }
+}
+
+module.exports = { ApplicationError, BadRequestError, AuthenticationError };

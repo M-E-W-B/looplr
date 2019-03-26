@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const pick = require('lodash/pick');
 const router = require('express').Router();
 
+const Error = require('../utils/errors');
 const config = require('../config.json');
 
 module.exports = ({ userRepository }) => {
@@ -11,12 +12,16 @@ module.exports = ({ userRepository }) => {
 
     if (!user)
       return next(
-        new Error({ message: 'Authentication failed. User not found.' })
+        new Error.BadRequestError({
+          message: 'Authentication failed. User not found.'
+        })
       );
     else if (user) {
       if (!userRepository.matchPassword(fields.password, user.password))
         return next(
-          new Error({ message: 'Authentication failed. Wrong password.' })
+          new Error.BadRequestError({
+            message: 'Authentication failed. Wrong password.'
+          })
         );
       else {
         const { id, name, email } = user;
@@ -50,7 +55,7 @@ module.exports = ({ userRepository }) => {
     // email validation
     if (!/(.+)@(.+){2,}\.(.+){2,}/.test(fields.email)) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Enter a valid email.'
         })
       );
@@ -59,7 +64,7 @@ module.exports = ({ userRepository }) => {
     // phonenumber validation
     if (!/^[789]\d{9}/.test(fields.phonenumber)) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Enter a valid phonenumber.'
         })
       );
@@ -68,7 +73,7 @@ module.exports = ({ userRepository }) => {
     // password validation
     if (fields.password && fields.password.length < 6) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Only 6 to 20 character length allowed.'
         })
       );
@@ -80,7 +85,7 @@ module.exports = ({ userRepository }) => {
       return res.json(user);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the user.',
           data: { extra: err.message }
         })

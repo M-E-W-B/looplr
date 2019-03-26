@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
 
+const Error = require('../utils/errors');
+
 module.exports = ({ imageRepository }) => {
   router.post('/', async (req, res, next) => {
     const fields = pick(req.body, [
@@ -17,7 +19,7 @@ module.exports = ({ imageRepository }) => {
       return res.json(image);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the image.',
           data: { extra: err.message }
         })
@@ -33,7 +35,7 @@ module.exports = ({ imageRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the image.',
           data: { extra: err.message }
         })
@@ -57,7 +59,7 @@ module.exports = ({ imageRepository }) => {
       return res.json(image);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the image.',
           data: { extra: err.message }
         })
@@ -74,7 +76,7 @@ module.exports = ({ imageRepository }) => {
       image = await imageRepository.getImageById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the image.',
           data: { extra: err.message }
         })
@@ -84,7 +86,7 @@ module.exports = ({ imageRepository }) => {
     if (image) return res.json(image);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Image not found.',
           data: { extra: err.message }
         })
@@ -108,7 +110,7 @@ module.exports = ({ imageRepository }) => {
       return res.json({ edges, pageInfo });
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch images.',
           data: { extra: err.message }
         })

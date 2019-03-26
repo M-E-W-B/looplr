@@ -16,16 +16,16 @@ app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-f
 app.use(methodOverride('X-HTTP-Method-Override')); // simulate PUT and DELETE
 app.use(cors());
 
-app.use('/', authRouter(knexClient));
-middlewares(app);
+// app.use('/', authRouter(knexClient));
+// middlewares(app);
 app.use('/', mainRouter(knexClient));
 
 app.use((err, req, res, next) => {
   // error passed should be an array
   if (process.env.NODE_ENV === 'dev') {
     console.error(err.stack);
-    res.json({ message: err.message });
-  } else res.json(Object.keys(err).length ? err : { message: err.message });
+    res.json({ message: err.message, data: err.data });
+  }
 });
 
 module.exports = app;

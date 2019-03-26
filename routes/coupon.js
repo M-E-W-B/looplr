@@ -1,6 +1,8 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
 
+const Error = require('../utils/errors');
+
 module.exports = ({ couponRepository }) => {
   router.post('/', async (req, res, next) => {
     const fields = pick(req.body, [
@@ -21,7 +23,7 @@ module.exports = ({ couponRepository }) => {
       return res.json(coupon);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the coupon.',
           data: { extra: err.message }
         })
@@ -37,7 +39,7 @@ module.exports = ({ couponRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the coupon.',
           data: { extra: err.message }
         })
@@ -65,7 +67,7 @@ module.exports = ({ couponRepository }) => {
       return res.json(coupon);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the coupon.',
           data: { extra: err.message }
         })
@@ -82,7 +84,7 @@ module.exports = ({ couponRepository }) => {
       coupon = await couponRepository.getCouponById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the coupon.',
           data: { extra: err.message }
         })
@@ -92,7 +94,7 @@ module.exports = ({ couponRepository }) => {
     if (coupon) return res.json(coupon);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Coupon not found.',
           data: { extra: err.message }
         })
@@ -116,7 +118,7 @@ module.exports = ({ couponRepository }) => {
       return res.json({ edges, pageInfo });
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch coupons.',
           data: { extra: err.message }
         })

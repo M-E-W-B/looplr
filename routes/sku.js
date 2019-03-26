@@ -1,5 +1,7 @@
 const router = require('express').Router();
 const pick = require('lodash/pick');
+
+const Error = require('../utils/errors');
 // @TODO: delegation: size, color
 
 module.exports = ({ skuRepository }) => {
@@ -19,7 +21,7 @@ module.exports = ({ skuRepository }) => {
       return res.json(sku);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to create the sku.',
           data: { extra: err.message }
         })
@@ -35,7 +37,7 @@ module.exports = ({ skuRepository }) => {
       return res.status(200).end();
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to delete the sku.',
           data: { extra: err.message }
         })
@@ -60,7 +62,7 @@ module.exports = ({ skuRepository }) => {
       return res.json(sku);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to update the sku.',
           data: { extra: err.message }
         })
@@ -77,7 +79,7 @@ module.exports = ({ skuRepository }) => {
       sku = await skuRepository.getSkuById(id);
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch the sku.',
           data: { extra: err.message }
         })
@@ -87,7 +89,7 @@ module.exports = ({ skuRepository }) => {
     if (sku) return res.json(sku);
     else
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Sku not found.',
           data: { extra: err.message }
         })
@@ -110,7 +112,7 @@ module.exports = ({ skuRepository }) => {
       };
     } catch (err) {
       next(
-        new Error({
+        new Error.BadRequestError({
           message: 'Unable to fetch skus.',
           data: { extra: err.message }
         })
