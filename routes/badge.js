@@ -81,7 +81,9 @@ module.exports = ({ badgeRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await badgeRepository.getBadges(
         pagination,
@@ -89,7 +91,7 @@ module.exports = ({ badgeRepository }) => {
         filters
       );
 
-      const pageInfo = badgeRepository.getPageInfo(
+      const pageInfo = await badgeRepository.getPageInfo(
         pagination,
         orderings,
         filters

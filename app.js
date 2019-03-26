@@ -24,7 +24,7 @@ app.use((err, req, res, next) => {
   // error passed should be an array
   if (process.env.NODE_ENV === 'dev') {
     console.error(err.stack);
-    res.json({ message: err.message, data: err.data });
+    res.status(err.status).json({ message: err.message, data: err.data });
   }
 });
 

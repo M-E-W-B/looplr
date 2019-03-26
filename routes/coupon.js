@@ -101,7 +101,9 @@ module.exports = ({ couponRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await couponRepository.getCoupons(
         pagination,
@@ -109,7 +111,7 @@ module.exports = ({ couponRepository }) => {
         filters
       );
 
-      const pageInfo = couponRepository.getPageInfo(
+      const pageInfo = await couponRepository.getPageInfo(
         pagination,
         orderings,
         filters

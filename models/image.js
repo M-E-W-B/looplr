@@ -32,7 +32,7 @@ class Repository {
   };
 
   getImageById = id =>
-    knexClient
+    this.knexClient
       .select([
         'id',
         'entity_id',
@@ -55,7 +55,7 @@ class Repository {
     thumbnail_url = null,
     description = null
   }) =>
-    knexClient.transaction(function(trx) {
+    this.knexClient.transaction(function(trx) {
       return trx(this.tableName).insert({
         entity_id,
         type,
@@ -66,7 +66,7 @@ class Repository {
     });
 
   update = (id, { entity_id, type, url, thumbnail_url, description }) =>
-    knexClient.transaction(function(trx) {
+    this.knexClient.transaction(function(trx) {
       return trx(this.tableName)
         .update({
           entity_id,
@@ -79,10 +79,10 @@ class Repository {
     });
 
   delete = id =>
-    knexClient.transaction(function(trx) {
+    this.knexClient.transaction(function(trx) {
       return trx(this.tableName)
         .update({
-          deleted_at: knexClient.fn.now()
+          deleted_at: this.knexClient.fn.now()
         })
         .where('id', id);
     });

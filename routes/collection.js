@@ -122,7 +122,9 @@ module.exports = ({ collectionRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await collectionRepository.getCollections(
         pagination,
@@ -130,7 +132,7 @@ module.exports = ({ collectionRepository }) => {
         filters
       );
 
-      const pageInfo = collectionRepository.getPageInfo(
+      const pageInfo = await collectionRepository.getPageInfo(
         pagination,
         orderings,
         filters

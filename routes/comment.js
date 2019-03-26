@@ -82,7 +82,9 @@ module.exports = ({ commentRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await commentRepository.getComments(
         pagination,
@@ -90,7 +92,7 @@ module.exports = ({ commentRepository }) => {
         filters
       );
 
-      const pageInfo = commentRepository.getPageInfo(
+      const pageInfo = await commentRepository.getPageInfo(
         pagination,
         orderings,
         filters

@@ -93,7 +93,9 @@ module.exports = ({ imageRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await imageRepository.getImages(
         pagination,
@@ -101,7 +103,7 @@ module.exports = ({ imageRepository }) => {
         filters
       );
 
-      const pageInfo = imageRepository.getPageInfo(
+      const pageInfo = await imageRepository.getPageInfo(
         pagination,
         orderings,
         filters

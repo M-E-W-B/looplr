@@ -312,7 +312,7 @@ CREATE TABLE order_item (
 DROP TABLE IF EXISTS coupon;
 CREATE TABLE coupon (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  code CHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  code VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   max_uses INT UNSIGNED NULL,
   max_uses_per_user TINYINT UNSIGNED NULL,

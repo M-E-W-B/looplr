@@ -96,20 +96,22 @@ module.exports = ({ skuRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await skuRepository.getSkus(pagination, orderings, filters);
 
-      const pageInfo = skuRepository.getPageInfo(
+      const pageInfo = await skuRepository.getPageInfo(
         pagination,
         orderings,
         filters
       );
 
-      return {
+      return res.json({
         edges,
         pageInfo
-      };
+      });
     } catch (err) {
       next(
         new Error.BadRequestError({

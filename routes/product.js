@@ -102,31 +102,34 @@ module.exports = ({ productRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       let edges;
       let pageInfo = null;
+      // @TODO:
 
-      if (collection_id) {
-        edges = await productRepository.getProductsByCollectionId(
-          collection_id,
-          pagination,
-          orderings,
-          filters
-        );
-      } else {
-        edges = await productRepository.getProducts(
-          pagination,
-          orderings,
-          filters
-        );
+      // if (collection_id) {
+      //   edges = await productRepository.getProductsByCollectionId(
+      //     collection_id,
+      //     pagination,
+      //     orderings,
+      //     filters
+      //   );
+      // } else {
+      //   edges = await productRepository.getProducts(
+      //     pagination,
+      //     orderings,
+      //     filters
+      //   );
 
-        pageInfo = productRepository.getPageInfo(
-          pagination,
-          orderings,
-          filters
-        );
-      }
+      //   pageInfo = await productRepository.getPageInfo(
+      //     pagination,
+      //     orderings,
+      //     filters
+      //   );
+      // }
 
       return {
         edges,

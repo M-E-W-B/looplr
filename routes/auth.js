@@ -7,8 +7,8 @@ const config = require('../config.json');
 
 module.exports = ({ userRepository }) => {
   router.post('/login', async (req, res, next) => {
-    const fields = pick(req.body, ['email', 'password']);
-    const user = await userRepository.getUserByEmail(fields.email);
+    const { email, password } = req.body;
+    const user = await userRepository.getUserByEmail(email);
 
     if (!user)
       return next(
@@ -17,7 +17,7 @@ module.exports = ({ userRepository }) => {
         })
       );
     else if (user) {
-      if (!userRepository.matchPassword(fields.password, user.password))
+      if (!userRepository.matchPassword(password, user.password))
         return next(
           new Error.BadRequestError({
             message: 'Authentication failed. Wrong password.'

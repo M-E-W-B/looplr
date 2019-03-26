@@ -82,7 +82,9 @@ module.exports = ({ colorRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await colorRepository.getColors(
         pagination,
@@ -90,7 +92,7 @@ module.exports = ({ colorRepository }) => {
         filters
       );
 
-      const pageInfo = colorRepository.getPageInfo(
+      const pageInfo = await colorRepository.getPageInfo(
         pagination,
         orderings,
         filters

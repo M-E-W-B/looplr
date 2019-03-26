@@ -81,7 +81,9 @@ module.exports = ({ sizeRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await sizeRepository.getSizes(
         pagination,
@@ -89,7 +91,7 @@ module.exports = ({ sizeRepository }) => {
         filters
       );
 
-      const pageInfo = sizeRepository.getPageInfo(
+      const pageInfo = await sizeRepository.getPageInfo(
         pagination,
         orderings,
         filters

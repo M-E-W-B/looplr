@@ -1,5 +1,7 @@
+const knex = require('knex');
+
 // @TODO: Support multiple operators for filtering
-const partialMatchColumns = ['first_name', 'last_name', 'description'];
+// const partialMatchColumns = ['first_name', 'last_name', 'description'];
 const operatorMapping = {
   GREATER_THAN: '>',
   GREATER_THAN_OR_EQUAL: '>=',
@@ -23,27 +25,23 @@ module.exports = (
       (acc, { column, operator, value }) =>
         acc.concat([
           `${tableName}.${column}`,
-          `${operatorMapping[operator]}`,
+          knex.raw(`${operatorMapping[operator]}`),
           `${operatorMapping[operator] === 'in' ? value : value[0]}`
         ]),
       []
     );
 
     const filterQuery = filters
-      .map(({ column, value }) =>
-        partialMatchColumns.indexOf(column) !== -1
-          ? `( ?? ? %?% )`
-          : `( ?? ? ? )`
-      )
+      .map(({ column, value }) => `( ?? ? ? )`)
       .join(' and ');
 
     query.joinRaw(`and ${filterQuery}`, filterParams);
   }
 
   if (orderings.length) {
-    const orderingParams = orderings.reduce(
+    const orderingsParams = orderings.reduce(
       (acc, { column, direction }) =>
-        acc.concat([`${tableName}.${column}`, `${direction}`]),
+        acc.concat([`${tableName}.${column}`, knex.raw(direction)]),
       []
     );
 
@@ -51,7 +49,7 @@ module.exports = (
       .map(({ column, direction }) => '?? ?')
       .join(', ');
 
-    query.joinRaw(`order by ${orderingsQuery}`, orderingParams);
+    query.joinRaw(`order by ${orderingsQuery}`, orderingsParams);
   }
 
   if (pagination) {

@@ -94,7 +94,9 @@ module.exports = ({ addressRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await addressRepository.getAddresses(
         pagination,
@@ -102,7 +104,7 @@ module.exports = ({ addressRepository }) => {
         filters
       );
 
-      const pageInfo = addressRepository.getPageInfo(
+      const pageInfo = await addressRepository.getPageInfo(
         pagination,
         orderings,
         filters

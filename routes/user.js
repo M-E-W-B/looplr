@@ -71,7 +71,9 @@ module.exports = ({ userRepository }) => {
       );
   });
 
-  router.get('/', async (req, res, next) => {
+  router.post('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = req.body;
+
     try {
       const edges = await userRepository.getUsers(
         pagination,
@@ -79,16 +81,16 @@ module.exports = ({ userRepository }) => {
         filters
       );
 
-      const pageInfo = userRepository.getPageInfo(
+      const pageInfo = await userRepository.getPageInfo(
         pagination,
         orderings,
         filters
       );
 
-      return {
+      return res.json({
         edges,
         pageInfo
-      };
+      });
     } catch (err) {
       next(
         new Error.BadRequestError({

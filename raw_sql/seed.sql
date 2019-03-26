@@ -90,6 +90,11 @@ VALUES
   (2, 6, 3, 'This product sucks!'),
   (1, 6, 1, 'This product sucks!');
 
+INSERT INTO coupon
+  (code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, starts_at, expires_at)
+VALUES
+  ('BOGO', 'This is applicable only on your first order.', 1, 1, 0, 1, 50, '2019-03-26 14:29:38', '2019-09-2 14:29:38');
+
 INSERT INTO image
   (entity_id, type, url, thumbnail_url, description)
 VALUES
