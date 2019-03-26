@@ -1,9 +1,18 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 // @TODO: delegation: size, color
 
 module.exports = ({ skuRepository }) => {
-  // { product_id, sku_attribute_id, stock, price, discount, is_active }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, [
+      'product_id',
+      'sku_attribute_id',
+      'stock',
+      'price',
+      'discount',
+      'is_active'
+    ]);
+
     try {
       const [id] = await skuRepository.create(fields);
       const sku = await skuRepository.getSkuById(id);
@@ -18,8 +27,9 @@ module.exports = ({ skuRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await skuRepository.delete(id);
       return res.status(200).end();
@@ -33,8 +43,17 @@ module.exports = ({ skuRepository }) => {
     }
   });
 
-  // { product_id, sku_attribute_id, stock, price, discount, is_active }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'product_id',
+      'sku_attribute_id',
+      'stock',
+      'price',
+      'discount',
+      'is_active'
+    ]);
+
     try {
       await skuRepository.update(id, fields);
       const sku = await skuRepository.getSkuById(id);
@@ -51,6 +70,7 @@ module.exports = ({ skuRepository }) => {
 
   // { id, product_id, sku_attribute_id, stock, price, discount, is_active, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
     let sku;
 
     try {

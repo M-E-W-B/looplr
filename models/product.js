@@ -190,8 +190,7 @@ class Repository {
         .where('id', id);
     });
 
-  delete =
-    id >
+  delete = id =>
     this.knexClient.transaction(function(trx) {
       return trx(this.tableName)
         .update({

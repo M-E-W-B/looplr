@@ -1,8 +1,8 @@
-const knex = require("knex");
-const { host, user, password, database } = require("./config");
+const knex = require('knex');
+const { host, user, password, database } = require('./config');
 
 const client = knex({
-  client: "mysql",
+  client: 'mysql',
   connection: {
     host,
     user,
@@ -10,7 +10,7 @@ const client = knex({
     database,
     namedPlaceholders: true,
     rowsAsArray: false,
-    timezone: "UTC"
+    timezone: 'UTC'
   }
 });
 

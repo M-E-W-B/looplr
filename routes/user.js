@@ -1,51 +1,10 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ userRepository }) => {
-  // { first_name, last_name, handle, email, gender, phonenumber, about }
-  router.post('/', async (req, res, next) => {
-    // email validation
-    if (!/(.+)@(.+){2,}\.(.+){2,}/.test(fields.email)) {
-      next(
-        new Error({
-          message: 'Enter a valid email.'
-        })
-      );
-    }
-
-    // phonenumber validation
-    if (!/^[789]\d{9}/.test(fields.phonenumber)) {
-      next(
-        new Error({
-          message: 'Enter a valid phonenumber.'
-        })
-      );
-    }
-
-    // password validation
-    if (fields.password && fields.password.length < 6) {
-      next(
-        new Error({
-          message: 'Only 6 to 20 character length allowed.'
-        })
-      );
-    }
-
-    try {
-      const id = await userRepository.create(fields);
-      const user = await userRepository.getUserById(id);
-      return res.json(user);
-    } catch (err) {
-      next(
-        new Error({
-          message: 'Unable to create the user.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
-
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await userRepository.delete(id);
       return res.status(200).end();
@@ -59,8 +18,18 @@ module.exports = ({ userRepository }) => {
     }
   });
 
-  // { first_name, last_name, handle, email, gender, phonenumber, about }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'first_name',
+      'last_name',
+      'handle',
+      'email',
+      'gender',
+      'phonenumber',
+      'about'
+    ]);
+
     try {
       await userRepository.update(id, fields);
       const user = await userRepository.getUserById(id);
@@ -76,11 +45,11 @@ module.exports = ({ userRepository }) => {
   });
 
   // { id, first_name, last_name, handle, email, gender, phonenumber, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
-  router.get('/:id', async (req, res, next) => {
+  router.get('/me', async (req, res, next) => {
     let user;
 
     try {
-      user = await userRepository.getUserById(id);
+      user = await userRepository.getUserById(req.decoded.id);
     } catch (err) {
       next(
         new Error({
@@ -128,9 +97,11 @@ module.exports = ({ userRepository }) => {
     }
   });
 
-  router.post('/follow', async (req, res, next) => {
+  router.post('/follow/:id', async (req, res, next) => {
+    const { id: toFollowUserId } = req.params;
+
     try {
-      await userRepository.followUser(user_id, to_follow_user_id);
+      await userRepository.followUser(req.decoded.id, toFollowUserId);
       return res.status(200).end();
     } catch (err) {
       next(
@@ -141,9 +112,11 @@ module.exports = ({ userRepository }) => {
     }
   });
 
-  router.post('/unfollow', async (req, res, next) => {
+  router.post('/unfollow/:id', async (req, res, next) => {
+    const { id: toUnfollowUserId } = req.params;
+
     try {
-      await userRepository.unfollowUser(user_id, to_unfollow_user_id);
+      await userRepository.unfollowUser(req.decoded.id, toUnfollowUserId);
       return res.status(200).end();
     } catch (err) {
       next(
@@ -156,7 +129,7 @@ module.exports = ({ userRepository }) => {
 
   router.get('/followings', async (req, res, next) => {
     try {
-      const users = await userRepository.getFollowings(user_id);
+      const users = await userRepository.getFollowings(req.decoded.id);
       return res.json(users);
     } catch (err) {
       next(
@@ -170,7 +143,7 @@ module.exports = ({ userRepository }) => {
 
   router.get('/followers', async (req, res, next) => {
     try {
-      const users = await userRepository.getFollowers(user_id);
+      const users = await userRepository.getFollowers(req.decoded.id);
       return res.json(users);
     } catch (err) {
       next(

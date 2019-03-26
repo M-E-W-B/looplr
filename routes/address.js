@@ -1,8 +1,18 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ addressRepository }) => {
-  // { user_id, street_address, landmark, city, state, postal_code }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, [
+      'user_id',
+      'street_address',
+      'landmark',
+      'city',
+      'state',
+      'postal_code',
+      'type'
+    ]);
+
     try {
       const [id] = await addressRepository.create(fields);
       const address = await addressRepository.getAddressById(id);
@@ -17,8 +27,9 @@ module.exports = ({ addressRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await addressRepository.delete(id);
       return res.status(200).end();
@@ -32,8 +43,18 @@ module.exports = ({ addressRepository }) => {
     }
   });
 
-  // { user_id, street_address, landmark, city, state, postal_code }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'user_id',
+      'street_address',
+      'landmark',
+      'city',
+      'state',
+      'postal_code',
+      'type'
+    ]);
+
     try {
       await addressRepository.update(id, fields);
       const address = await addressRepository.getAddressById(id);
@@ -46,8 +67,9 @@ module.exports = ({ addressRepository }) => {
     }
   });
 
-  // { id, user_id, street_address, landmark, state, postal_code, created_at, updated_at, deleted_at }
+  // { id, user_id, street_address, landmark, state, postal_code, type, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
     let address;
 
     try {

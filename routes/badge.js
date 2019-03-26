@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ badgeRepository }) => {
-  // { name, description }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, ['name', 'description']);
+
     try {
       const [id] = await badgeRepository.create(fields);
       const badge = await badgeRepository.getBadgeById(id);
@@ -17,8 +19,9 @@ module.exports = ({ badgeRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await badgeRepository.delete(id);
       return res.status(200).end();
@@ -32,8 +35,10 @@ module.exports = ({ badgeRepository }) => {
     }
   });
 
-  // { name, description }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, ['name', 'description']);
+
     try {
       await badgeRepository.update(id, fields);
       const badge = await badgeRepository.getBadgeById(id);
@@ -50,6 +55,7 @@ module.exports = ({ badgeRepository }) => {
 
   // { id, name, description, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
     let badge;
 
     try {

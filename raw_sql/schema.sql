@@ -50,7 +50,7 @@ DROP TABLE IF EXISTS collection;
 CREATE TABLE collection (
   id INT UNSIGNED NOT NULL,
   name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  -- owner can be a user or the company
+  -- owner can be a user
   owner_id INT UNSIGNED NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   tags JSON NULL,
@@ -85,7 +85,7 @@ CREATE TABLE product (
   subcategory VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   storename VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  gender ENUM('M', 'F', 'U') NOT NULL DEFAULT 'U',
+  gender ENUM('M', 'F', 'U') NULL,
   tags JSON NULL,
   promotional_text VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
@@ -125,7 +125,7 @@ CREATE TABLE sku_attribute (
 DROP TABLE IF EXISTS color;
 CREATE TABLE color (
   id INT UNSIGNED NOT NULL,
-  hexcode CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  hexcode CHAR(7) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -155,6 +155,11 @@ CREATE TABLE address (
   city VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   state VARCHAR(30) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   postal_code CHAR(6) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  type ENUM(
+    'home',
+    'office',    
+    'other'
+  ) NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -193,7 +198,7 @@ CREATE TABLE comment (
   -- collection, product, order
   entity_id INT UNSIGNED NOT NULL,
   rating TINYINT UNSIGNED NULL CHECK(rating >= 0 AND rating <= 10),
-  txt VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+  txt VARCHAR(400) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -292,7 +297,8 @@ CREATE TABLE order_item (
     'REJECTED',
     'CONFIRMED',
     'OUT_FOR_DELIVERY',
-    'DELIVERED'
+    'DELIVERED',
+    'RETURNED'
   ) NOT NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),

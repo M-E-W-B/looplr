@@ -17,6 +17,7 @@ class Repository {
         'city',
         'state',
         'postal_code',
+        'type',
         'created_at',
         'updated_at'
       ])
@@ -42,6 +43,7 @@ class Repository {
         'city',
         'state',
         'postal_code',
+        'type',
         'created_at',
         'updated_at'
       ])
@@ -56,7 +58,8 @@ class Repository {
     landmark = null,
     city,
     state,
-    postal_code
+    postal_code,
+    type
   }) =>
     this.knexClient.transaction(function(trx) {
       return trx(this.tableName).insert({
@@ -65,13 +68,14 @@ class Repository {
         landmark,
         city,
         state,
-        postal_code
+        postal_code,
+        type
       });
     });
 
   update = (
     id,
-    { user_id, street_address, landmark, city, state, postal_code }
+    { user_id, street_address, landmark, city, state, postal_code, type }
   ) =>
     this.knexClient.transaction(function(trx) {
       return trx(this.tableName)
@@ -81,7 +85,8 @@ class Repository {
           landmark,
           city,
           state,
-          postal_code
+          postal_code,
+          type
         })
         .where('id', id);
     });

@@ -21,6 +21,7 @@ middlewares(app);
 app.use('/', mainRouter(knexClient));
 
 app.use((err, req, res, next) => {
+  // error passed should be an array
   if (process.env.NODE_ENV === 'dev') {
     console.error(err.stack);
     res.json({ message: err.message });

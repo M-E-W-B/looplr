@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ sizeRepository }) => {
-  // { name }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, ['name']);
+
     try {
       const id = await sizeRepository.create(fields);
       const size = await sizeRepository.getSizeById(id);
@@ -17,8 +19,9 @@ module.exports = ({ sizeRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await sizeRepository.delete(id);
       return res.status(200).end();
@@ -32,8 +35,10 @@ module.exports = ({ sizeRepository }) => {
     }
   });
 
-  // { name }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, ['name']);
+
     try {
       await sizeRepository.update(id, fields);
       const size = await sizeRepository.getSizeById(id);
@@ -50,6 +55,7 @@ module.exports = ({ sizeRepository }) => {
 
   // { id, name, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
     let size;
 
     try {

@@ -1,9 +1,20 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 // @TODO: delegation: skus, images, sizechart
 
 module.exports = ({ productRepository }) => {
-  // { name, category, subcategory, description, storename, gender, tags, promotional_text }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, [
+      'name',
+      'category',
+      'subcategory',
+      'description',
+      'storename',
+      'gender',
+      'tags',
+      'promotional_text'
+    ]);
+
     try {
       const id = await productRepository.create(fields);
       const product = await productRepository.getProductById(id);
@@ -18,8 +29,9 @@ module.exports = ({ productRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await productRepository.delete(id);
       return res.status(200).end();
@@ -33,8 +45,19 @@ module.exports = ({ productRepository }) => {
     }
   });
 
-  // { name, category, subcategory, description, storename, gender, tags, promotional_text }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'name',
+      'category',
+      'subcategory',
+      'description',
+      'storename',
+      'gender',
+      'tags',
+      'promotional_text'
+    ]);
+
     try {
       await productRepository.update(id, fields);
       const product = await productRepository.getProductById(id);
@@ -51,6 +74,7 @@ module.exports = ({ productRepository }) => {
 
   // { id, name, category, subcategory, description, storename, gender, tags, promotional_text, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
     let product;
 
     try {

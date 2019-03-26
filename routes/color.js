@@ -1,8 +1,10 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ colorRepository }) => {
-  // { hexcode }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, ['hexcode']);
+
     try {
       const id = await colorRepository.create(fields);
       const color = await colorRepository.getColorById(id);
@@ -17,8 +19,9 @@ module.exports = ({ colorRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await colorRepository.delete(id);
       return res.status(200).end();
@@ -34,6 +37,9 @@ module.exports = ({ colorRepository }) => {
 
   // { hexcode }
   router.put('/:id', async (req, res, next) => {
+    const fields = pick(req.body, ['hexcode']);
+    const { id } = req.params;
+
     try {
       await colorRepository.update(id, fields);
       const color = await colorRepository.getColorById(id);
@@ -51,6 +57,7 @@ module.exports = ({ colorRepository }) => {
   // { id, hexcode, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     let color;
+    const { id } = req.params;
 
     try {
       color = await colorRepository.getColorById(id);

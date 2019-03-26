@@ -60,6 +60,50 @@ class Repository {
       .whereNull('deleted_at')
       .first();
 
+  getUserByEmail = email =>
+    this.knexClient
+      .select([
+        'id',
+        'first_name',
+        'last_name',
+        'handle',
+        'email',
+        'gender',
+        'phonenumber',
+        'about',
+        'reset_password_token',
+        'reset_password_expires_at',
+        'is_active',
+        'created_at',
+        'updated_at'
+      ])
+      .from(this.tableName)
+      .where('email', email)
+      .whereNull('deleted_at')
+      .first();
+
+  getUserByHandle = handle =>
+    this.knexClient
+      .select([
+        'id',
+        'first_name',
+        'last_name',
+        'handle',
+        'email',
+        'gender',
+        'phonenumber',
+        'about',
+        'reset_password_token',
+        'reset_password_expires_at',
+        'is_active',
+        'created_at',
+        'updated_at'
+      ])
+      .from(this.tableName)
+      .where('handle', handle)
+      .whereNull('deleted_at')
+      .first();
+
   generateHash = password =>
     bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 

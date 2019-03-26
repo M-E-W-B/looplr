@@ -1,8 +1,16 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ imageRepository }) => {
-  // { entity_id, type, url, thumbnail_url, description }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, [
+      'entity_id',
+      'type',
+      'url',
+      'thumbnail_url',
+      'description'
+    ]);
+
     try {
       const [id] = await imageRepository.create(fields);
       const image = await imageRepository.getImageById(id);
@@ -17,8 +25,9 @@ module.exports = ({ imageRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await imageRepository.delete(id);
       return res.status(200).end();
@@ -32,8 +41,16 @@ module.exports = ({ imageRepository }) => {
     }
   });
 
-  // { entity_id, type, url, thumbnail_url, description }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'entity_id',
+      'type',
+      'url',
+      'thumbnail_url',
+      'description'
+    ]);
+
     try {
       await imageRepository.update(id, fields);
       const image = await imageRepository.getImageById(id);
@@ -51,6 +68,7 @@ module.exports = ({ imageRepository }) => {
   // { id, entity_id, type, url, thumbnail_url, description, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     let image;
+    const { id } = req.params;
 
     try {
       image = await imageRepository.getImageById(id);

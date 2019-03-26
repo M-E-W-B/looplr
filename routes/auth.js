@@ -1,68 +1,91 @@
 const jwt = require('jsonwebtoken');
 const pick = require('lodash/pick');
 const router = require('express').Router();
+
 const config = require('../config.json');
 
-module.exports = ctx => {
+module.exports = ({ userRepository }) => {
   router.post('/login', async (req, res, next) => {
-    User.findOne({
-      email: req.body.email
-    })
-      .then(user => {
-        if (!user) {
-          return next(
-            new Error({ message: 'Authentication failed. User not found.' })
-          );
-        } else if (user) {
-          if (!user.validPassword(req.body.password)) {
-            return next(
-              new Error({ message: 'Authentication failed. Wrong password.' })
-            );
-          } else {
-            const { _id, name, email } = user;
-            const payload = { _id, name, email };
+    const fields = pick(req.body, ['email', 'password']);
+    const user = await userRepository.getUserByEmail(fields.email);
 
-            const token = jwt.sign(payload, config.secret, {
-              expiresIn: 86400 // expires in 24 hours
-            });
+    if (!user)
+      return next(
+        new Error({ message: 'Authentication failed. User not found.' })
+      );
+    else if (user) {
+      if (!userRepository.matchPassword(fields.password, user.password))
+        return next(
+          new Error({ message: 'Authentication failed. Wrong password.' })
+        );
+      else {
+        const { id, name, email } = user;
+        const payload = { id, name, email };
 
-            res.json({
-              message: 'Enjoy your token!',
-              user: payload,
-              token
-            });
-          }
-        }
-      })
-      .catch(next);
+        const token = jwt.sign(payload, config.secret, {
+          expiresIn: 86400 // expires in 24 hours
+        });
+
+        res.json({
+          message: 'Enjoy your token!',
+          user: payload,
+          token
+        });
+      }
+    }
   });
 
   router.post('/signup', async (req, res, next) => {
-    const obj = pick(req.body, [
-      'name',
-      'about',
+    const fields = pick(req.body, [
+      'email',
+      'phonenumber',
       'password',
-      'website',
-      'image',
+      'first_name',
+      'last_name',
+      'handle',
       'gender',
-      'email'
+      'about'
     ]);
 
-    if (!obj.password)
-      return next(new Error({ message: 'Password is required!' }));
-
-    if (obj.password.length < 6 || obj.password.length > 20)
-      return next(
-        new Error({ message: 'Only 6 to 20 character length allowed!' })
+    // email validation
+    if (!/(.+)@(.+){2,}\.(.+){2,}/.test(fields.email)) {
+      next(
+        new Error({
+          message: 'Enter a valid email.'
+        })
       );
+    }
 
-    const user = new User(obj);
-    // store encrypted password
-    user.password = user.generateHash(obj.password);
-    user
-      .save()
-      .then(user => res.json(user))
-      .catch(next);
+    // phonenumber validation
+    if (!/^[789]\d{9}/.test(fields.phonenumber)) {
+      next(
+        new Error({
+          message: 'Enter a valid phonenumber.'
+        })
+      );
+    }
+
+    // password validation
+    if (fields.password && fields.password.length < 6) {
+      next(
+        new Error({
+          message: 'Only 6 to 20 character length allowed.'
+        })
+      );
+    }
+
+    try {
+      const id = await userRepository.create(fields);
+      const user = await userRepository.getUserById(id);
+      return res.json(user);
+    } catch (err) {
+      next(
+        new Error({
+          message: 'Unable to create the user.',
+          data: { extra: err.message }
+        })
+      );
+    }
   });
 
   return router;

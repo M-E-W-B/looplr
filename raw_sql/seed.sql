@@ -10,7 +10,7 @@ VALUES
   ('1st_collection', 'when a user creates 1st collection'),
   ('50th_collection', 'when a user creates 50th collection'),
   ('100th_order', 'when a user orders for the 100th time'),
-  ('total_order_price_above_Rs2000', 'when a user\'s order value is more than Rs. 2000');
+  ('total_order_price_above_Rs2000', 'when a user''s order value is more than Rs. 2000');
 
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO user
@@ -61,8 +61,8 @@ INSERT INTO product
   (id, name, category, subcategory, description, storename, gender, tags, promotional_text)
 VALUES
   (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
-  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', JSON_ARRAY('tshirt', 'slim'), NULL),
-  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\'t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', JSON_ARRAY('tshirt', 'slim'), NULL);
+  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', JSON_ARRAY('tshirt', 'slim'), NULL),
+  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don\''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', JSON_ARRAY('tshirt', 'slim'), NULL);
 
 INSERT INTO sku
   (product_id, sku_attribute_id, stock, price, discount)

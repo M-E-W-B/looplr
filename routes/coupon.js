@@ -1,8 +1,20 @@
 const router = require('express').Router();
+const pick = require('lodash/pick');
 
 module.exports = ({ couponRepository }) => {
-  // { code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at }
   router.post('/', async (req, res, next) => {
+    const fields = pick(req.body, [
+      'code',
+      'description',
+      'max_uses',
+      'max_uses_per_user',
+      'min_order',
+      'is_percentage',
+      'discount',
+      'start_at',
+      'expires_at'
+    ]);
+
     try {
       const [id] = await couponRepository.create(fields);
       const coupon = await couponRepository.getCouponById(id);
@@ -17,8 +29,9 @@ module.exports = ({ couponRepository }) => {
     }
   });
 
-  // { id }
   router.delete('/:id', async (req, res, next) => {
+    const { id } = req.params;
+
     try {
       await couponRepository.delete(id);
       return res.status(200).end();
@@ -32,8 +45,20 @@ module.exports = ({ couponRepository }) => {
     }
   });
 
-  // { code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at }
   router.put('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    const fields = pick(req.body, [
+      'code',
+      'description',
+      'max_uses',
+      'max_uses_per_user',
+      'min_order',
+      'is_percentage',
+      'discount',
+      'start_at',
+      'expires_at'
+    ]);
+
     try {
       await couponRepository.update(id, fields);
       const coupon = await couponRepository.getCouponById(id);
@@ -51,6 +76,7 @@ module.exports = ({ couponRepository }) => {
   // { id, code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     let coupon;
+    const { id } = req.params;
 
     try {
       coupon = await couponRepository.getCouponById(id);

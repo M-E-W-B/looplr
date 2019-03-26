@@ -17,10 +17,10 @@ class Repository {
     return list(pagination, orderings, filters, query, this.tableName);
   };
 
-  getPageInfo = (pagination, orderings, filters) {
+  getPageInfo = (pagination, orderings, filters) => {
     const query = this.getBadges(null, orderings, filters);
     return pageInfo(pagination, query);
-  }
+  };
 
   getBadgeById = id =>
     this.knexClient
