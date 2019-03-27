@@ -4,8 +4,8 @@ const pick = require('lodash/pick');
 const Error = require('../utils/errors');
 
 module.exports = ({ userRepository }) => {
-  router.delete('/:id', async (req, res, next) => {
-    const { id } = req.params;
+  router.delete('/', async (req, res, next) => {
+    const { id } = req.decoded;
 
     try {
       await userRepository.delete(id);
@@ -20,8 +20,8 @@ module.exports = ({ userRepository }) => {
     }
   });
 
-  router.put('/:id', async (req, res, next) => {
-    const { id } = req.params;
+  router.put('/', async (req, res, next) => {
+    const { id } = req.decoded;
     const fields = pick(req.body, [
       'first_name',
       'last_name',
@@ -47,11 +47,12 @@ module.exports = ({ userRepository }) => {
   });
 
   // { id, first_name, last_name, handle, email, gender, phonenumber, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
-  router.get('/me', async (req, res, next) => {
+  router.get('/', async (req, res, next) => {
     let user;
+    const { id } = req.decoded;
 
     try {
-      user = await userRepository.getUserById(req.decoded.id);
+      user = await userRepository.getUserById(id);
     } catch (err) {
       return next(
         new Error.BadRequestError({
@@ -103,9 +104,10 @@ module.exports = ({ userRepository }) => {
 
   router.post('/follow/:id', async (req, res, next) => {
     const { id: toFollowUserId } = req.params;
+    const { id } = req.decoded;
 
     try {
-      await userRepository.followUser(req.decoded.id, toFollowUserId);
+      await userRepository.followUser(id, toFollowUserId);
       return res.status(200).end();
     } catch (err) {
       return next(
@@ -118,9 +120,10 @@ module.exports = ({ userRepository }) => {
 
   router.post('/unfollow/:id', async (req, res, next) => {
     const { id: toUnfollowUserId } = req.params;
+    const { id } = req.decoded;
 
     try {
-      await userRepository.unfollowUser(req.decoded.id, toUnfollowUserId);
+      await userRepository.unfollowUser(id, toUnfollowUserId);
       return res.status(200).end();
     } catch (err) {
       return next(
@@ -132,8 +135,10 @@ module.exports = ({ userRepository }) => {
   });
 
   router.get('/followings', async (req, res, next) => {
+    const { id } = req.decoded;
+
     try {
-      const users = await userRepository.getFollowings(req.decoded.id);
+      const users = await userRepository.getFollowings(id);
       return res.json(users);
     } catch (err) {
       return next(
@@ -146,8 +151,10 @@ module.exports = ({ userRepository }) => {
   });
 
   router.get('/followers', async (req, res, next) => {
+    const { id } = req.decoded;
+
     try {
-      const users = await userRepository.getFollowers(req.decoded.id);
+      const users = await userRepository.getFollowers(id);
       return res.json(users);
     } catch (err) {
       return next(

@@ -2,6 +2,8 @@ const express = require('express');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const helmet = require('helmet');
+const compression = require('compression');
 
 const knexClient = require('./knex-client');
 const config = require('./config');
@@ -14,7 +16,9 @@ const app = express();
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
 app.use(methodOverride('X-HTTP-Method-Override')); // simulate PUT and DELETE
+app.use(helmet());
 app.use(cors());
+app.use(compression());
 
 app.use('/', authRouter(knexClient));
 middlewares(app);

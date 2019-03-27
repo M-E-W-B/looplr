@@ -216,7 +216,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx('follow')
         .update({
-          deleted_at: knexClient.fn.now()
+          deleted_at: this.knexClient.fn.now()
         })
         .where({ follower_id: user_id, followed_id: to_unfollow_user_id })
     );
@@ -243,7 +243,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: knexClient.fn.now()
+          deleted_at: this.knexClient.fn.now()
         })
         .where('id', id)
     );

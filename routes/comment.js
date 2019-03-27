@@ -42,6 +42,7 @@ module.exports = ({ commentRepository }) => {
   // { rating, txt }
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
+    const fields = pick(req.body, ['rating', 'txt']);
 
     try {
       await commentRepository.update(id, fields);

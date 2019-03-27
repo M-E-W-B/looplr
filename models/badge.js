@@ -52,7 +52,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: knexClient.fn.now()
+          deleted_at: this.knexClient.fn.now()
         })
         .where('id', id)
     );
