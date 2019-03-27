@@ -12,7 +12,7 @@ module.exports = ({ collectionRepository }) => {
       const collection = await collectionRepository.getCollectionById(id);
       return res.json(collection);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the collection.',
           data: { extra: err.message }
@@ -28,7 +28,7 @@ module.exports = ({ collectionRepository }) => {
       await collectionRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the collection.',
           data: { extra: err.message }
@@ -46,7 +46,7 @@ module.exports = ({ collectionRepository }) => {
       const collection = await collectionRepository.getCollectionById(id);
       return res.json(collection);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the collection.',
           data: { extra: err.message }
@@ -67,7 +67,7 @@ module.exports = ({ collectionRepository }) => {
         );
         return res.stautus(200).end();
       } catch (err) {
-        next(
+        return next(
           new Error.BadRequestError({
             data: { extra: err.message }
           })
@@ -88,7 +88,7 @@ module.exports = ({ collectionRepository }) => {
         );
         return res.status(200).end();
       } catch (err) {
-        next(
+        return next(
           new Error.BadRequestError({
             data: { extra: err.message }
           })
@@ -105,7 +105,7 @@ module.exports = ({ collectionRepository }) => {
     try {
       collection = await collectionRepository.getCollectionById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the collection.',
           data: { extra: err.message }
@@ -115,7 +115,7 @@ module.exports = ({ collectionRepository }) => {
 
     if (collection) return res.json(collection);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Collection not found.'
         })
@@ -140,7 +140,7 @@ module.exports = ({ collectionRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch collections.',
           data: { extra: err.message }

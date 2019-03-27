@@ -12,7 +12,7 @@ module.exports = ({ colorRepository }) => {
       const color = await colorRepository.getColorById(id);
       return res.json(color);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the color.',
           data: { extra: err.message }
@@ -28,7 +28,7 @@ module.exports = ({ colorRepository }) => {
       await colorRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the color.',
           data: { extra: err.message }
@@ -47,7 +47,7 @@ module.exports = ({ colorRepository }) => {
       const color = await colorRepository.getColorById(id);
       return res.json(color);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the color.',
           data: { extra: err.message }
@@ -64,7 +64,7 @@ module.exports = ({ colorRepository }) => {
     try {
       color = await colorRepository.getColorById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the color.',
           data: { extra: err.message }
@@ -74,7 +74,7 @@ module.exports = ({ colorRepository }) => {
 
     if (color) return res.json(color);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Color not found.',
           data: { extra: err.message }
@@ -100,7 +100,7 @@ module.exports = ({ colorRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch colors.',
           data: { extra: err.message }

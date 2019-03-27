@@ -30,38 +30,6 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
-  // getCommentsByUserId = userId =>
-  //   this.knexClient
-  //     .select([
-  //       'id',
-  //       'user_id',
-  //       'entity_id',
-  //       'rating',
-  //       'txt',
-  //       'created_at',
-  //       'updated_at'
-  //     ])
-  //     .from(this.tableName)
-  //     .where('user_id', userId)
-  //     .whereNull('deleted_at')
-  //     .orderBy('created_at', 'desc');
-
-  // getCommentsOn = entityId =>
-  //   this.knexClient
-  //     .select([
-  //       'id',
-  //       'user_id',
-  //       'entity_id',
-  //       'rating',
-  //       'txt',
-  //       'created_at',
-  //       'updated_at'
-  //     ])
-  //     .from(this.tableName)
-  //     .where('entity_id', entityId)
-  //     .whereNull('deleted_at')
-  //     .orderBy('created_at', 'desc');
-
   getCommentById = id =>
     this.knexClient
       .select([
@@ -79,33 +47,33 @@ class Repository {
       .first();
 
   create = ({ user_id, entity_id, rating = null, txt }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName).insert({
+    this.knexClient.transaction(trx =>
+      trx(this.tableName).insert({
         user_id,
         entity_id,
         rating,
         txt
-      });
-    });
+      })
+    );
 
   update = (id, { rating, txt }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           rating,
           txt
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

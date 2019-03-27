@@ -22,7 +22,7 @@ module.exports = ({ couponRepository }) => {
       const coupon = await couponRepository.getCouponById(id);
       return res.json(coupon);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the coupon.',
           data: { extra: err.message }
@@ -38,7 +38,7 @@ module.exports = ({ couponRepository }) => {
       await couponRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the coupon.',
           data: { extra: err.message }
@@ -66,7 +66,7 @@ module.exports = ({ couponRepository }) => {
       const coupon = await couponRepository.getCouponById(id);
       return res.json(coupon);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the coupon.',
           data: { extra: err.message }
@@ -83,7 +83,7 @@ module.exports = ({ couponRepository }) => {
     try {
       coupon = await couponRepository.getCouponById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the coupon.',
           data: { extra: err.message }
@@ -93,7 +93,7 @@ module.exports = ({ couponRepository }) => {
 
     if (coupon) return res.json(coupon);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Coupon not found.',
           data: { extra: err.message }
@@ -119,7 +119,7 @@ module.exports = ({ couponRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch coupons.',
           data: { extra: err.message }

@@ -145,8 +145,9 @@ class Repository {
     tags = null,
     promotional_text = null
   }) =>
-    this.knexClient.transaction(async function(trx) {
+    this.knexClient.transaction(async trx => {
       const [id] = await trx('entity').insert({ id: null });
+
       await trx(this.tableName).insert({
         id,
         name,
@@ -175,8 +176,8 @@ class Repository {
       promotional_text
     }
   ) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           name,
           category,
@@ -187,17 +188,17 @@ class Repository {
           tags,
           promotional_text
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

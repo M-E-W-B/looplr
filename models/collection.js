@@ -47,8 +47,9 @@ class Repository {
       .first();
 
   create = ({ name, owner_id = null, description = null, tags = null }) =>
-    this.knexClient.transaction(async function(trx) {
+    this.knexClient.transaction(async trx => {
       const [id] = await trx('entity').insert({ id: null });
+
       await trx(this.tableName).insert({
         id,
         name,
@@ -61,44 +62,44 @@ class Repository {
     });
 
   update = (id, { name, description, tags }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           name,
           description,
           tags
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   addProductIntoCollection = (collection_id, product_id) =>
-    this.knexClient.transaction(function(trx) {
-      return trx('collection_product').insert({
+    this.knexClient.transaction(trx =>
+      trx('collection_product').insert({
         collection_id,
         product_id
-      });
-    });
+      })
+    );
 
   removeProductFromCollection = (collection_id, product_id) =>
-    this.knexClient.transaction(function(trx) {
-      return trx('collection_product')
+    this.knexClient.transaction(trx =>
+      trx('collection_product')
         .update({
           deleted_at: knexClient.fn.now()
         })
         .where({
           collection_id,
           product_id
-        });
-    });
+        })
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

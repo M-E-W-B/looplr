@@ -55,19 +55,19 @@ class Repository {
     thumbnail_url = null,
     description = null
   }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName).insert({
+    this.knexClient.transaction(trx =>
+      trx(this.tableName).insert({
         entity_id,
         type,
         url,
         thumbnail_url,
         description
-      });
-    });
+      })
+    );
 
   update = (id, { entity_id, type, url, thumbnail_url, description }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           entity_id,
           type,
@@ -75,17 +75,17 @@ class Repository {
           thumbnail_url,
           description
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: this.knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

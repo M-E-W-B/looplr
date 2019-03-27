@@ -31,8 +31,9 @@ class Repository {
       .first();
 
   create = ({ name }) =>
-    this.knexClient.transaction(async function(trx) {
+    this.knexClient.transaction(async trx => {
       const [id] = await trx('sku_attribute').insert({ id: null });
+
       await trx(this.tableName).insert({
         id,
         name
@@ -42,22 +43,22 @@ class Repository {
     });
 
   update = (id, { name }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           name
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

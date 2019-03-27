@@ -3,9 +3,12 @@ const pick = require('lodash/pick');
 const router = require('express').Router();
 
 const Error = require('../utils/errors');
+const { UserRepositoryFactory } = require('../models');
 const config = require('../config.json');
 
-module.exports = ({ userRepository }) => {
+module.exports = knexClient => {
+  const userRepository = UserRepositoryFactory(knexClient);
+
   router.post('/login', async (req, res, next) => {
     const { email, password } = req.body;
     const user = await userRepository.getUserByEmail(email);
@@ -24,8 +27,8 @@ module.exports = ({ userRepository }) => {
           })
         );
       else {
-        const { id, name, email } = user;
-        const payload = { id, name, email };
+        const { id, handle, email } = user;
+        const payload = { id, handle, email };
 
         const token = jwt.sign(payload, config.secret, {
           expiresIn: 86400 // expires in 24 hours
@@ -54,7 +57,7 @@ module.exports = ({ userRepository }) => {
 
     // email validation
     if (!/(.+)@(.+){2,}\.(.+){2,}/.test(fields.email)) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Enter a valid email.'
         })
@@ -63,7 +66,7 @@ module.exports = ({ userRepository }) => {
 
     // phonenumber validation
     if (!/^[789]\d{9}/.test(fields.phonenumber)) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Enter a valid phonenumber.'
         })
@@ -71,8 +74,8 @@ module.exports = ({ userRepository }) => {
     }
 
     // password validation
-    if (fields.password && fields.password.length < 6) {
-      next(
+    if (!fields.password || fields.password.length < 6) {
+      return next(
         new Error.BadRequestError({
           message: 'Only 6 to 20 character length allowed.'
         })
@@ -84,7 +87,7 @@ module.exports = ({ userRepository }) => {
       const user = await userRepository.getUserById(id);
       return res.json(user);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the user.',
           data: { extra: err.message }

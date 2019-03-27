@@ -58,23 +58,23 @@ class Repository {
     discount = null,
     is_active
   }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName).insert({
+    this.knexClient.transaction(trx =>
+      trx(this.tableName).insert({
         product_id,
         sku_attribute_id,
         stock,
         price,
         discount,
         is_active
-      });
-    });
+      })
+    );
 
   update = (
     id,
     { product_id, sku_attribute_id, stock, price, discount, is_active }
   ) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           product_id,
           sku_attribute_id,
@@ -83,17 +83,17 @@ class Repository {
           discount,
           is_active
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

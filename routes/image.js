@@ -18,7 +18,7 @@ module.exports = ({ imageRepository }) => {
       const image = await imageRepository.getImageById(id);
       return res.json(image);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the image.',
           data: { extra: err.message }
@@ -34,7 +34,7 @@ module.exports = ({ imageRepository }) => {
       await imageRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the image.',
           data: { extra: err.message }
@@ -58,7 +58,7 @@ module.exports = ({ imageRepository }) => {
       const image = await imageRepository.getImageById(id);
       return res.json(image);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the image.',
           data: { extra: err.message }
@@ -75,7 +75,7 @@ module.exports = ({ imageRepository }) => {
     try {
       image = await imageRepository.getImageById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the image.',
           data: { extra: err.message }
@@ -85,7 +85,7 @@ module.exports = ({ imageRepository }) => {
 
     if (image) return res.json(image);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Image not found.',
           data: { extra: err.message }
@@ -111,7 +111,7 @@ module.exports = ({ imageRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch images.',
           data: { extra: err.message }

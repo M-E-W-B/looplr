@@ -23,7 +23,7 @@ module.exports = ({ productRepository }) => {
       const product = await productRepository.getProductById(id);
       return res.json(product);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the product.',
           data: { extra: err.message }
@@ -39,7 +39,7 @@ module.exports = ({ productRepository }) => {
       await productRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the product.',
           data: { extra: err.message }
@@ -66,7 +66,7 @@ module.exports = ({ productRepository }) => {
       const product = await productRepository.getProductById(id);
       return res.json(product);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the product.',
           data: { extra: err.message }
@@ -84,7 +84,7 @@ module.exports = ({ productRepository }) => {
       // @TODO
       product = await productRepository.getProductById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the product.',
           data: { extra: err.message }
@@ -94,7 +94,7 @@ module.exports = ({ productRepository }) => {
 
     if (product) return res.json(product);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Product not found.',
           data: { extra: err.message }
@@ -136,7 +136,7 @@ module.exports = ({ productRepository }) => {
         pageInfo
       };
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch products.',
           data: { extra: err.message }

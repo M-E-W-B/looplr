@@ -70,6 +70,7 @@ class Repository {
         'email',
         'gender',
         'phonenumber',
+        'password',
         'about',
         'reset_password_token',
         'reset_password_expires_at',
@@ -108,7 +109,7 @@ class Repository {
     bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 
   matchPassword = (password, encPassword) =>
-    bcrypt.compareSync(password, encPassword);
+    bcrypt.compareSync(password, encPassword.toString());
 
   getFollowers = userId =>
     this.knexClient
@@ -169,8 +170,9 @@ class Repository {
     about = null,
     is_active = 1
   }) =>
-    this.knexClient.transaction(async function(trx) {
+    this.knexClient.transaction(async trx => {
       const [id] = await trx('entity').insert({ id: null });
+
       await trx(this.tableName).insert({
         id,
         first_name,
@@ -190,8 +192,8 @@ class Repository {
     });
 
   update = (id, { first_name, last_name, gender, phonenumber, about }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           first_name,
           last_name,
@@ -199,52 +201,52 @@ class Repository {
           phonenumber,
           about
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   followUser = (user_id, to_follow_user_id) =>
-    this.knexClient.transaction(function(trx) {
-      return trx('follow').insert({
+    this.knexClient.transaction(trx =>
+      trx('follow').insert({
         follower_id: user_id,
         followed_id: to_follow_user_id
-      });
-    });
+      })
+    );
 
   unfollowUser = (user_id, to_unfollow_user_id) =>
-    this.knexClient.transaction(function(trx) {
-      return trx('follow')
+    this.knexClient.transaction(trx =>
+      trx('follow')
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where({ follower_id: user_id, followed_id: to_unfollow_user_id });
-    });
+        .where({ follower_id: user_id, followed_id: to_unfollow_user_id })
+    );
 
   markActive = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           is_active: 1
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   markInActive = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           is_active: 0
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

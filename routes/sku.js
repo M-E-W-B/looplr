@@ -20,7 +20,7 @@ module.exports = ({ skuRepository }) => {
       const sku = await skuRepository.getSkuById(id);
       return res.json(sku);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the sku.',
           data: { extra: err.message }
@@ -36,7 +36,7 @@ module.exports = ({ skuRepository }) => {
       await skuRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the sku.',
           data: { extra: err.message }
@@ -61,7 +61,7 @@ module.exports = ({ skuRepository }) => {
       const sku = await skuRepository.getSkuById(id);
       return res.json(sku);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the sku.',
           data: { extra: err.message }
@@ -78,7 +78,7 @@ module.exports = ({ skuRepository }) => {
     try {
       sku = await skuRepository.getSkuById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the sku.',
           data: { extra: err.message }
@@ -88,7 +88,7 @@ module.exports = ({ skuRepository }) => {
 
     if (sku) return res.json(sku);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Sku not found.',
           data: { extra: err.message }
@@ -113,7 +113,7 @@ module.exports = ({ skuRepository }) => {
         pageInfo
       });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch skus.',
           data: { extra: err.message }

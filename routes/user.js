@@ -11,7 +11,7 @@ module.exports = ({ userRepository }) => {
       await userRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the user.',
           data: { extra: err.message }
@@ -37,7 +37,7 @@ module.exports = ({ userRepository }) => {
       const user = await userRepository.getUserById(id);
       return res.json(user);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the user.',
           data: { extra: err.message }
@@ -53,7 +53,7 @@ module.exports = ({ userRepository }) => {
     try {
       user = await userRepository.getUserById(req.decoded.id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the user.',
           data: { extra: err.message }
@@ -63,7 +63,7 @@ module.exports = ({ userRepository }) => {
 
     if (user) return res.json(user);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'User not found.',
           data: { extra: err.message }
@@ -92,7 +92,7 @@ module.exports = ({ userRepository }) => {
         pageInfo
       });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch users.',
           data: { extra: err.message }
@@ -108,7 +108,7 @@ module.exports = ({ userRepository }) => {
       await userRepository.followUser(req.decoded.id, toFollowUserId);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           data: { extra: err.message }
         })
@@ -123,7 +123,7 @@ module.exports = ({ userRepository }) => {
       await userRepository.unfollowUser(req.decoded.id, toUnfollowUserId);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           data: { extra: err.message }
         })
@@ -136,7 +136,7 @@ module.exports = ({ userRepository }) => {
       const users = await userRepository.getFollowings(req.decoded.id);
       return res.json(users);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the users.',
           data: { extra: err.message }
@@ -150,7 +150,7 @@ module.exports = ({ userRepository }) => {
       const users = await userRepository.getFollowers(req.decoded.id);
       return res.json(users);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the users.',
           data: { extra: err.message }

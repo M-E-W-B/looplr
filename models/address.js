@@ -61,8 +61,8 @@ class Repository {
     postal_code,
     type
   }) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName).insert({
+    this.knexClient.transaction(trx =>
+      trx(this.tableName).insert({
         user_id,
         street_address,
         landmark,
@@ -70,15 +70,15 @@ class Repository {
         state,
         postal_code,
         type
-      });
-    });
+      })
+    );
 
   update = (
     id,
     { user_id, street_address, landmark, city, state, postal_code, type }
   ) =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           user_id,
           street_address,
@@ -88,17 +88,17 @@ class Repository {
           postal_code,
           type
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 
   delete = id =>
-    this.knexClient.transaction(function(trx) {
-      return trx(this.tableName)
+    this.knexClient.transaction(trx =>
+      trx(this.tableName)
         .update({
           deleted_at: knexClient.fn.now()
         })
-        .where('id', id);
-    });
+        .where('id', id)
+    );
 }
 
 module.exports = knexClient => new Repository(knexClient);

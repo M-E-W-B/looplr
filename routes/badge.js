@@ -8,11 +8,11 @@ module.exports = ({ badgeRepository }) => {
     const fields = pick(req.body, ['name', 'description']);
 
     try {
-      const [id] = await badgeRepository.create(fields);
+      const id = await badgeRepository.create(fields);
       const badge = await badgeRepository.getBadgeById(id);
       return res.json(badge);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the badge.',
           data: { extra: err.message }
@@ -28,7 +28,7 @@ module.exports = ({ badgeRepository }) => {
       await badgeRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the badge.',
           data: { extra: err.message }
@@ -46,7 +46,7 @@ module.exports = ({ badgeRepository }) => {
       const badge = await badgeRepository.getBadgeById(id);
       return res.json(badge);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the badge.',
           data: { extra: err.message }
@@ -63,7 +63,7 @@ module.exports = ({ badgeRepository }) => {
     try {
       badge = await badgeRepository.getBadgeById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the badge.',
           data: { extra: err.message }
@@ -73,7 +73,7 @@ module.exports = ({ badgeRepository }) => {
 
     if (badge) return res.json(badge);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Badge not found.',
           data: { extra: err.message }
@@ -99,7 +99,7 @@ module.exports = ({ badgeRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch badges.',
           data: { extra: err.message }

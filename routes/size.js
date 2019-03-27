@@ -12,7 +12,7 @@ module.exports = ({ sizeRepository }) => {
       const size = await sizeRepository.getSizeById(id);
       return res.json(size);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the size.',
           data: { extra: err.message }
@@ -28,7 +28,7 @@ module.exports = ({ sizeRepository }) => {
       await sizeRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the size.',
           data: { extra: err.message }
@@ -46,7 +46,7 @@ module.exports = ({ sizeRepository }) => {
       const size = await sizeRepository.getSizeById(id);
       return res.json(size);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to update the size.',
           data: { extra: err.message }
@@ -63,7 +63,7 @@ module.exports = ({ sizeRepository }) => {
     try {
       size = await sizeRepository.getSizeById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the size.',
           data: { extra: err.message }
@@ -73,7 +73,7 @@ module.exports = ({ sizeRepository }) => {
 
     if (size) return res.json(size);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Size not found.',
           data: { extra: err.message }
@@ -99,7 +99,7 @@ module.exports = ({ sizeRepository }) => {
 
       return res.json({ edges, pageInfo });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch sizes.',
           data: { extra: err.message }

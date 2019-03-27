@@ -11,16 +11,19 @@ module.exports = app => {
     if (token)
       jwt.verify(token, config.secret, function(err, decoded) {
         if (err) {
-          next(
+          return next(
             new Error.AuthenticationError({
               message: 'Failed to authenticate token.'
             })
           );
         } else {
           req.decoded = decoded;
-          next();
+          return next();
         }
       });
-    else next(new Error.AuthenticationError({ message: 'No token provided.' }));
+    else
+      return next(
+        new Error.AuthenticationError({ message: 'No token provided.' })
+      );
   });
 };

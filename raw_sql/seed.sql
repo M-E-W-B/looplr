@@ -35,8 +35,8 @@ INSERT INTO sku_attribute(id) VALUES (NULL), (NULL);
 INSERT INTO color
   (id, hexcode)
 VALUES
-  (1, '61CDEC'),
-  (2, 'EBB860');
+  (1, '#61CDEC'),
+  (2, '#EBB860');
 
 INSERT INTO sku_attribute(id) VALUES (NULL), (NULL), (NULL), (NULL);
 INSERT INTO size

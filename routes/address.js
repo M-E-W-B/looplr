@@ -19,7 +19,7 @@ module.exports = ({ addressRepository }) => {
       const address = await addressRepository.getAddressById(id);
       return res.json(address);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to create the address.',
           data: { extra: err.message }
@@ -35,7 +35,7 @@ module.exports = ({ addressRepository }) => {
       await addressRepository.delete(id);
       return res.status(200).end();
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to delete the address.',
           data: { extra: err.message }
@@ -76,7 +76,7 @@ module.exports = ({ addressRepository }) => {
     try {
       address = await addressRepository.getAddressById(id);
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch the address.',
           data: { extra: err.message }
@@ -86,7 +86,7 @@ module.exports = ({ addressRepository }) => {
 
     if (address) return res.json(address);
     else
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Address not found.',
           data: { extra: err.message }
@@ -115,7 +115,7 @@ module.exports = ({ addressRepository }) => {
         pageInfo
       });
     } catch (err) {
-      next(
+      return next(
         new Error.BadRequestError({
           message: 'Unable to fetch addresses.',
           data: { extra: err.message }
