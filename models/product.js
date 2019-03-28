@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,19 +10,21 @@ class Repository {
 
   getProducts = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'name',
-        'category',
-        'subcategory',
-        'description',
-        'storename',
-        'gender',
-        'tags',
-        'promotional_text',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'name',
+          'category',
+          'subcategory',
+          'description',
+          'storename',
+          'gender',
+          'tags',
+          'promotional_text',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -50,9 +53,9 @@ class Repository {
         'product.storename AS storename',
         'product.gender AS gender',
         'product.tags AS tags',
-        'product.promotional_text AS promotional_text',
-        'product.created_at AS created_at',
-        'product.updated_at AS updated_at'
+        'product.promotional_text AS promotionalText',
+        'product.created_at AS createdAt',
+        'product.updated_at AS updatedAt'
       ])
       .from('collection_product')
       .innerJoin(this.tableName, 'product.id', 'collection_product.product_id');
@@ -113,23 +116,25 @@ class Repository {
   //   return Promise.all([productSkuPromise, productImagePromise]);
   // };
 
-  getFullProductById(id) {}
+  // getFullProductById(id) {}
 
   getProductById = id =>
     this.knexClient
-      .select([
-        'id',
-        'name',
-        'category',
-        'subcategory',
-        'description',
-        'storename',
-        'gender',
-        'tags',
-        'promotional_text',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'name',
+          'category',
+          'subcategory',
+          'description',
+          'storename',
+          'gender',
+          'tags',
+          'promotional_text',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
@@ -143,7 +148,7 @@ class Repository {
     storename = null,
     gender = 'U',
     tags = null,
-    promotional_text = null
+    promotionalText: promotional_text = null
   }) =>
     this.knexClient.transaction(async trx => {
       const [id] = await trx('entity').insert({ id: null });
@@ -173,7 +178,7 @@ class Repository {
       storename,
       gender,
       tags,
-      promotional_text
+      promotionalText: promotional_text
     }
   ) =>
     this.knexClient.transaction(trx =>

@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,15 +10,17 @@ class Repository {
 
   getComments = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'user_id',
-        'entity_id',
-        'rating',
-        'txt',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'user_id',
+          'entity_id',
+          'rating',
+          'txt',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -32,21 +35,23 @@ class Repository {
 
   getCommentById = id =>
     this.knexClient
-      .select([
-        'id',
-        'user_id',
-        'entity_id',
-        'rating',
-        'txt',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'user_id',
+          'entity_id',
+          'rating',
+          'txt',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
       .first();
 
-  create = ({ user_id, entity_id, rating = null, txt }) =>
+  create = ({ userId: user_id, entityId: entity_id, rating = null, txt }) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName).insert({
         user_id,

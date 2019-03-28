@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,17 +10,19 @@ class Repository {
 
   getSkus = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'product_id',
-        'sku_attribute_id',
-        'stock',
-        'price',
-        'discount',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'product_id',
+          'sku_attribute_id',
+          'stock',
+          'price',
+          'discount',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -34,29 +37,31 @@ class Repository {
 
   getSkuById = id =>
     this.knexClient
-      .select([
-        'id',
-        'product_id',
-        'sku_attribute_id',
-        'stock',
-        'price',
-        'discount',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'product_id',
+          'sku_attribute_id',
+          'stock',
+          'price',
+          'discount',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
       .first();
 
   create = ({
-    product_id,
-    sku_attribute_id,
+    productId: product_id,
+    skuAttributeId: sku_attribute_id,
     stock,
     price = null,
     discount = null,
-    is_active
+    isActive: is_active
   }) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName).insert({
@@ -71,7 +76,14 @@ class Repository {
 
   update = (
     id,
-    { product_id, sku_attribute_id, stock, price, discount, is_active }
+    {
+      productId: product_id,
+      skuAttributeId: sku_attribute_id,
+      stock,
+      price = null,
+      discount = null,
+      isActive: is_active
+    }
   ) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName)

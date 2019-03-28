@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,20 +10,22 @@ class Repository {
 
   getCoupons = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'code',
-        'description',
-        'max_uses',
-        'max_uses_per_user',
-        'min_order',
-        'is_percentage',
-        'discount',
-        'starts_at',
-        'expires_at',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'code',
+          'description',
+          'max_uses',
+          'max_uses_per_user',
+          'min_order',
+          'is_percentage',
+          'discount',
+          'starts_at',
+          'expires_at',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -37,20 +40,22 @@ class Repository {
 
   getCouponById = id =>
     this.knexClient
-      .select([
-        'id',
-        'code',
-        'description',
-        'max_uses',
-        'max_uses_per_user',
-        'min_order',
-        'is_percentage',
-        'discount',
-        'starts_at',
-        'expires_at',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'code',
+          'description',
+          'max_uses',
+          'max_uses_per_user',
+          'min_order',
+          'is_percentage',
+          'discount',
+          'starts_at',
+          'expires_at',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
@@ -59,13 +64,13 @@ class Repository {
   create = ({
     code,
     description = null,
-    max_uses = null,
-    max_uses_per_user = null,
-    min_order = null,
-    is_percentage,
+    maxUses: max_uses = null,
+    maxUsesPerUser: max_uses_per_user = null,
+    minOrder: min_order = null,
+    isPercentage: is_percentage,
     discount = null,
-    starts_at = null,
-    expires_at = null
+    startsAt: starts_at = null,
+    expiresAt: expires_at = null
   }) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName).insert({
@@ -86,13 +91,13 @@ class Repository {
     {
       code,
       description,
-      max_uses,
-      max_uses_per_user,
-      min_order,
-      is_percentage,
+      maxUses: max_uses,
+      maxUsesPerUser: max_uses_per_user,
+      minOrder: min_order,
+      isPercentage: is_percentage,
       discount,
-      starts_at,
-      expires_at
+      startsAt: starts_at,
+      expiresAt: expires_at
     }
   ) =>
     this.knexClient.transaction(trx =>

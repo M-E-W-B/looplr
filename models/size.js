@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,7 +10,11 @@ class Repository {
 
   getSizes = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select(['id', 'name', 'created_at', 'updated_at'])
+      .select(
+        ['id', 'name', 'created_at', 'updated_at'].map(
+          i => `${i} AS ${camelCase(i)}`
+        )
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -24,7 +29,11 @@ class Repository {
 
   getSizeById = id =>
     this.knexClient
-      .select(['id', 'name', 'created_at', 'updated_at'])
+      .select(
+        ['id', 'name', 'created_at', 'updated_at'].map(
+          i => `${i} AS ${camelCase(i)}`
+        )
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')

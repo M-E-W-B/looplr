@@ -1,5 +1,6 @@
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
+const camelCase = require('lodash.camelcase');
 
 class Repository {
   constructor(knexClient) {
@@ -9,16 +10,18 @@ class Repository {
 
   getImages = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'entity_id',
-        'type',
-        'url',
-        'thumbnail_url',
-        'description',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'entity_id',
+          'type',
+          'url',
+          'thumbnail_url',
+          'description',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -33,26 +36,28 @@ class Repository {
 
   getImageById = id =>
     this.knexClient
-      .select([
-        'id',
-        'entity_id',
-        'type',
-        'url',
-        'thumbnail_url',
-        'description',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'entity_id',
+          'type',
+          'url',
+          'thumbnail_url',
+          'description',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
       .first();
 
   create = ({
-    entity_id,
+    entityId: entity_id,
     type,
     url,
-    thumbnail_url = null,
+    thumbnailUrl: thumbnail_url = null,
     description = null
   }) =>
     this.knexClient.transaction(trx =>
@@ -65,7 +70,10 @@ class Repository {
       })
     );
 
-  update = (id, { entity_id, type, url, thumbnail_url, description }) =>
+  update = (
+    id,
+    { entityId: entity_id, type, url, thumbnailUrl: thumbnail_url, description }
+  ) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({

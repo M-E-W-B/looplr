@@ -1,20 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ imageRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, [
-      'entity_id',
-      'type',
-      'url',
-      'thumbnail_url',
-      'description'
-    ]);
-
     try {
-      const [id] = await imageRepository.create(fields);
+      const [id] = await imageRepository.create(req.body);
       const image = await imageRepository.getImageById(id);
       return res.json(image);
     } catch (err) {
@@ -45,16 +35,9 @@ module.exports = ({ imageRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, [
-      'entity_id',
-      'type',
-      'url',
-      'thumbnail_url',
-      'description'
-    ]);
 
     try {
-      await imageRepository.update(id, fields);
+      await imageRepository.update(id, req.body);
       const image = await imageRepository.getImageById(id);
       return res.json(image);
     } catch (err) {

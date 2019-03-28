@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt-nodejs');
-
+const camelCase = require('lodash.camelcase');
 const list = require('../utils/list');
 const pageInfo = require('../utils/page-info');
 
@@ -11,21 +11,23 @@ class Repository {
 
   getUsers = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select([
-        'id',
-        'first_name',
-        'last_name',
-        'handle',
-        'email',
-        'gender',
-        'phonenumber',
-        'about',
-        'reset_password_token',
-        'reset_password_expires_at',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'first_name',
+          'last_name',
+          'handle',
+          'email',
+          'gender',
+          'phonenumber',
+          'about',
+          'reset_password_token',
+          'reset_password_expires_at',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName);
 
     query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
@@ -40,21 +42,23 @@ class Repository {
 
   getUserById = id =>
     this.knexClient
-      .select([
-        'id',
-        'first_name',
-        'last_name',
-        'handle',
-        'email',
-        'gender',
-        'phonenumber',
-        'about',
-        'reset_password_token',
-        'reset_password_expires_at',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'first_name',
+          'last_name',
+          'handle',
+          'email',
+          'gender',
+          'phonenumber',
+          'about',
+          'reset_password_token',
+          'reset_password_expires_at',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('id', id)
       .whereNull('deleted_at')
@@ -62,22 +66,24 @@ class Repository {
 
   getUserByEmail = email =>
     this.knexClient
-      .select([
-        'id',
-        'first_name',
-        'last_name',
-        'handle',
-        'email',
-        'gender',
-        'phonenumber',
-        'password',
-        'about',
-        'reset_password_token',
-        'reset_password_expires_at',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'first_name',
+          'last_name',
+          'handle',
+          'email',
+          'gender',
+          'phonenumber',
+          'password',
+          'about',
+          'reset_password_token',
+          'reset_password_expires_at',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('email', email)
       .whereNull('deleted_at')
@@ -85,21 +91,23 @@ class Repository {
 
   getUserByHandle = handle =>
     this.knexClient
-      .select([
-        'id',
-        'first_name',
-        'last_name',
-        'handle',
-        'email',
-        'gender',
-        'phonenumber',
-        'about',
-        'reset_password_token',
-        'reset_password_expires_at',
-        'is_active',
-        'created_at',
-        'updated_at'
-      ])
+      .select(
+        [
+          'id',
+          'first_name',
+          'last_name',
+          'handle',
+          'email',
+          'gender',
+          'phonenumber',
+          'about',
+          'reset_password_token',
+          'reset_password_expires_at',
+          'is_active',
+          'created_at',
+          'updated_at'
+        ].map(i => `${i} AS ${camelCase(i)}`)
+      )
       .from(this.tableName)
       .where('handle', handle)
       .whereNull('deleted_at')
@@ -115,18 +123,18 @@ class Repository {
     this.knexClient
       .select([
         'user.id AS id',
-        'user.first_name AS first_name',
-        'user.last_name AS last_name',
+        'user.first_name AS firstName',
+        'user.last_name AS lastName',
         'user.handle AS handle',
         'user.email AS email',
         'user.gender AS gender',
         'user.phonenumber AS phonenumber',
         'user.about AS about',
-        'user.reset_password_token AS reset_password_token',
-        'user.reset_password_expires_at AS reset_password_expires_at',
-        'user.is_active AS is_active',
-        'user.created_at AS created_at',
-        'user.updated_at AS updated_at '
+        'user.reset_password_token AS resetPasswordToken',
+        'user.reset_password_expires_at AS resetPasswordExpiresAt',
+        'user.is_active AS isActive',
+        'user.created_at AS createdAt',
+        'user.updated_at AS updatedAt'
       ])
       .from('follow')
       .innerJoin(this.tableName, 'user.id', 'follow.followed_id')
@@ -139,18 +147,18 @@ class Repository {
     this.knexClient
       .select([
         'user.id AS id',
-        'user.first_name AS first_name',
-        'user.last_name AS last_name',
+        'user.first_name AS firstName',
+        'user.last_name AS lastName',
         'user.handle AS handle',
         'user.email AS email',
         'user.gender AS gender',
         'user.phonenumber AS phonenumber',
         'user.about AS about',
-        'user.reset_password_token AS reset_password_token',
-        'user.reset_password_expires_at AS reset_password_expires_at',
-        'user.is_active AS is_active',
-        'user.created_at AS created_at',
-        'user.updated_at AS updated_at '
+        'user.reset_password_token AS resetPasswordToken',
+        'user.reset_password_expires_at AS resetPasswordExpiresAt',
+        'user.is_active AS isActive',
+        'user.created_at AS createdAt',
+        'user.updated_at AS updatedAt'
       ])
       .from('follow')
       .innerJoin(this.tableName, 'user.id', 'follow.followed_id')
@@ -160,15 +168,15 @@ class Repository {
       .orderBy('follow.created_at', 'desc');
 
   create = ({
-    first_name,
-    last_name = null,
+    firstName: first_name,
+    lastName: last_name = null,
     handle = null,
     email,
     gender,
     password,
     phonenumber = null,
     about = null,
-    is_active = 1
+    isActive: is_active = 1
   }) =>
     this.knexClient.transaction(async trx => {
       const [id] = await trx('entity').insert({ id: null });
@@ -191,7 +199,10 @@ class Repository {
       return id;
     });
 
-  update = (id, { first_name, last_name, gender, phonenumber, about }) =>
+  update = (
+    id,
+    { firstName: first_name, lastName: last_name, gender, phonenumber, about }
+  ) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
@@ -204,21 +215,21 @@ class Repository {
         .where('id', id)
     );
 
-  followUser = (user_id, to_follow_user_id) =>
+  followUser = (follower_id, followed_id) =>
     this.knexClient.transaction(trx =>
       trx('follow').insert({
-        follower_id: user_id,
-        followed_id: to_follow_user_id
+        follower_id,
+        followed_id
       })
     );
 
-  unfollowUser = (user_id, to_unfollow_user_id) =>
+  unfollowUser = (follower_id, followed_id) =>
     this.knexClient.transaction(trx =>
       trx('follow')
         .update({
           deleted_at: this.knexClient.fn.now()
         })
-        .where({ follower_id: user_id, followed_id: to_unfollow_user_id })
+        .where({ follower_id, followed_id })
     );
 
   markActive = id =>

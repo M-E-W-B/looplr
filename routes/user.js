@@ -1,6 +1,4 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ userRepository }) => {
@@ -22,18 +20,9 @@ module.exports = ({ userRepository }) => {
 
   router.put('/', async (req, res, next) => {
     const { id } = req.decoded;
-    const fields = pick(req.body, [
-      'first_name',
-      'last_name',
-      'handle',
-      'email',
-      'gender',
-      'phonenumber',
-      'about'
-    ]);
 
     try {
-      await userRepository.update(id, fields);
+      await userRepository.update(id, req.body);
       const user = await userRepository.getUserById(id);
       return res.json(user);
     } catch (err) {

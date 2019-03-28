@@ -1,14 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ sizeRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, ['name']);
-
     try {
-      const id = await sizeRepository.create(fields);
+      const id = await sizeRepository.create(req.body);
       const size = await sizeRepository.getSizeById(id);
       return res.json(size);
     } catch (err) {
@@ -39,10 +35,9 @@ module.exports = ({ sizeRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, ['name']);
 
     try {
-      await sizeRepository.update(id, fields);
+      await sizeRepository.update(id, req.body);
       const size = await sizeRepository.getSizeById(id);
       return res.json(size);
     } catch (err) {

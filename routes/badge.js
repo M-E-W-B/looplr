@@ -1,14 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ badgeRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, ['name', 'description']);
-
     try {
-      const id = await badgeRepository.create(fields);
+      const id = await badgeRepository.create(req.body);
       const badge = await badgeRepository.getBadgeById(id);
       return res.json(badge);
     } catch (err) {
@@ -39,10 +35,9 @@ module.exports = ({ badgeRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, ['name', 'description']);
 
     try {
-      await badgeRepository.update(id, fields);
+      await badgeRepository.update(id, req.body);
       const badge = await badgeRepository.getBadgeById(id);
       return res.json(badge);
     } catch (err) {

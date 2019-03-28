@@ -1,14 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ colorRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, ['hexcode']);
-
     try {
-      const id = await colorRepository.create(fields);
+      const id = await colorRepository.create(req.body);
       const color = await colorRepository.getColorById(id);
       return res.json(color);
     } catch (err) {
@@ -39,11 +35,10 @@ module.exports = ({ colorRepository }) => {
 
   // { hexcode }
   router.put('/:id', async (req, res, next) => {
-    const fields = pick(req.body, ['hexcode']);
     const { id } = req.params;
 
     try {
-      await colorRepository.update(id, fields);
+      await colorRepository.update(id, req.body);
       const color = await colorRepository.getColorById(id);
       return res.json(color);
     } catch (err) {

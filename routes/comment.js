@@ -5,12 +5,11 @@ const Error = require('../utils/errors');
 
 module.exports = ({ commentRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, ['entity_id', 'rating', 'txt']);
-
-    fields.user_id = req.decoded.id;
+    // @FIX
+    req.body.user_id = req.decoded.id;
 
     try {
-      const [id] = await commentRepository.create(fields);
+      const [id] = await commentRepository.create(req.body);
       const comment = await commentRepository.getCommentById(id);
       return res.json(comment);
     } catch (err) {
@@ -42,10 +41,9 @@ module.exports = ({ commentRepository }) => {
   // { rating, txt }
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, ['rating', 'txt']);
 
     try {
-      await commentRepository.update(id, fields);
+      await commentRepository.update(id, req.body);
       const comment = await commentRepository.getCommentById(id);
       return res.json(comment);
     } catch (err) {

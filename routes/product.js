@@ -1,25 +1,12 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 // @TODO: delegation: skus, images, sizechart
 
 module.exports = ({ productRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, [
-      'name',
-      'category',
-      'subcategory',
-      'description',
-      'storename',
-      'gender',
-      'tags',
-      'promotional_text'
-    ]);
-
     try {
-      const id = await productRepository.create(fields);
+      const id = await productRepository.create(req.body);
       const product = await productRepository.getProductById(id);
       return res.json(product);
     } catch (err) {
@@ -50,19 +37,9 @@ module.exports = ({ productRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, [
-      'name',
-      'category',
-      'subcategory',
-      'description',
-      'storename',
-      'gender',
-      'tags',
-      'promotional_text'
-    ]);
 
     try {
-      await productRepository.update(id, fields);
+      await productRepository.update(id, req.body);
       const product = await productRepository.getProductById(id);
       return res.json(product);
     } catch (err) {

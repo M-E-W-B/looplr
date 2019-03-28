@@ -1,21 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
 const Error = require('../utils/errors');
 
 module.exports = ({ addressRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, [
-      'user_id',
-      'street_address',
-      'landmark',
-      'city',
-      'state',
-      'postal_code',
-      'type'
-    ]);
-
     try {
-      const [id] = await addressRepository.create(fields);
+      const [id] = await addressRepository.create(req.body);
       const address = await addressRepository.getAddressById(id);
       return res.json(address);
     } catch (err) {
@@ -46,18 +35,9 @@ module.exports = ({ addressRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, [
-      'user_id',
-      'street_address',
-      'landmark',
-      'city',
-      'state',
-      'postal_code',
-      'type'
-    ]);
 
     try {
-      await addressRepository.update(id, fields);
+      await addressRepository.update(id, req.body);
       const address = await addressRepository.getAddressById(id);
       return res.json(address);
     } catch (err) {

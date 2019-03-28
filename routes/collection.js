@@ -1,14 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ collectionRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, ['name', 'description', 'owner_id', 'tags']);
-
     try {
-      const id = await collectionRepository.create(fields);
+      const id = await collectionRepository.create(req.body);
       const collection = await collectionRepository.getCollectionById(id);
       return res.json(collection);
     } catch (err) {
@@ -39,10 +35,9 @@ module.exports = ({ collectionRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, ['name', 'description', 'tags']);
 
     try {
-      await collectionRepository.update(id, fields);
+      await collectionRepository.update(id, req.body);
       const collection = await collectionRepository.getCollectionById(id);
       return res.json(collection);
     } catch (err) {

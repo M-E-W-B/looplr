@@ -1,24 +1,10 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 
 module.exports = ({ couponRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, [
-      'code',
-      'description',
-      'max_uses',
-      'max_uses_per_user',
-      'min_order',
-      'is_percentage',
-      'discount',
-      'start_at',
-      'expires_at'
-    ]);
-
     try {
-      const [id] = await couponRepository.create(fields);
+      const [id] = await couponRepository.create(req.body);
       const coupon = await couponRepository.getCouponById(id);
       return res.json(coupon);
     } catch (err) {
@@ -49,20 +35,9 @@ module.exports = ({ couponRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, [
-      'code',
-      'description',
-      'max_uses',
-      'max_uses_per_user',
-      'min_order',
-      'is_percentage',
-      'discount',
-      'start_at',
-      'expires_at'
-    ]);
 
     try {
-      await couponRepository.update(id, fields);
+      await couponRepository.update(id, req.body);
       const coupon = await couponRepository.getCouponById(id);
       return res.json(coupon);
     } catch (err) {

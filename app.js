@@ -21,7 +21,7 @@ app.use(cors());
 app.use(compression());
 
 app.use('/', authRouter(knexClient));
-middlewares(app);
+if (process.env.NODE_ENV !== 'test') middlewares(app);
 app.use('/', mainRouter(knexClient));
 
 app.use((err, req, res, next) => {

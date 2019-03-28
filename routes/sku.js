@@ -1,22 +1,11 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
 // @TODO: delegation: size, color
 
 module.exports = ({ skuRepository }) => {
   router.post('/', async (req, res, next) => {
-    const fields = pick(req.body, [
-      'product_id',
-      'sku_attribute_id',
-      'stock',
-      'price',
-      'discount',
-      'is_active'
-    ]);
-
     try {
-      const [id] = await skuRepository.create(fields);
+      const [id] = await skuRepository.create(req.body);
       const sku = await skuRepository.getSkuById(id);
       return res.json(sku);
     } catch (err) {
@@ -47,17 +36,9 @@ module.exports = ({ skuRepository }) => {
 
   router.put('/:id', async (req, res, next) => {
     const { id } = req.params;
-    const fields = pick(req.body, [
-      'product_id',
-      'sku_attribute_id',
-      'stock',
-      'price',
-      'discount',
-      'is_active'
-    ]);
 
     try {
-      await skuRepository.update(id, fields);
+      await skuRepository.update(id, req.body);
       const sku = await skuRepository.getSkuById(id);
       return res.json(sku);
     } catch (err) {
