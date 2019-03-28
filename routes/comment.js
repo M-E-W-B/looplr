@@ -6,7 +6,7 @@ const Error = require('../utils/errors');
 module.exports = ({ commentRepository }) => {
   router.post('/', async (req, res, next) => {
     // @FIX
-    req.body.user_id = req.decoded.id;
+    req.body.userId = req.decoded.id;
 
     try {
       const [id] = await commentRepository.create(req.body);

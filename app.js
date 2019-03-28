@@ -21,15 +21,15 @@ app.use(cors());
 app.use(compression());
 
 app.use('/', authRouter(knexClient));
-if (process.env.NODE_ENV !== 'test') middlewares(app);
+middlewares(app);
 app.use('/', mainRouter(knexClient));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
 
-  if (process.env.NODE_ENV === 'dev')
-    res.status(err.status).json([{ message: err.message, data: err.data }]);
-  else res.status(err.status).json([{ message: err.message }]);
+  if (process.env.NODE_ENV === 'prod')
+    res.status(err.status).json([{ message: err.message }]);
+  else res.status(err.status).json([{ message: err.message, data: err.data }]);
 });
 
 module.exports = app;

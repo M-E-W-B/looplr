@@ -3,6 +3,9 @@ const Error = require('../utils/errors');
 
 module.exports = ({ addressRepository }) => {
   router.post('/', async (req, res, next) => {
+    // @FIX
+    req.body.userId = 1 || req.decoded.id;
+
     try {
       const [id] = await addressRepository.create(req.body);
       const address = await addressRepository.getAddressById(id);
