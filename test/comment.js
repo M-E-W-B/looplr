@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let comment;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Comment Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,80 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Comment', () => {
+    it('it should POST a Comment ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        entityId: 11,
+        rating: faker.random.number({ min: 0, max: 10 }),
+        txt: faker.random.words()
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/comment')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('entityId');
+          res.body.should.have.property('rating');
+          res.body.should.have.property('txt');
 
-          address = res.body;
+          comment = res.body;
           done();
         });
     });
   });
 
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
+  describe('/PUT/:id Comment', () => {
+    it('it should UPDATE a Comment given the id', done => {
       const data = {
-        state: faker.address.state(),
-        type: 'other'
+        rating: faker.random.number({ min: 0, max: 10 }),
+        txt: faker.random.words()
       };
 
       chai
         .request(app)
-        .put('/address/' + address.id)
+        .put('/comment/' + comment.id)
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          res.body.should.have.property('rating').eql(data.rating);
+          res.body.should.have.property('txt').eql(data.txt);
+
           done();
         });
     });
   });
 
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
+  describe('/GET/:id Comment', () => {
+    it('it should GET a Comment by the given id', done => {
       chai
         .request(app)
-        .get('/address/' + address.id)
+        .get('/comment/' + comment.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
+          res.body.should.have.property('entityId');
+          res.body.should.have.property('rating');
+          res.body.should.have.property('txt');
 
-          res.body.should.have.property('id').eql(address.id);
+          res.body.should.have.property('id').eql(comment.id);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/DELETE/:id Comment', () => {
+    it('it should DELETE a Comment given the id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .delete('/comment/' + comment.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +107,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Comment', () => {
+    it('it should GET all the Comments', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/comment/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {

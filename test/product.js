@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let product;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Product Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,90 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Product', () => {
+    it('it should POST a Product ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        name: faker.random.word(),
+        category: faker.random.word(),
+        subcategory: faker.random.word(),
+        description: faker.lorem.sentences(),
+        storename: faker.random.word(),
+        gender: 'M',
+        tags: JSON.stringify(faker.random.words().split(' '))
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/product')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('name');
+          res.body.should.have.property('category');
+          res.body.should.have.property('subcategory');
+          res.body.should.have.property('desription');
+          res.body.should.have.property('storename');
+          res.body.should.have.property('gender');
+          res.body.should.have.property('tags');
 
-          address = res.body;
+          product = res.body;
           done();
         });
     });
   });
 
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
+  describe('/PUT/:id Product', () => {
+    it('it should UPDATE a Product given the id', done => {
       const data = {
-        state: faker.address.state(),
-        type: 'other'
+        gender: 'F'
       };
 
       chai
         .request(app)
-        .put('/address/' + address.id)
+        .put('/product/' + product.id)
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          res.body.should.have.property('gender').eql(data.gender);
+
           done();
         });
     });
   });
 
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
+  describe('/GET/:id Product', () => {
+    it('it should GET a Product by the given id', done => {
       chai
         .request(app)
-        .get('/address/' + address.id)
+        .get('/product/' + product.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
+          res.body.should.have.property('name');
+          res.body.should.have.property('category');
+          res.body.should.have.property('subcategory');
+          res.body.should.have.property('desription');
+          res.body.should.have.property('storename');
+          res.body.should.have.property('gender');
+          res.body.should.have.property('tags');
 
-          res.body.should.have.property('id').eql(address.id);
+          res.body.should.have.property('id').eql(product.id);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/DELETE/:id Product', () => {
+    it('it should DELETE a Product given the id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .delete('/product/' + product.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +117,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Product', () => {
+    it('it should GET all the Products', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/product/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {

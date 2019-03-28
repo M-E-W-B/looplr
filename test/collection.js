@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let collection;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Collection Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,77 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Collection', () => {
+    it('it should POST a Collection ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        name: faker.random.words(),
+        description: faker.lorem.sentences(),
+        tags: JSON.stringify(faker.random.words().split(' '))
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/collection')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('name');
+          res.body.should.have.property('description');
+          res.body.should.have.property('tags');
 
-          address = res.body;
+          collection = res.body;
           done();
         });
     });
   });
 
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
+  describe('/PUT/:id Collection', () => {
+    it('it should UPDATE a Collection given the id', done => {
       const data = {
-        state: faker.address.state(),
-        type: 'other'
+        tags: JSON.stringify(faker.random.words().split(' '))
       };
 
       chai
         .request(app)
-        .put('/address/' + address.id)
+        .put('/collection/' + collection.id)
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          res.body.should.have.property('tags').eql(data.tags);
+
           done();
         });
     });
   });
 
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
+  describe('/GET/:id Collection', () => {
+    it('it should GET a Collection by the given id', done => {
       chai
         .request(app)
-        .get('/address/' + address.id)
+        .get('/collection/' + collection.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
-
-          res.body.should.have.property('id').eql(address.id);
+          res.body.should.have.property('name');
+          res.body.should.have.property('description');
+          res.body.should.have.property('tags');
+          res.body.should.have.property('id').eql(collection.id);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/DELETE/:id Collection', () => {
+    it('it should DELETE a Collection given the id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .delete('/collection/' + collection.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +104,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Collection', () => {
+    it('it should GET all the Collections', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/collection/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {

@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let sku;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Sku Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,83 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Sku', () => {
+    it('it should POST a Sku ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        productId: 6,
+        skuAttributeId: 1,
+        stock: faker.random.number({ min: 0, max: 30 }),
+        price: faker.random.number({ min: 100, max: 1000 }),
+        discount: faker.random.number({ min: 100, max: 1000 }),
+        isActive: 1
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/sku')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('productId');
+          res.body.should.have.property('stock');
+          res.body.should.have.property('price');
+          res.body.should.have.property('discount');
 
-          address = res.body;
+          sku = res.body;
           done();
         });
     });
   });
 
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
+  describe('/PUT/:id Sku', () => {
+    it('it should UPDATE a Sku given the id', done => {
       const data = {
-        state: faker.address.state(),
-        type: 'other'
+        stock: faker.random.number({ min: 0, max: 30 }),
+        price: faker.random.number({ min: 100, max: 1000 })
       };
 
       chai
         .request(app)
-        .put('/address/' + address.id)
+        .put('/sku/' + sku.id)
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          res.body.should.have.property('stock').eql(data.stock);
+          res.body.should.have.property('price').eql(data.price);
           done();
         });
     });
   });
 
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
+  describe('/GET/:id Sku', () => {
+    it('it should GET a Sku by the given id', done => {
       chai
         .request(app)
-        .get('/address/' + address.id)
+        .get('/sku/' + sku.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
-
-          res.body.should.have.property('id').eql(address.id);
+          res.body.should.have.property('productId');
+          res.body.should.have.property('stock');
+          res.body.should.have.property('price');
+          res.body.should.have.property('discount');
+          res.body.should.have.property('id').eql(sku.id);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/DELETE/:id Sku', () => {
+    it('it should DELETE a Sku given the id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .delete('/sku/' + sku.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +110,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Sku', () => {
+    it('it should GET all the Skus', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/sku/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {

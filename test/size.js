@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let size;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Size Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,71 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Size', () => {
+    it('it should POST a Size ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        name: faker.hacker.abbreviation()
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/size')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('name');
 
-          address = res.body;
+          size = res.body;
           done();
         });
     });
   });
 
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
+  describe('/PUT/:id Size', () => {
+    it('it should UPDATE a Size given the id', done => {
       const data = {
-        state: faker.address.state(),
-        type: 'other'
+        name: faker.hacker.abbreviation()
       };
 
       chai
         .request(app)
-        .put('/address/' + address.id)
+        .put('/size/' + size.id)
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          res.body.should.have.property('name').eql(data.name);
+
           done();
         });
     });
   });
 
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
+  describe('/GET/:id Size', () => {
+    it('it should GET a Size by the given id', done => {
       chai
         .request(app)
-        .get('/address/' + address.id)
+        .get('/size/' + size.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
-
-          res.body.should.have.property('id').eql(address.id);
+          res.body.should.have.property('name');
+          res.body.should.have.property('id').eql(size.id);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/DELETE/:id Size', () => {
+    it('it should DELETE a Size given the id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .delete('/size/' + size.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +98,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Size', () => {
+    it('it should GET all the Sizes', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/size/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {

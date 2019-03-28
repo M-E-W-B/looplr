@@ -7,10 +7,10 @@ const app = require('../app');
 const should = chai.should();
 chai.use(chaiHttp);
 
-let address;
+let image;
 let accessToken;
 
-describe('Address Routes', () => {
+describe('Image Routes', () => {
   before(function(done) {
     chai
       .request(app)
@@ -25,86 +25,81 @@ describe('Address Routes', () => {
       });
   });
 
-  describe('/POST Address', () => {
-    it('it should POST an Address ', done => {
+  describe('/POST Image', () => {
+    it('it should POST an Image ', done => {
       const data = {
-        streetAddress: faker.address.streetAddress(),
-        landmark: faker.address.streetName(),
-        city: faker.address.city(),
-        state: faker.address.state(),
-        postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        entityId: 11,
+        type: 'collection',
+        url: 'http://lorempixel.com/300/300/',
+        thumbnailUrl: 'http://lorempixel.com/20/20/'
       };
 
       chai
         .request(app)
-        .post('/address')
+        .post('/image')
         .set('x-access-token', accessToken)
         .send(data)
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
-
-          address = res.body;
-          done();
-        });
-    });
-  });
-
-  describe('/PUT/:id Address', () => {
-    it('it should UPDATE an Address given the id', done => {
-      const data = {
-        state: faker.address.state(),
-        type: 'other'
-      };
-
-      chai
-        .request(app)
-        .put('/address/' + address.id)
-        .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
-          done();
-        });
-    });
-  });
-
-  describe('/GET/:id Address', () => {
-    it('it should GET an Address by the given id', done => {
-      chai
-        .request(app)
-        .get('/address/' + address.id)
-        .set('x-access-token', accessToken)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
+          res.body.should.have.property('entityId');
           res.body.should.have.property('type');
+          res.body.should.have.property('url');
+          res.body.should.have.property('thumbnailUrl');
 
-          res.body.should.have.property('id').eql(address.id);
+          image = res.body;
+          done();
+        });
+    });
+  });
+
+  describe('/PUT/:id Image', () => {
+    it('it should UPDATE an Image given the id', done => {
+      const data = {
+        thumbnailUrl: 'http://lorempixel.com/40/40/'
+      };
+
+      chai
+        .request(app)
+        .put('/image/' + image.id)
+        .set('x-access-token', accessToken)
+        .send(data)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('thumbnailUrl').eql(data.thumbnailUrl);
 
           done();
         });
     });
   });
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
+  describe('/GET/:id Image', () => {
+    it('it should GET an Image by the given id', done => {
       chai
         .request(app)
-        .delete('/address/' + address.id)
+        .get('/image/' + image.id)
+        .set('x-access-token', accessToken)
+        .end((err, res) => {
+          res.should.have.status(200);
+          res.body.should.be.a('object');
+          res.body.should.have.property('entityId');
+          res.body.should.have.property('type');
+          res.body.should.have.property('url');
+          res.body.should.have.property('thumbnailUrl');
+
+          res.body.should.have.property('id').eql(image.id);
+
+          done();
+        });
+    });
+  });
+
+  describe('/DELETE/:id Image', () => {
+    it('it should DELETE an Image given the id', done => {
+      chai
+        .request(app)
+        .delete('/image/' + image.id)
         .set('x-access-token', accessToken)
         .end((err, res) => {
           res.should.have.status(200);
@@ -113,11 +108,11 @@ describe('Address Routes', () => {
     });
   });
 
-  describe('/GET Address', () => {
-    it('it should GET all the Addresses', done => {
+  describe('/GET Image', () => {
+    it('it should GET all the Images', done => {
       chai
         .request(app)
-        .post('/address/list')
+        .post('/image/list')
         .set('x-access-token', accessToken)
         .send({
           pagination: {
