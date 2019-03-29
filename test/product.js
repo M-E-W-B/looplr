@@ -1,143 +1,140 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const faker = require('faker');
+// const chai = require('chai');
+// const chaiHttp = require('chai-http');
+// const faker = require('faker');
 
-const app = require('../app');
+// const app = require('../app');
 
-const should = chai.should();
-chai.use(chaiHttp);
+// const should = chai.should();
+// const randomizeArray = faker.helpers.randomize;
 
-let product;
-let accessToken;
+// chai.use(chaiHttp);
 
-describe('Product Routes', () => {
-  before(function(done) {
-    chai
-      .request(app)
-      .post('/login')
-      .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
-      })
-      .end((err, res) => {
-        accessToken = res.body.token;
-        done();
-      });
-  });
+// let product;
+// let accessToken;
 
-  describe('/POST Product', () => {
-    it('it should POST a Product ', done => {
-      const data = {
-        name: faker.random.word(),
-        category: faker.random.word(),
-        subcategory: faker.random.word(),
-        description: faker.lorem.sentences(),
-        storename: faker.random.word(),
-        gender: 'M',
-        tags: JSON.stringify(faker.random.words().split(' '))
-      };
+// describe('Product Routes', () => {
+//   before(function(done) {
+//     chai
+//       .request(app)
+//       .post('/login')
+//       .send({
+//         email: 'Dorothy50@yahoo.com',
+//         password: 'K8U_zXMI8vpI5Tg'
+//       })
+//       .end((err, res) => {
+//         accessToken = res.body.token;
+//         done();
+//       });
+//   });
 
-      chai
-        .request(app)
-        .post('/product')
-        .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('name');
-          res.body.should.have.property('category');
-          res.body.should.have.property('subcategory');
-          res.body.should.have.property('desription');
-          res.body.should.have.property('storename');
-          res.body.should.have.property('gender');
-          res.body.should.have.property('tags');
+//   describe('/POST Product', () => {
+//     it('it should POST a Product ', done => {
+//       const data = {
+//         name: faker.random.word(),
+//         category: faker.random.word(),
+//         subcategory: faker.random.word(),
+//         description: faker.lorem.sentences(),
+//         storename: faker.random.word(),
+//         gender: randomizeArray(enums.genders.concat('U')),
+//         tags: JSON.stringify(faker.random.words().split(' ')),
+//         promotionalText: faker.lorem.sentences()
+//       };
 
-          product = res.body;
-          done();
-        });
-    });
-  });
+//       chai
+//         .request(app)
+//         .post('/product')
+//         .set('x-access-token', accessToken)
+//         .send(data)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(data).map(key => res.body.should.have.property(key));
 
-  describe('/PUT/:id Product', () => {
-    it('it should UPDATE a Product given the id', done => {
-      const data = {
-        gender: 'F'
-      };
+//           product = res.body;
+//           done();
+//         });
+//     });
+//   });
 
-      chai
-        .request(app)
-        .put('/product/' + product.id)
-        .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('gender').eql(data.gender);
+//   describe('/PUT/:id Product', () => {
+//     it('it should UPDATE a Product given the id', done => {
+//       const data = {
+//         category: faker.random.word(),
+//         subcategory: faker.random.word(),
+//         description: faker.lorem.sentences(),
+//         storename: faker.random.word(),
+//         gender: randomizeArray(['M', 'F', 'U'])
+//       };
 
-          done();
-        });
-    });
-  });
+//       chai
+//         .request(app)
+//         .put('/product/' + product.id)
+//         .set('x-access-token', accessToken)
+//         .send(data)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(product).map(key =>
+//             res.body.should.have.property(key).eql(data[key])
+//           );
 
-  describe('/GET/:id Product', () => {
-    it('it should GET a Product by the given id', done => {
-      chai
-        .request(app)
-        .get('/product/' + product.id)
-        .set('x-access-token', accessToken)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('name');
-          res.body.should.have.property('category');
-          res.body.should.have.property('subcategory');
-          res.body.should.have.property('desription');
-          res.body.should.have.property('storename');
-          res.body.should.have.property('gender');
-          res.body.should.have.property('tags');
+//           done();
+//         });
+//     });
+//   });
 
-          res.body.should.have.property('id').eql(product.id);
+//   describe('/GET/:id Product', () => {
+//     it('it should GET a Product by the given id', done => {
+//       chai
+//         .request(app)
+//         .get('/product/' + product.id)
+//         .set('x-access-token', accessToken)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(data).map(key => res.body.should.have.property(key));
 
-          done();
-        });
-    });
-  });
+//           res.body.should.have.property('id').eql(product.id);
 
-  describe('/DELETE/:id Product', () => {
-    it('it should DELETE a Product given the id', done => {
-      chai
-        .request(app)
-        .delete('/product/' + product.id)
-        .set('x-access-token', accessToken)
-        .end((err, res) => {
-          res.should.have.status(200);
-          done();
-        });
-    });
-  });
+//           done();
+//         });
+//     });
+//   });
 
-  describe('/GET Product', () => {
-    it('it should GET all the Products', done => {
-      chai
-        .request(app)
-        .post('/product/list')
-        .set('x-access-token', accessToken)
-        .send({
-          pagination: {
-            pageNumber: 1,
-            pageSize: 10
-          },
-          orderings: [],
-          filters: []
-        })
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('edges');
-          res.body.should.have.property('pageInfo');
-          done();
-        });
-    });
-  });
-});
+//   describe('/DELETE/:id Product', () => {
+//     it('it should DELETE a Product given the id', done => {
+//       chai
+//         .request(app)
+//         .delete('/product/' + product.id)
+//         .set('x-access-token', accessToken)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           done();
+//         });
+//     });
+//   });
+
+//   describe('/GET Product', () => {
+//     it('it should GET all the Products', done => {
+//       chai
+//         .request(app)
+//         .post('/product/list')
+//         .set('x-access-token', accessToken)
+//         .send({
+//           pagination: {
+//             pageNumber: 1,
+//             pageSize: 10
+//           },
+//           orderings: [],
+//           filters: []
+//         })
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           res.body.should.have.property('edges');
+//           res.body.should.have.property('pageInfo');
+//           done();
+//         });
+//     });
+//   });
+// });

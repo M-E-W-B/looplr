@@ -5,6 +5,8 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+
 chai.use(chaiHttp);
 
 let address;
@@ -16,8 +18,8 @@ describe('Address Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -33,7 +35,7 @@ describe('Address Routes', () => {
         city: faker.address.city(),
         state: faker.address.state(),
         postalCode: faker.random.number({ min: 100000, max: 999999 }),
-        type: 'home'
+        type: randomizeArray(['home', 'other', 'office'])
       };
 
       chai
@@ -44,9 +46,7 @@ describe('Address Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('postalCode');
+          Object.keys(data).map(key => res.body.should.have.property(key));
 
           address = res.body;
           done();
@@ -58,7 +58,7 @@ describe('Address Routes', () => {
     it('it should UPDATE an Address given the id', done => {
       const data = {
         state: faker.address.state(),
-        type: 'other'
+        type: randomizeArray(['home', 'other', 'office'])
       };
 
       chai
@@ -69,8 +69,10 @@ describe('Address Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('state').eql(data.state);
-          res.body.should.have.property('type').eql('other');
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
+
           done();
         });
     });
@@ -85,14 +87,7 @@ describe('Address Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('userId');
-          res.body.should.have.property('streetAddress');
-          res.body.should.have.property('landmark');
-          res.body.should.have.property('city');
-          res.body.should.have.property('state');
-          res.body.should.have.property('postalCode');
-          res.body.should.have.property('type');
-
+          Object.keys(address).map(key => res.body.should.have.property(key));
           res.body.should.have.property('id').eql(address.id);
 
           done();

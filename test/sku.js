@@ -5,6 +5,8 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+
 chai.use(chaiHttp);
 
 let sku;
@@ -16,8 +18,8 @@ describe('Sku Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -26,14 +28,41 @@ describe('Sku Routes', () => {
   });
 
   describe('/POST Sku', () => {
-    it('it should POST a Sku ', done => {
+    it('it should POST a Sku ', async done => {
+      const [productList, colorList] = await Promise.all([
+        chai
+          .request(app)
+          .post('/product/list')
+          .set('x-access-token', accessToken)
+          .send({
+            pagination: {
+              pageNumber: 1,
+              pageSize: 10
+            },
+            orderings: [],
+            filters: []
+          }),
+        chai
+          .request(app)
+          .post('/color/list')
+          .set('x-access-token', accessToken)
+          .send({
+            pagination: {
+              pageNumber: 1,
+              pageSize: 10
+            },
+            orderings: [],
+            filters: []
+          })
+      ]);
+
       const data = {
-        productId: 6,
+        productId: randomizeArray(productList.edges).id,
+        skuAttributeId: randomizeArray(color.edges).id,
         stock: faker.random.number({ min: 0, max: 30 }),
         price: faker.random.number({ min: 100, max: 1000 }),
-        skuAttributeId: 1,
         discount: faker.random.number({ min: 100, max: 1000 }),
-        isActive: 1
+        isActive: randomizeArray([0, 1])
       };
 
       chai
@@ -44,10 +73,7 @@ describe('Sku Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('productId');
-          res.body.should.have.property('stock');
-          res.body.should.have.property('price');
-          res.body.should.have.property('discount');
+          Object.keys(sku).map(key => res.body.should.have.property(key));
 
           sku = res.body;
           done();
@@ -70,8 +96,10 @@ describe('Sku Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('stock').eql(data.stock);
-          res.body.should.have.property('price').eql(data.price);
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
+
           done();
         });
     });
@@ -86,10 +114,7 @@ describe('Sku Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('productId');
-          res.body.should.have.property('stock');
-          res.body.should.have.property('price');
-          res.body.should.have.property('discount');
+          Object.keys(data).map(key => res.body.should.have.property(key));
           res.body.should.have.property('id').eql(sku.id);
 
           done();

@@ -5,6 +5,8 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+
 chai.use(chaiHttp);
 
 let badge;
@@ -16,8 +18,8 @@ describe('Badge Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -40,8 +42,7 @@ describe('Badge Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('name');
-          res.body.should.have.property('desription');
+          Object.keys(data).map(key => res.body.should.have.property(key));
 
           badge = res.body;
           done();
@@ -63,7 +64,9 @@ describe('Badge Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('name').eql(data.name);
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
 
           done();
         });
@@ -79,9 +82,7 @@ describe('Badge Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('name');
-          res.body.should.have.property('description');
-
+          Object.keys(badge).map(key => res.body.should.have.property(key));
           res.body.should.have.property('id').eql(badge.id);
 
           done();

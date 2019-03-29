@@ -5,6 +5,18 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+const toTimestamp = date => {
+  const month = date.getMonth() + 1;
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const hour = date.getHours();
+  const minute = date.getMinutes();
+  const second = date.getSeconds();
+
+  return `${year}:${month}:${day} ${hour}:${minute}:${second}`;
+};
+
 chai.use(chaiHttp);
 
 let coupon;
@@ -16,8 +28,8 @@ describe('Coupon Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -29,14 +41,18 @@ describe('Coupon Routes', () => {
     it('it should POST a Coupon ', done => {
       const data = {
         code:
-          faker.commerce.productAdjective().toUpperCase() +
-          faker.random.number(),
+          faker.commerce
+            .productAdjective()
+            .toUpperCase()
+            .substring(0, 4) + faker.random.number({ min: 999, max: 9999 }),
         description: faker.lorem.sentences(),
+        maxUses: faker.random.number({ min: 100 }),
+        maxUsesPerUser: faker.random.number({ min: 1, max: 100 }),
         minOrder: faker.random.number({ min: 1000, max: 5000 }),
-        isPercentage: 1,
+        isPercentage: randomizeArray([0, 1]),
         discount: faker.random.number({ min: 100, max: 500 }),
-        startsAt: faker.date.past().toISOString(),
-        expiresAt: faker.date.past().toISOString()
+        startsAt: toTimestamp(faker.date.past()),
+        expiresAt: toTimestamp(faker.date.past())
       };
 
       chai
@@ -47,13 +63,7 @@ describe('Coupon Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('code');
-          res.body.should.have.property('description');
-          res.body.should.have.property('minOrder');
-          res.body.should.have.property('isPercentage');
-          res.body.should.have.property('discount');
-          res.body.should.have.property('startsAt');
-          res.body.should.have.property('expiresAt');
+          Object.keys(data).map(key => res.body.should.have.property(key));
 
           coupon = res.body;
           done();
@@ -65,8 +75,10 @@ describe('Coupon Routes', () => {
     it('it should UPDATE a Coupon given the id', done => {
       const data = {
         code:
-          faker.commerce.productAdjective().toUpperCase() +
-          faker.random.number(),
+          faker.commerce
+            .productAdjective()
+            .toUpperCase()
+            .substring(0, 4) + faker.random.number({ min: 999, max: 9999 }),
         minOrder: faker.random.number({ min: 1000, max: 5000 })
       };
 
@@ -78,8 +90,9 @@ describe('Coupon Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('code').eql(data.code);
-          res.body.should.have.property('minOrder').eql(data.minOrder);
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
 
           done();
         });
@@ -95,13 +108,7 @@ describe('Coupon Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('code');
-          res.body.should.have.property('description');
-          res.body.should.have.property('minOrder');
-          res.body.should.have.property('isPercentage');
-          res.body.should.have.property('discount');
-          res.body.should.have.property('startsAt');
-          res.body.should.have.property('expiresAt');
+          Object.keys(coupon).map(key => res.body.should.have.property(key));
 
           res.body.should.have.property('id').eql(coupon.id);
 

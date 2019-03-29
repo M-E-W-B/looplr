@@ -63,8 +63,7 @@ async function init() {
             max: 9999999999
           }),
           about: faker.random.words(),
-          isActive:
-            enums.boolean[Math.floor(Math.random() * enums.boolean.length)]
+          isActive: randomizeArray(enums.boolean)
         });
       } catch (error) {
         console.log(error.sqlMessage);
@@ -191,7 +190,7 @@ async function init() {
           maxUses: faker.random.number({ min: 100 }),
           maxUsesPerUser: faker.random.number({ min: 1, max: 100 }),
           minOrder: faker.random.number({ min: 1000, max: 5000 }),
-          isPercentage: 1,
+          isPercentage: randomizeArray(enums.boolean),
           discount: faker.random.number({ min: 100, max: 500 }),
           startsAt: toTimestamp(faker.date.past()),
           expiresAt: toTimestamp(faker.date.past())
@@ -210,7 +209,7 @@ async function init() {
         return await imageRepository.create({
           entityId: randomizeArray(collectionIds.concat(productIds)),
           type: randomizeArray(enums.imageType),
-          url: 'http://lorempixel.com/100/100/',
+          url: 'http://lorempixel.com/300/300/',
           thumbnailUrl: 'http://lorempixel.com/20/20/',
           description: faker.lorem.sentence()
         });

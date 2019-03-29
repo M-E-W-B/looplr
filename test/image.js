@@ -5,6 +5,8 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+
 chai.use(chaiHttp);
 
 let image;
@@ -16,8 +18,8 @@ describe('Image Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -26,12 +28,31 @@ describe('Image Routes', () => {
   });
 
   describe('/POST Image', () => {
-    it('it should POST an Image ', done => {
+    it('it should POST an Image ', async done => {
+      const collectionList = await chai
+        .request(app)
+        .post('/collection/list')
+        .set('x-access-token', accessToken)
+        .send({
+          pagination: {
+            pageNumber: 1,
+            pageSize: 10
+          },
+          orderings: [],
+          filters: []
+        });
+
       const data = {
-        entityId: 11,
-        type: 'collection',
+        entityId: randomizeArray(collectionList.edges).id,
+        type: randomizeArray([
+          'product',
+          'collection',
+          'product_sizechart',
+          'user'
+        ]),
         url: 'http://lorempixel.com/300/300/',
-        thumbnailUrl: 'http://lorempixel.com/20/20/'
+        thumbnailUrl: 'http://lorempixel.com/20/20/',
+        description: faker.lorem.sentence()
       };
 
       chai
@@ -42,10 +63,7 @@ describe('Image Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('entityId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('url');
-          res.body.should.have.property('thumbnailUrl');
+          Object.keys(data).map(key => res.body.should.have.property(key));
 
           image = res.body;
           done();
@@ -67,7 +85,9 @@ describe('Image Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('thumbnailUrl').eql(data.thumbnailUrl);
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
 
           done();
         });
@@ -83,10 +103,9 @@ describe('Image Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('entityId');
-          res.body.should.have.property('type');
-          res.body.should.have.property('url');
-          res.body.should.have.property('thumbnailUrl');
+          Object.keys(image).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
 
           res.body.should.have.property('id').eql(image.id);
 

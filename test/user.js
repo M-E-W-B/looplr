@@ -1,154 +1,150 @@
-const chai = require('chai');
-const chaiHttp = require('chai-http');
-const faker = require('faker');
+// const chai = require('chai');
+// const chaiHttp = require('chai-http');
+// const faker = require('faker');
 
-const app = require('../app');
+// const app = require('../app');
 
-const should = chai.should();
-chai.use(chaiHttp);
+// const should = chai.should();
+// const randomizeArray = faker.helpers.randomize;
 
-let user;
+// chai.use(chaiHttp);
 
-describe('Address Routes', () => {
-  describe('/POST Login', () => {
-    it('it should login a User ', done => {
-      chai
-        .request(app)
-        .post('/login')
-        .send({
-          email: 'kshirish@example.com',
-          password: 'qwerty123'
-        })
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('message');
-          res.body.should.have.property('user');
-          res.body.user.should.be.a('object');
-          res.body.should.have.property('token');
+// let user;
 
-          user = res.body;
-          done();
-        });
-    });
-  });
+// describe('Address Routes', () => {
+//   describe('/POST Login', () => {
+//     it('it should login a User ', done => {
+//       chai
+//         .request(app)
+//         .post('/login')
+//         .send({
+//           email: 'Dorothy50@yahoo.com',
+//           password: 'K8U_zXMI8vpI5Tg'
+//         })
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           res.body.should.have.property('message');
+//           res.body.should.have.property('user');
+//           res.body.should.have.property('token');
+//           res.body.user.should.be.a('object');
 
-  describe('/POST User', () => {
-    it('it should POST a User ', done => {
-      const data = {
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        handle: faker.commerce.productAdjective() + faker.hacker.noun(),
-        email: faker.internet.email(),
-        password: faker.internet.password(),
-        gender: 'M',
-        phonenumber: faker.random.number({ min: 8000000000, max: 9999999999 }),
-        about: faker.random.words(),
-        isActive: 1
-      };
+//           user = res.body;
+//           done();
+//         });
+//     });
+//   });
 
-      chai
-        .request(app)
-        .post('/signup')
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('firstName');
-          res.body.should.have.property('handle');
-          res.body.should.have.property('email');
-          res.body.should.have.property('phonenumber');
-          res.body.should.have.property('isActive');
+//   describe('/POST User', () => {
+//     it('it should POST a User ', done => {
+//       const data = {
+//         firstName: faker.name.firstName(),
+//         lastName: faker.name.lastName(),
+//         handle: faker.internet.userName(),
+//         email: faker.internet.email(),
+//         password: faker.internet.password(),
+//         gender: randomizeArray(enums.genders),
+//         phonenumber: faker.random.number({
+//           min: 8000000000,
+//           max: 9999999999
+//         }),
+//         about: faker.random.words(),
+//         isActive: randomizeArray([0, 1])
+//       };
 
-          user = res.body;
-          done();
-        });
-    });
-  });
+//       chai
+//         .request(app)
+//         .post('/signup')
+//         .send(data)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(data).map(key => res.body.should.have.property(key));
 
-  describe('/PUT/:id User', () => {
-    it('it should UPDATE a User given the id', done => {
-      const data = {
-        firstName: faker.name.firstName(),
-        lastName: faker.name.lastName(),
-        about: faker.random.words(),
-        isActive: 0
-      };
+//           user = res.body;
+//           done();
+//         });
+//     });
+//   });
 
-      chai
-        .request(app)
-        .put('/user')
-        .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('firstName').eql(data.firstName);
-          res.body.should.have.property('lastName').eql(data.lastName);
-          res.body.should.have.property('about').eql(data.about);
-          res.body.should.have.property('isActive').eql(data.isActive);
+//   describe('/PUT/:id User', () => {
+//     it('it should UPDATE a User given the id', done => {
+//       const data = {
+//         firstName: faker.name.firstName(),
+//         lastName: faker.name.lastName(),
+//         about: faker.random.words(),
+//         isActive: 0
+//       };
 
-          done();
-        });
-    });
-  });
+//       chai
+//         .request(app)
+//         .put('/user')
+//         .set('x-access-token', accessToken)
+//         .send(data)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(data).map(key =>
+//             res.body.should.have.property(key).eql(data[key])
+//           );
 
-  describe('/GET/:id User', () => {
-    it('it should GET an Address by the given id', done => {
-      chai
-        .request(app)
-        .get('/me')
-        .set('x-access-token', accessToken)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('firstName');
-          res.body.should.have.property('handle');
-          res.body.should.have.property('email');
-          res.body.should.have.property('phonenumber');
-          res.body.should.have.property('isActive');
+//           done();
+//         });
+//     });
+//   });
 
-          res.body.should.have.property('id').eql(address.id);
+//   describe('/GET/:id User', () => {
+//     it('it should GET an Address by the given id', done => {
+//       chai
+//         .request(app)
+//         .get('/me')
+//         .set('x-access-token', accessToken)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           Object.keys(user).map(key => res.body.should.have.property(key));
 
-          done();
-        });
-    });
-  });
+//           res.body.should.have.property('id').eql(address.id);
 
-  describe('/DELETE/:id Address', () => {
-    it('it should DELETE an Address given the id', done => {
-      chai
-        .request(app)
-        .delete('/user')
-        .set('x-access-token', accessToken)
-        .end((err, res) => {
-          res.should.have.status(200);
-          done();
-        });
-    });
-  });
+//           done();
+//         });
+//     });
+//   });
 
-  describe('/GET Users', () => {
-    it('it should GET all the Users', done => {
-      chai
-        .request(app)
-        .post('/user/list')
-        .set('x-access-token', accessToken)
-        .send({
-          pagination: {
-            pageNumber: 1,
-            pageSize: 10
-          },
-          orderings: [],
-          filters: []
-        })
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          res.body.should.have.property('edges');
-          res.body.should.have.property('pageInfo');
-          done();
-        });
-    });
-  });
-});
+//   describe('/DELETE/:id Address', () => {
+//     it('it should DELETE an Address given the id', done => {
+//       chai
+//         .request(app)
+//         .delete('/user')
+//         .set('x-access-token', accessToken)
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           done();
+//         });
+//     });
+//   });
+
+//   describe('/GET Users', () => {
+//     it('it should GET all the Users', done => {
+//       chai
+//         .request(app)
+//         .post('/user/list')
+//         .set('x-access-token', accessToken)
+//         .send({
+//           pagination: {
+//             pageNumber: 1,
+//             pageSize: 10
+//           },
+//           orderings: [],
+//           filters: []
+//         })
+//         .end((err, res) => {
+//           res.should.have.status(200);
+//           res.body.should.be.a('object');
+//           res.body.should.have.property('edges');
+//           res.body.should.have.property('pageInfo');
+//           done();
+//         });
+//     });
+//   });
+// });

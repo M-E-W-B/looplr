@@ -1,5 +1,5 @@
 -- @TODO: Delivery will combine pincode and product to deduce
-    -- return policy,
+    -- return policy
     -- payment method
     -- delivery date
 
@@ -41,9 +41,9 @@ CREATE TABLE user (
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
-  UNIQUE(phonenumber),
-  UNIQUE(email),
-  UNIQUE(handle)
+  UNIQUE(phonenumber, deleted_at),
+  UNIQUE(email, deleted_at),
+  UNIQUE(handle, deleted_at)
 );
 
 DROP TABLE IF EXISTS collection;
@@ -73,7 +73,7 @@ CREATE TABLE collection_product (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(collection_id, product_id),
+  UNIQUE(collection_id, product_id, deleted_at),
   FOREIGN KEY (collection_id) REFERENCES collection(id),
   FOREIGN KEY (product_id) REFERENCES product(id)
 );
@@ -111,7 +111,7 @@ CREATE TABLE sku (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(product_id, sku_attribute_id)
+  UNIQUE(product_id, sku_attribute_id, deleted_at)
 );
 
 DROP TABLE IF EXISTS sku_attribute;
@@ -134,7 +134,7 @@ CREATE TABLE color (
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES sku_attribute(id),
-  UNIQUE(hexcode)
+  UNIQUE(hexcode, deleted_at)
 );
 
 DROP TABLE IF EXISTS size;
@@ -147,7 +147,7 @@ CREATE TABLE size (
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES sku_attribute(id),
-  UNIQUE(name)
+  UNIQUE(name, deleted_at)
 );
 
 DROP TABLE IF EXISTS address;
@@ -191,7 +191,7 @@ CREATE TABLE image (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(entity_id, type),
+  UNIQUE(entity_id, type, deleted_at),
   FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
 
@@ -222,7 +222,7 @@ CREATE TABLE follow (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(follower_id, followed_id),
+  UNIQUE(follower_id, followed_id, deleted_at),
   FOREIGN KEY (follower_id) REFERENCES user(id),
   FOREIGN KEY (followed_id) REFERENCES user(id)
 );
@@ -264,7 +264,7 @@ CREATE TABLE cart_item (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(cart_id, sku_id),
+  UNIQUE(cart_id, sku_id, deleted_at),
   FOREIGN KEY (cart_id) REFERENCES cart(id),
   FOREIGN KEY (sku_id) REFERENCES sku(id)
 );
@@ -330,7 +330,7 @@ CREATE TABLE coupon (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(code)
+  UNIQUE(code, deleted_at)
 );
 
 DROP TABLE IF EXISTS badge;
@@ -355,7 +355,7 @@ CREATE TABLE user_badge (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(user_id, badge_id),
+  UNIQUE(user_id, badge_id, deleted_at),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (badge_id) REFERENCES badge(id)
 );

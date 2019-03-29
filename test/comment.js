@@ -5,6 +5,8 @@ const faker = require('faker');
 const app = require('../app');
 
 const should = chai.should();
+const randomizeArray = faker.helpers.randomize;
+
 chai.use(chaiHttp);
 
 let comment;
@@ -16,8 +18,8 @@ describe('Comment Routes', () => {
       .request(app)
       .post('/login')
       .send({
-        email: 'kshirish@example.com',
-        password: 'qwerty123'
+        email: 'Dorothy50@yahoo.com',
+        password: 'K8U_zXMI8vpI5Tg'
       })
       .end((err, res) => {
         accessToken = res.body.token;
@@ -26,9 +28,22 @@ describe('Comment Routes', () => {
   });
 
   describe('/POST Comment', () => {
-    it('it should POST a Comment ', done => {
+    it('it should POST a Comment ', async done => {
+      const collectionList = await chai
+        .request(app)
+        .post('/collection/list')
+        .set('x-access-token', accessToken)
+        .send({
+          pagination: {
+            pageNumber: 1,
+            pageSize: 10
+          },
+          orderings: [],
+          filters: []
+        });
+
       const data = {
-        entityId: 11,
+        entityId: randomizeArray(collectionList.edges).id,
         rating: faker.random.number({ min: 0, max: 10 }),
         txt: faker.random.words()
       };
@@ -41,9 +56,7 @@ describe('Comment Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('entityId');
-          res.body.should.have.property('rating');
-          res.body.should.have.property('txt');
+          Object.keys(data).map(key => res.body.should.have.property(key));
 
           comment = res.body;
           done();
@@ -66,8 +79,9 @@ describe('Comment Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('rating').eql(data.rating);
-          res.body.should.have.property('txt').eql(data.txt);
+          Object.keys(data).map(key =>
+            res.body.should.have.property(key).eql(data[key])
+          );
 
           done();
         });
@@ -83,9 +97,7 @@ describe('Comment Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          res.body.should.have.property('entityId');
-          res.body.should.have.property('rating');
-          res.body.should.have.property('txt');
+          Object.keys(comment).map(key => res.body.should.have.property(key));
 
           res.body.should.have.property('id').eql(comment.id);
 
