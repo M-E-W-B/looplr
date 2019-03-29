@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "test": "NODE_ENV=test mocha --harmony --timeout 10000",
-    "start": "NODE_ENV=dev nodemon --harmony index.js"
+    "start": "NODE_ENV=dev nodemon --harmony index.js",
+    "seed": "node --harmony seed"
   },
   "repository": {
     "type": "git",

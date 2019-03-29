@@ -29,9 +29,9 @@ describe('Sku Routes', () => {
     it('it should POST a Sku ', done => {
       const data = {
         productId: 6,
-        skuAttributeId: 1,
         stock: faker.random.number({ min: 0, max: 30 }),
         price: faker.random.number({ min: 100, max: 1000 }),
+        skuAttributeId: 1,
         discount: faker.random.number({ min: 100, max: 1000 }),
         isActive: 1
       };

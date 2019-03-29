@@ -8,7 +8,7 @@
       "runtimeExecutable": "nodemon",
       "runtimeArgs": ["--inspect", "--harmony"],
       "env": { "NODE_ENV": "dev" },
-      "program": "${workspaceFolder}/index.js",
+      "program": "${workspaceFolder}/seed/index.js",
       "restart": true,
       "console": "integratedTerminal",
       "internalConsoleOptions": "neverOpen"

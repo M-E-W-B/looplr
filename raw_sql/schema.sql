@@ -73,6 +73,7 @@ CREATE TABLE collection_product (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
+  UNIQUE(collection_id, product_id),
   FOREIGN KEY (collection_id) REFERENCES collection(id),
   FOREIGN KEY (product_id) REFERENCES product(id)
 );
@@ -109,7 +110,8 @@ CREATE TABLE sku (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE(product_id, sku_attribute_id)
 );
 
 DROP TABLE IF EXISTS sku_attribute;
@@ -131,7 +133,8 @@ CREATE TABLE color (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES sku_attribute(id)
+  FOREIGN KEY (id) REFERENCES sku_attribute(id),
+  UNIQUE(hexcode)
 );
 
 DROP TABLE IF EXISTS size;
@@ -143,7 +146,8 @@ CREATE TABLE size (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES sku_attribute(id)
+  FOREIGN KEY (id) REFERENCES sku_attribute(id),
+  UNIQUE(name)
 );
 
 DROP TABLE IF EXISTS address;
@@ -203,8 +207,7 @@ CREATE TABLE comment (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
-  PRIMARY KEY (id),
-  UNIQUE(user_id, entity_id),
+  PRIMARY KEY (id),  
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
@@ -219,6 +222,7 @@ CREATE TABLE follow (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
+  UNIQUE(follower_id, followed_id),
   FOREIGN KEY (follower_id) REFERENCES user(id),
   FOREIGN KEY (followed_id) REFERENCES user(id)
 );
@@ -313,7 +317,7 @@ DROP TABLE IF EXISTS coupon;
 CREATE TABLE coupon (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   code VARCHAR(8) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   max_uses INT UNSIGNED NULL,
   max_uses_per_user TINYINT UNSIGNED NULL,
   min_order INT UNSIGNED NULL,
@@ -325,14 +329,15 @@ CREATE TABLE coupon (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
-  PRIMARY KEY (id)
+  PRIMARY KEY (id),
+  UNIQUE(code)
 );
 
 DROP TABLE IF EXISTS badge;
 CREATE TABLE badge (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   name VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  description VARCHAR(300) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
@@ -350,38 +355,39 @@ CREATE TABLE user_badge (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
+  UNIQUE(user_id, badge_id),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (badge_id) REFERENCES badge(id)
 );
 
-DELIMITER //
-CREATE TRIGGER tr_badge_user_insert
-AFTER INSERT ON user
-FOR EACH ROW BEGIN
-  IF NEW.phonenumber IS NOT NULL
-  THEN
-    INSERT INTO user_badge (
-      user_id, badge_id
-    ) VALUES (
-      NEW.id,
-      1
-    );
-  END IF;
-END;//
-DELIMITER ;
+-- DELIMITER //
+-- CREATE TRIGGER tr_badge_user_insert
+-- AFTER INSERT ON user
+-- FOR EACH ROW BEGIN
+--   IF NEW.phonenumber IS NOT NULL
+--   THEN
+--     INSERT INTO user_badge (
+--       user_id, badge_id
+--     ) VALUES (
+--       NEW.id,
+--       1
+--     );
+--   END IF;
+-- END;//
+-- DELIMITER ;
 
-DELIMITER //
-CREATE TRIGGER tr_badge_user_update
-AFTER UPDATE ON user
-FOR EACH ROW BEGIN
-  IF OLD.phonenumber IS NULL AND NEW.phonenumber IS NOT NULL
-  THEN
-    INSERT INTO user_badge (
-      user_id, badge_id
-    ) VALUES (
-      NEW.id,
-      1
-    );
-  END IF;
-END;//
-DELIMITER ;
+-- DELIMITER //
+-- CREATE TRIGGER tr_badge_user_update
+-- AFTER UPDATE ON user
+-- FOR EACH ROW BEGIN
+--   IF OLD.phonenumber IS NULL AND NEW.phonenumber IS NOT NULL
+--   THEN
+--     INSERT INTO user_badge (
+--       user_id, badge_id
+--     ) VALUES (
+--       NEW.id,
+--       1
+--     );
+--   END IF;
+-- END;//
+-- DELIMITER ;
