@@ -1,5 +1,8 @@
 const router = require('express').Router();
 
+// config layout
+const { layout } = require('../config.json');
+
 // routers
 const addressRouter = require('./address');
 const badgeRouter = require('./badge');
@@ -54,6 +57,10 @@ module.exports = knexClient => {
     couponRepository,
     userRepository
   };
+
+  router.get('/layout', (req, res, next) => {
+    res.json(layout);
+  });
 
   router.use('/address', addressRouter(ctx));
   router.use('/badge', badgeRouter(ctx));

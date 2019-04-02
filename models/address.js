@@ -13,7 +13,6 @@ class Repository {
       .select(
         [
           'id',
-          'user_id',
           'street_address',
           'landmark',
           'city',
@@ -41,7 +40,6 @@ class Repository {
       .select(
         [
           'id',
-          'user_id',
           'street_address',
           'landmark',
           'city',
