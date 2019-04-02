@@ -80,38 +80,38 @@ module.exports = ({ productRepository }) => {
   });
 
   router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
+    const { pagination, orderings, filters, collectionId } = req.body;
 
     try {
       let edges;
       let pageInfo = null;
       // @TODO:
 
-      // if (collection_id) {
-      //   edges = await productRepository.getProductsByCollectionId(
-      //     collection_id,
-      //     pagination,
-      //     orderings,
-      //     filters
-      //   );
-      // } else {
-      //   edges = await productRepository.getProducts(
-      //     pagination,
-      //     orderings,
-      //     filters
-      //   );
+      if (collectionId) {
+        edges = await productRepository.getProductsByCollectionId(
+          collectionId,
+          pagination,
+          orderings,
+          filters
+        );
+      } else {
+        edges = await productRepository.getProducts(
+          pagination,
+          orderings,
+          filters
+        );
 
-      //   pageInfo = await productRepository.getPageInfo(
-      //     pagination,
-      //     orderings,
-      //     filters
-      //   );
-      // }
+        pageInfo = await productRepository.getPageInfo(
+          pagination,
+          orderings,
+          filters
+        );
+      }
 
-      return {
+      return res.json({
         edges,
         pageInfo
-      };
+      });
     } catch (err) {
       return next(
         new Error.BadRequestError({

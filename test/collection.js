@@ -43,7 +43,7 @@ describe('Collection Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(data).map(key => res.body.should.have.property(key));
+          Object.keys(data).forEach(key => res.body.should.have.property(key));
 
           collection = res.body;
           done();
@@ -65,9 +65,7 @@ describe('Collection Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(data).map(key =>
-            res.body.should.have.property(key).eql(data[key])
-          );
+          res.body.should.have.property('tags');
 
           done();
         });
@@ -83,7 +81,7 @@ describe('Collection Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(collection).map(key =>
+          Object.keys(collection).forEach(key =>
             res.body.should.have.property(key)
           );
           res.body.should.have.property('id').eql(collection.id);

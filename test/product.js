@@ -48,7 +48,7 @@
 //         .end((err, res) => {
 //           res.should.have.status(200);
 //           res.body.should.be.a('object');
-//           Object.keys(data).map(key => res.body.should.have.property(key));
+//           Object.keys(data).forEach(key => res.body.should.have.property(key));
 
 //           product = res.body;
 //           done();
@@ -74,7 +74,7 @@
 //         .end((err, res) => {
 //           res.should.have.status(200);
 //           res.body.should.be.a('object');
-//           Object.keys(product).map(key =>
+//           Object.keys(product).forEach(key =>
 //             res.body.should.have.property(key).eql(data[key])
 //           );
 
@@ -92,7 +92,7 @@
 //         .end((err, res) => {
 //           res.should.have.status(200);
 //           res.body.should.be.a('object');
-//           Object.keys(data).map(key => res.body.should.have.property(key));
+//           Object.keys(data).forEach(key => res.body.should.have.property(key));
 
 //           res.body.should.have.property('id').eql(product.id);
 

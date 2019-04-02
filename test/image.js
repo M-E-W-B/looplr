@@ -28,8 +28,8 @@ describe('Image Routes', () => {
   });
 
   describe('/POST Image', () => {
-    it('it should POST an Image ', async done => {
-      const collectionList = await chai
+    it('it should POST an Image ', done => {
+      chai
         .request(app)
         .post('/collection/list')
         .set('x-access-token', accessToken)
@@ -40,33 +40,36 @@ describe('Image Routes', () => {
           },
           orderings: [],
           filters: []
-        });
+        })
+        .end((err, collectionList) => {
+          const data = {
+            entityId: randomizeArray(collectionList.body.edges).id,
+            type: randomizeArray([
+              'product',
+              'collection',
+              'product_sizechart',
+              'user'
+            ]),
+            url: 'http://lorempixel.com/300/300/',
+            thumbnailUrl: 'http://lorempixel.com/20/20/',
+            description: faker.lorem.sentence()
+          };
 
-      const data = {
-        entityId: randomizeArray(collectionList.edges).id,
-        type: randomizeArray([
-          'product',
-          'collection',
-          'product_sizechart',
-          'user'
-        ]),
-        url: 'http://lorempixel.com/300/300/',
-        thumbnailUrl: 'http://lorempixel.com/20/20/',
-        description: faker.lorem.sentence()
-      };
+          chai
+            .request(app)
+            .post('/image')
+            .set('x-access-token', accessToken)
+            .send(data)
+            .end((err, res) => {
+              res.should.have.status(200);
+              res.body.should.be.a('object');
+              Object.keys(data).forEach(key =>
+                res.body.should.have.property(key)
+              );
 
-      chai
-        .request(app)
-        .post('/image')
-        .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          Object.keys(data).map(key => res.body.should.have.property(key));
-
-          image = res.body;
-          done();
+              image = res.body;
+              done();
+            });
         });
     });
   });
@@ -85,7 +88,7 @@ describe('Image Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(data).map(key =>
+          Object.keys(data).forEach(key =>
             res.body.should.have.property(key).eql(data[key])
           );
 
@@ -103,9 +106,7 @@ describe('Image Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(image).map(key =>
-            res.body.should.have.property(key).eql(data[key])
-          );
+          Object.keys(image).forEach(key => res.body.should.have.property(key));
 
           res.body.should.have.property('id').eql(image.id);
 

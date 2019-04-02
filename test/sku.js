@@ -28,55 +28,58 @@ describe('Sku Routes', () => {
   });
 
   describe('/POST Sku', () => {
-    it('it should POST a Sku ', async done => {
-      const [productList, colorList] = await Promise.all([
-        chai
-          .request(app)
-          .post('/product/list')
-          .set('x-access-token', accessToken)
-          .send({
-            pagination: {
-              pageNumber: 1,
-              pageSize: 10
-            },
-            orderings: [],
-            filters: []
-          }),
-        chai
-          .request(app)
-          .post('/color/list')
-          .set('x-access-token', accessToken)
-          .send({
-            pagination: {
-              pageNumber: 1,
-              pageSize: 10
-            },
-            orderings: [],
-            filters: []
-          })
-      ]);
-
-      const data = {
-        productId: randomizeArray(productList.edges).id,
-        skuAttributeId: randomizeArray(color.edges).id,
-        stock: faker.random.number({ min: 0, max: 30 }),
-        price: faker.random.number({ min: 100, max: 1000 }),
-        discount: faker.random.number({ min: 100, max: 1000 }),
-        isActive: randomizeArray([0, 1])
-      };
-
+    it('it should POST a Sku ', done => {
       chai
         .request(app)
-        .post('/sku')
+        .post('/product/list')
         .set('x-access-token', accessToken)
-        .send(data)
-        .end((err, res) => {
-          res.should.have.status(200);
-          res.body.should.be.a('object');
-          Object.keys(sku).map(key => res.body.should.have.property(key));
+        .send({
+          pagination: {
+            pageNumber: 1,
+            pageSize: 10
+          },
+          orderings: [],
+          filters: []
+        })
+        .end((err, productList) => {
+          chai
+            .request(app)
+            .post('/color/list')
+            .set('x-access-token', accessToken)
+            .send({
+              pagination: {
+                pageNumber: 1,
+                pageSize: 10
+              },
+              orderings: [],
+              filters: []
+            })
+            .end((err, colorList) => {
+              const data = {
+                productId: randomizeArray(productList.body.edges).id,
+                skuAttributeId: randomizeArray(colorList.body.edges).id,
+                stock: faker.random.number({ min: 0, max: 30 }),
+                price: faker.random.number({ min: 100, max: 1000 }),
+                discount: faker.random.number({ min: 100, max: 1000 }),
+                isActive: randomizeArray([0, 1])
+              };
 
-          sku = res.body;
-          done();
+              chai
+                .request(app)
+                .post('/sku')
+                .set('x-access-token', accessToken)
+                .send(data)
+                .end((err, res) => {
+                  res.should.have.status(200);
+                  res.body.should.be.a('object');
+                  Object.keys(data).forEach(key =>
+                    res.body.should.have.property(key)
+                  );
+
+                  sku = res.body;
+                  done();
+                });
+            });
         });
     });
   });
@@ -96,7 +99,7 @@ describe('Sku Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(data).map(key =>
+          Object.keys(data).forEach(key =>
             res.body.should.have.property(key).eql(data[key])
           );
 
@@ -114,7 +117,7 @@ describe('Sku Routes', () => {
         .end((err, res) => {
           res.should.have.status(200);
           res.body.should.be.a('object');
-          Object.keys(data).map(key => res.body.should.have.property(key));
+          Object.keys(sku).forEach(key => res.body.should.have.property(key));
           res.body.should.have.property('id').eql(sku.id);
 
           done();
