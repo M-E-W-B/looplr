@@ -43,7 +43,7 @@ LEFT JOIN image AS i
 ON p.id = i.entity_id
 WHERE p.deleted_at IS NULL AND i.deleted_at IS NULL;
 
--- List all comments on a collection
+-- List all comments of a user
 SELECT
   u.handle, c.rating, c.txt
 FROM comment AS c

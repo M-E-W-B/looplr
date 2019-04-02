@@ -37,36 +37,36 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
-  getProductsByCollectionId = (
-    collectionId,
-    pagination,
-    orderings,
-    filters
-  ) => {
-    const query = this.knexClient
-      .select([
-        'product.id AS id',
-        'product.name AS name',
-        'product.category AS category',
-        'product.subcategory AS subcategory',
-        'product.description AS description',
-        'product.storename AS storename',
-        'product.gender AS gender',
-        'product.tags AS tags',
-        'product.promotional_text AS promotionalText',
-        'product.created_at AS createdAt',
-        'product.updated_at AS updatedAt'
-      ])
-      .from('collection_product')
-      .innerJoin(this.tableName, 'product.id', 'collection_product.product_id');
+  // getProductsByCollectionId = (
+  //   collectionId,
+  //   pagination,
+  //   orderings,
+  //   filters
+  // ) => {
+  //   const query = this.knexClient
+  //     .select([
+  //       'product.id AS id',
+  //       'product.name AS name',
+  //       'product.category AS category',
+  //       'product.subcategory AS subcategory',
+  //       'product.description AS description',
+  //       'product.storename AS storename',
+  //       'product.gender AS gender',
+  //       'product.tags AS tags',
+  //       'product.promotional_text AS promotionalText',
+  //       'product.created_at AS createdAt',
+  //       'product.updated_at AS updatedAt'
+  //     ])
+  //     .from('collection_product')
+  //     .innerJoin(this.tableName, 'product.id', 'collection_product.product_id');
 
-    query.joinRaw(
-      'where collection_product.collection_id = ? and collection_product.deleted_at is null and product.deleted_at is null',
-      [collectionId]
-    );
+  //   query.joinRaw(
+  //     'where collection_product.collection_id = ? and collection_product.deleted_at is null and product.deleted_at is null',
+  //     [collectionId]
+  //   );
 
-    return list(pagination, orderings, filters, query, this.tableName);
-  };
+  //   return list(pagination, orderings, filters, query, this.tableName);
+  // };
 
   // getFullProducts = () => {
   //   const productSkuPromise = knexClient

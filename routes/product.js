@@ -83,30 +83,17 @@ module.exports = ({ productRepository }) => {
     const { pagination, orderings, filters, collectionId } = req.body;
 
     try {
-      let edges;
-      let pageInfo = null;
-      // @TODO:
+      const edges = await productRepository.getProducts(
+        pagination,
+        orderings,
+        filters
+      );
 
-      if (collectionId) {
-        edges = await productRepository.getProductsByCollectionId(
-          collectionId,
-          pagination,
-          orderings,
-          filters
-        );
-      } else {
-        edges = await productRepository.getProducts(
-          pagination,
-          orderings,
-          filters
-        );
-
-        pageInfo = await productRepository.getPageInfo(
-          pagination,
-          orderings,
-          filters
-        );
-      }
+      const pageInfo = await productRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
 
       return res.json({
         edges,
