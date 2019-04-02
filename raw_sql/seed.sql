@@ -14,10 +14,10 @@ VALUES
 
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO user
-  (id, first_name, last_name, handle, phonenumber, gender, email, password, is_active)
+  (id, first_name, last_name, handle, phonenumber, gender, image, email, password, is_active)
 VALUES
-  (1, 'John', 'Doe', 'johhny21', '9876382710', 'M', 'john@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1),
-  (2, 'Eli', 'Barkovich', 'elie', '9385002793', 'F', 'eli@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1);
+  (1, 'John', 'Doe', 'johhny21', '9876382710', 'M', 'https://picsum.photos/600/600/?random', 'john@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1),
+  (2, 'Eli', 'Barkovich', 'elie', '9385002793', 'F', 'https://picsum.photos/600/600/?random', 'eli@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1);
 
 INSERT INTO follow
   (follower_id, followed_id)
@@ -26,10 +26,10 @@ VALUES
 
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO collection
-  (id, name, owner_id, description, tags)
+  (id, name, image, owner_id, description, tags)
 VALUES
-  (3, 'Winter Collection', 1, 'Gear up for a warm and cosy winter with winter wear online.', JSON_ARRAY('men', 'women', 'kids')),
-  (4, 'Summer Collection', 1, 'Select from our unique summer collection.', JSON_ARRAY('men', 'women', 'kids'));
+  (3, 'Winter Collection', 'https://picsum.photos/600/600/?random', 1, 'Gear up for a warm and cosy winter with winter wear online.', JSON_ARRAY('men', 'women', 'kids')),
+  (4, 'Summer Collection', 'https://picsum.photos/600/600/?random', 1, 'Select from our unique summer collection.', JSON_ARRAY('men', 'women', 'kids'));
 
 INSERT INTO sku_attribute(id) VALUES (NULL), (NULL);
 INSERT INTO color
@@ -58,11 +58,11 @@ VALUES
 
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO product
-  (id, name, category, subcategory, description, storename, gender, tags, promotional_text)
+  (id, name, category, subcategory, description, storename, gender, image, sizechart, tags, promotional_text)
 VALUES
-  (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
-  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', JSON_ARRAY('tshirt', 'slim'), NULL),
-  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', JSON_ARRAY('tshirt', 'slim'), NULL);
+  (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
+  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL),
+  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL);
 
 INSERT INTO sku
   (product_id, sku_attribute_id, stock, price, discount)
@@ -94,20 +94,6 @@ INSERT INTO coupon
   (code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, starts_at, expires_at)
 VALUES
   ('BOGO', 'This is applicable only on your first order.', 1, 1, 0, 1, 50, '2019-03-26 14:29:38', '2019-09-2 14:29:38');
-
-INSERT INTO image
-  (entity_id, type, url, thumbnail_url, description)
-VALUES
-  (3, 'collection', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (4, 'collection', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (5, 'product', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (5, 'product_sizechart', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (6, 'product', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (6, 'product_sizechart', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (7, 'product', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (7, 'product_sizechart', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (1, 'user', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL),
-  (2, 'user', 'http://placehold.it/300X300', 'http://placehold.it/20X20', NULL);
 
 INSERT INTO wishlist
   (user_id, sku_id)

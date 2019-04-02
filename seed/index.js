@@ -10,8 +10,7 @@ const {
   SizeRepositoryFactory,
   SkuRepositoryFactory,
   CouponRepositoryFactory,
-  UserRepositoryFactory,
-  ImageRepositoryFactory
+  UserRepositoryFactory
 } = require('../models');
 
 const addressRepository = AddressRepositoryFactory(knexClient);
@@ -24,12 +23,10 @@ const sizeRepository = SizeRepositoryFactory(knexClient);
 const skuRepository = SkuRepositoryFactory(knexClient);
 const couponRepository = CouponRepositoryFactory(knexClient);
 const userRepository = UserRepositoryFactory(knexClient);
-const imageRepository = ImageRepositoryFactory(knexClient);
 
 const enums = {
   genders: ['M', 'F'],
   addressType: ['home', 'office', 'other'],
-  imageType: ['product', 'collection', 'product_sizechart', 'user'],
   boolean: [0, 1]
 };
 
@@ -62,6 +59,7 @@ async function init() {
             min: 8000000000,
             max: 9999999999
           }),
+          image: 'https://picsum.photos/600/600/?random',
           about: faker.random.words(),
           isActive: randomizeArray(enums.boolean)
         });
@@ -113,6 +111,7 @@ async function init() {
       try {
         return await collectionRepository.create({
           name: faker.random.words(),
+          image: 'https://picsum.photos/600/600/?random',
           ownerId: randomizeArray(userIds),
           description: faker.lorem.sentences(),
           tags: JSON.stringify(faker.random.words().split(' '))
@@ -146,6 +145,12 @@ async function init() {
           name: faker.random.word(),
           category: faker.random.word(),
           subcategory: faker.random.word(),
+          image: JSON.stringify([
+            'https://picsum.photos/600/600/?random',
+            'https://picsum.photos/600/600/?random',
+            'https://picsum.photos/600/600/?random'
+          ]),
+          sizechart: 'https://picsum.photos/600/600/?random',
           description: faker.lorem.sentences(),
           storename: faker.random.word(),
           gender: randomizeArray(enums.genders.concat('U')),
@@ -194,24 +199,6 @@ async function init() {
           discount: faker.random.number({ min: 100, max: 500 }),
           startsAt: toTimestamp(faker.date.past()),
           expiresAt: toTimestamp(faker.date.past())
-        });
-      } catch (error) {
-        console.log(error.sqlMessage);
-        console.log(error.sql);
-      }
-    })
-  );
-
-  // Image
-  const imageIds = await Promise.all(
-    [...Array(100)].map(async () => {
-      try {
-        return await imageRepository.create({
-          entityId: randomizeArray(collectionIds.concat(productIds)),
-          type: randomizeArray(enums.imageType),
-          url: 'http://lorempixel.com/300/300/',
-          thumbnailUrl: 'http://lorempixel.com/20/20/',
-          description: faker.lorem.sentence()
         });
       } catch (error) {
         console.log(error.sqlMessage);

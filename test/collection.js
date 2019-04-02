@@ -32,6 +32,7 @@ describe('Collection Routes', () => {
       const data = {
         name: faker.random.words(),
         description: faker.lorem.sentences(),
+        image: 'https://picsum.photos/600/600/?random',
         tags: JSON.stringify(faker.random.words().split(' '))
       };
 

@@ -18,6 +18,8 @@ class Repository {
           'subcategory',
           'description',
           'storename',
+          'sizechart',
+          'image',
           'gender',
           'tags',
           'promotional_text',
@@ -51,7 +53,9 @@ class Repository {
   //       'product.subcategory AS subcategory',
   //       'product.description AS description',
   //       'product.storename AS storename',
-  //       'product.gender AS gender',
+  // 'product.gender AS gender',
+  // 'product.sizechart AS sizechart',
+  // 'product.image AS image',
   //       'product.tags AS tags',
   //       'product.promotional_text AS promotionalText',
   //       'product.created_at AS createdAt',
@@ -68,55 +72,41 @@ class Repository {
   //   return list(pagination, orderings, filters, query, this.tableName);
   // };
 
-  // getFullProducts = () => {
-  //   const productSkuPromise = knexClient
-  //     .select([
-  //       'product.id AS id',
-  //       'product.name AS name',
-  //       'product.category AS',
-  //       'product.subcategory AS subcategory',
-  //       'product.description AS description',
-  //       'product.storename AS storename',
-  //       'product.gender AS gender',
-  //       'product.tags AS tags',
-  //       'product.promotional_text AS promotional_text',
-  //       'product.created_at AS created_at',
-  //       'product.updated_at AS updated_at',
-  //       'sku.id AS sku_id',
-  //       'sku.stock AS stock',
-  //       'sku.price AS price',
-  //       'sku.discount AS discount',
-  //       'sku.is_active AS is_active',
-  //       'color.hexcode AS color',
-  //       'size.name AS size'
-  //     ])
-  //     .from(this.tableName)
-  //     .leftJoin('sku', 'product.id', 'sku.product_id')
-  //     .leftJoin('color', 'color.id', 'sku.sku_attribute_id')
-  //     .leftJoin('size', 'size.id', 'sku.sku_attribute_id')
-  //     .whereNull('product.deleted_at')
-  //     .whereNull('sku.deleted_at')
-  //     .whereNull('color.deleted_at')
-  //     .whereNull('size.deleted_at')
-  //     .orderBy('sku.created_at', 'desc');
-
-  //   const productImagePromise = knexClient
-  //     .select([
-  //       'product.id AS id',
-  //       'image.type',
-  //       'image.url',
-  //       'image.thumbnail_url'
-  //     ])
-  //     .from(this.tableName)
-  //     .leftJoin('image', 'image.entity_id', 'product.id')
-  //     .whereNull('product.deleted_at')
-  //     .whereNull('image.deleted_at')
-  //     .orderBy('image.created_at', 'desc');
-
-  //   return Promise.all([productSkuPromise, productImagePromise]);
-  // };
-
-  // getFullProductById(id) {}
+  getFullProductById = id =>
+    this.knexClient
+      .select([
+        'product.id AS id',
+        'product.name AS name',
+        'product.category AS',
+        'product.subcategory AS subcategory',
+        'product.description AS description',
+        'product.storename AS storename',
+        'product.gender AS gender',
+        'product.sizechart AS sizechart',
+        'product.image AS image',
+        'product.tags AS tags',
+        'product.promotional_text AS promotional_text',
+        'product.created_at AS created_at',
+        'product.updated_at AS updated_at',
+        'sku.id AS sku_id',
+        'sku.stock AS stock',
+        'sku.price AS price',
+        'sku.discount AS discount',
+        'sku.is_active AS is_active',
+        'color.hexcode AS color',
+        'size.name AS size'
+      ])
+      .from(this.tableName)
+      .leftJoin('sku', 'product.id', 'sku.product_id')
+      .leftJoin('color', 'color.id', 'sku.sku_attribute_id')
+      .leftJoin('size', 'size.id', 'sku.sku_attribute_id')
+      .where('product.id', id)
+      .whereNull('product.deleted_at')
+      .whereNull('sku.deleted_at')
+      .whereNull('color.deleted_at')
+      .whereNull('size.deleted_at')
+      .orderBy('sku.created_at', 'desc')
+      .first();
 
   getProductById = id =>
     this.knexClient
@@ -129,6 +119,8 @@ class Repository {
           'description',
           'storename',
           'gender',
+          'sizechart',
+          'image',
           'tags',
           'promotional_text',
           'created_at',
@@ -145,6 +137,8 @@ class Repository {
     category = null,
     subcategory = null,
     description = null,
+    image,
+    sizechart,
     storename = null,
     gender = 'U',
     tags = null,
@@ -159,6 +153,8 @@ class Repository {
         category,
         subcategory,
         description,
+        image,
+        sizechart,
         storename,
         gender,
         tags,
@@ -175,6 +171,8 @@ class Repository {
       category,
       subcategory,
       description,
+      image,
+      sizechart,
       storename,
       gender,
       tags,
@@ -188,6 +186,8 @@ class Repository {
           category,
           subcategory,
           description,
+          image,
+          sizechart,
           storename,
           gender,
           tags,

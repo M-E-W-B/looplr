@@ -20,6 +20,7 @@ class Repository {
           'email',
           'gender',
           'phonenumber',
+          'image',
           'about',
           'reset_password_token',
           'reset_password_expires_at',
@@ -51,6 +52,7 @@ class Repository {
           'email',
           'gender',
           'phonenumber',
+          'image',
           'about',
           'reset_password_token',
           'reset_password_expires_at',
@@ -76,6 +78,7 @@ class Repository {
           'gender',
           'phonenumber',
           'password',
+          'image',
           'about',
           'reset_password_token',
           'reset_password_expires_at',
@@ -99,6 +102,7 @@ class Repository {
           'handle',
           'email',
           'gender',
+          'image',
           'phonenumber',
           'about',
           'reset_password_token',
@@ -128,6 +132,7 @@ class Repository {
         'user.handle AS handle',
         'user.email AS email',
         'user.gender AS gender',
+        'user.image AS image',
         'user.phonenumber AS phonenumber',
         'user.about AS about',
         'user.reset_password_token AS resetPasswordToken',
@@ -152,6 +157,7 @@ class Repository {
         'user.handle AS handle',
         'user.email AS email',
         'user.gender AS gender',
+        'user.image AS image',
         'user.phonenumber AS phonenumber',
         'user.about AS about',
         'user.reset_password_token AS resetPasswordToken',
@@ -174,6 +180,7 @@ class Repository {
     email,
     gender,
     password,
+    image,
     phonenumber = null,
     about = null,
     isActive: is_active = 1
@@ -189,6 +196,7 @@ class Repository {
         email,
         password: this.generateHash(password),
         gender,
+        image,
         phonenumber,
         about,
         reset_password_token: null,
@@ -201,7 +209,14 @@ class Repository {
 
   update = (
     id,
-    { firstName: first_name, lastName: last_name, gender, phonenumber, about }
+    {
+      firstName: first_name,
+      lastName: last_name,
+      gender,
+      image,
+      phonenumber,
+      about
+    }
   ) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName)

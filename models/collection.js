@@ -15,6 +15,7 @@ class Repository {
           'id',
           'name',
           'owner_id',
+          'image',
           'description',
           'tags',
           'created_at',
@@ -40,6 +41,7 @@ class Repository {
           'id',
           'name',
           'owner_id',
+          'image',
           'description',
           'tags',
           'created_at',
@@ -54,6 +56,7 @@ class Repository {
   create = ({
     name,
     ownerId: owner_id = null,
+    image,
     description = null,
     tags = null
   }) =>
@@ -64,6 +67,7 @@ class Repository {
         id,
         name,
         owner_id,
+        image,
         description,
         tags
       });
@@ -71,11 +75,12 @@ class Repository {
       return id;
     });
 
-  update = (id, { name, description, tags }) =>
+  update = (id, { name, image, description, tags }) =>
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
           name,
+          image,
           description,
           tags
         })

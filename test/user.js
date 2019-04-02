@@ -44,6 +44,7 @@ describe('User Routes', () => {
         handle: faker.internet.userName(),
         email: faker.internet.email(),
         password: faker.internet.password(),
+        image: 'https://picsum.photos/600/600/?random',
         gender: randomizeArray(randomizeArray(['M', 'F'])),
         phonenumber: faker.random.number({
           min: 8000000000,

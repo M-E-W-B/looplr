@@ -30,6 +30,7 @@ CREATE TABLE user (
   email VARCHAR(100) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   gender ENUM('M','F') NULL,
   password BINARY(60) NOT NULL,
+  image VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   phonenumber CHAR(10) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   about VARCHAR(800) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   reset_password_token VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
@@ -52,6 +53,7 @@ CREATE TABLE collection (
   name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
   -- owner can be a user
   owner_id INT UNSIGNED NULL,
+  image VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   tags JSON NULL,
 
@@ -85,6 +87,8 @@ CREATE TABLE product (
   category VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   subcategory VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  image JSON NULL,
+  sizechart VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   storename VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   gender ENUM('M', 'F', 'U') NULL,
   tags JSON NULL,
@@ -170,29 +174,6 @@ CREATE TABLE address (
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY(id),
   FOREIGN KEY (user_id) REFERENCES user(id)
-);
-
-DROP TABLE IF EXISTS image;
-CREATE TABLE image (
-  id INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  -- collection, product, user
-  entity_id INT UNSIGNED NOT NULL,
-  type ENUM(
-    'product',
-    'collection',
-    'product_sizechart',
-    'user'
-  ) NOT NULL,
-  url VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  thumbnail_url VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  description VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-
-  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
-  PRIMARY KEY (id),
-  UNIQUE(entity_id, type, deleted_at),
-  FOREIGN KEY (entity_id) REFERENCES entity(id)
 );
 
 DROP TABLE IF EXISTS comment;

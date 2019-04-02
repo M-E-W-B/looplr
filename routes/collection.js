@@ -92,7 +92,7 @@ module.exports = ({ collectionRepository }) => {
     }
   );
 
-  // { id, name, description, owner_id, tags, created_at, updated_at, deleted_at }
+  // { id, name, description, image, owner_id, tags, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     let collection;

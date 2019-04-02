@@ -1,7 +1,7 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
 
-// @TODO: delegation: skus, images, sizechart
+// @TODO: delegation: skus
 
 module.exports = ({ productRepository }) => {
   router.post('/', async (req, res, next) => {
@@ -52,7 +52,7 @@ module.exports = ({ productRepository }) => {
     }
   });
 
-  // { id, name, category, subcategory, description, storename, gender, tags, promotional_text, created_at, updated_at, deleted_at }
+  // { id, name, category, subcategory, description, image, sizechart, storename, gender, tags, promotional_text, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     let product;

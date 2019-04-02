@@ -35,7 +35,7 @@ module.exports = ({ userRepository }) => {
     }
   });
 
-  // { id, first_name, last_name, handle, email, gender, phonenumber, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
+  // { id, first_name, last_name, handle, email, gender, phonenumber, image, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
   router.get('/', async (req, res, next) => {
     let user;
     const { id } = req.decoded;
