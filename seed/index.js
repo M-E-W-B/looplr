@@ -5,6 +5,7 @@ const {
   BadgeRepositoryFactory,
   ColorRepositoryFactory,
   CommentRepositoryFactory,
+  CategoryRepositoryFactory,
   CollectionRepositoryFactory,
   ProductRepositoryFactory,
   SizeRepositoryFactory,
@@ -14,6 +15,7 @@ const {
 } = require('../models');
 
 const addressRepository = AddressRepositoryFactory(knexClient);
+const categoryRepository = CategoryRepositoryFactory(knexClient);
 const badgeRepository = BadgeRepositoryFactory(knexClient);
 const colorRepository = ColorRepositoryFactory(knexClient);
 const commentRepository = CommentRepositoryFactory(knexClient);
@@ -69,6 +71,9 @@ async function init() {
       }
     })
   );
+
+  // Category
+  // @TODO
 
   // Address
   const addressIds = await Promise.all(

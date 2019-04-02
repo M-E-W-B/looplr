@@ -65,6 +65,20 @@ CREATE TABLE collection (
   FOREIGN KEY (owner_id) REFERENCES user(id)
 );
 
+DROP TABLE IF EXISTS category;
+CREATE TABLE category (
+  id INT UNSIGNED NOT NULL,
+  name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,  
+  parent_category_id INT UNSIGNED NULL,
+  
+  created_at TIMESTAMP NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMP NULL ON UPDATE NOW(),
+  deleted_at TIMESTAMP NULL,
+  PRIMARY KEY (id),
+  FOREIGN KEY (id) REFERENCES entity(id),
+  FOREIGN KEY (parent_category_id) REFERENCES category(id)
+);
+
 DROP TABLE IF EXISTS collection_product;
 CREATE TABLE collection_product (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -84,8 +98,7 @@ DROP TABLE IF EXISTS product;
 CREATE TABLE product (
   id INT UNSIGNED NOT NULL,
   name VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
-  category VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
-  subcategory VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
+  subcategory_id INT UNSIGNED NOT NULL,  
   description VARCHAR(500) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   image JSON NULL,
   sizechart VARCHAR(200) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
@@ -98,7 +111,8 @@ CREATE TABLE product (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES entity(id)
+  FOREIGN KEY (id) REFERENCES entity(id),
+  FOREIGN KEY (subcategory_id) REFERENCES category(id)
 );
 
 DROP TABLE IF EXISTS sku;

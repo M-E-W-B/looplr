@@ -34,15 +34,6 @@ SELECT
 FROM address
 WHERE user_id = 1 AND deleted_at IS NULL;
 
--- List all products along with their images
-SELECT
-  p.id, p.name, p.storename,
-  i.type, i.url, i.thumbnail_url
-FROM product AS p
-LEFT JOIN image AS i
-ON p.id = i.entity_id
-WHERE p.deleted_at IS NULL AND i.deleted_at IS NULL;
-
 -- List all comments of a user
 SELECT
   u.handle, c.rating, c.txt
