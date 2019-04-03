@@ -106,18 +106,8 @@ module.exports = ({ addressRepository }, { verify }) => {
   });
 
   router.post('/list', verify, async (req, res, next) => {
-    const pagination = {
-      pageNumber: 1,
-      pageSize: 10
-    };
-
-    const orderings = [
-      {
-        column: 'id',
-        direction: 'ASC'
-      }
-    ];
-
+    const pagination = null;
+    const orderings = null;
     const filters = [
       {
         column: 'user_id',
@@ -127,22 +117,13 @@ module.exports = ({ addressRepository }, { verify }) => {
     ];
 
     try {
-      const edges = await addressRepository.getAddresses(
+      const addresses = await addressRepository.getAddresses(
         pagination,
         orderings,
         filters
       );
 
-      const pageInfo = await addressRepository.getPageInfo(
-        pagination,
-        orderings,
-        filters
-      );
-
-      return res.json({
-        edges,
-        pageInfo
-      });
+      return res.json(addresses);
     } catch (err) {
       return next(
         new Error.BadRequestError({

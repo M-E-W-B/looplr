@@ -27,6 +27,22 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
+  getBadgesByUserId = userId =>
+    this.knexClient
+      .select([
+        'badge.id AS id',
+        'badge.name AS name',
+        'badge.description AS description',
+        'user_badge.created_at AS createdAt',
+        'user_badge.updated_at AS updatedAt'
+      ])
+      .from('user_badge')
+      .innerJoin(this.tableName, 'badge.id', 'user_badge.badge_id')
+      .where('user_badge.user_id', userId)
+      .whereNull('user_badge.deleted_at')
+      .whereNull('badge.deleted_at')
+      .orderBy('user_badge.created_at', 'desc');
+
   getBadgeById = id =>
     this.knexClient
       .select(

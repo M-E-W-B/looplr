@@ -26,8 +26,8 @@ module.exports = knexClient => {
           })
         );
       else {
-        const { id, handle, email } = user;
-        const payload = { id, handle, email };
+        const { id, handle, email, isAdmin } = user;
+        const payload = { id, handle, email, isAdmin };
 
         const token = jwt.sign(payload, config.secret, {
           expiresIn: 86400 // expires in 24 hours

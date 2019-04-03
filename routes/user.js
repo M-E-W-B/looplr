@@ -1,7 +1,10 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
 
-module.exports = ({ userRepository }) => {
+module.exports = (
+  { userRepository, badgeRepository, collectionRepository },
+  { verify }
+) => {
   router.delete('/', async (req, res, next) => {
     const { id } = req.decoded;
 
@@ -154,6 +157,183 @@ module.exports = ({ userRepository }) => {
       );
     }
   });
+
+  router.get('/badge/list', async (req, res, next) => {
+    try {
+      const badges = await badgeRepository.getBadgesByUserId(req.decoded.id);
+      return res.json(badges);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch badges.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
+  router.get('/collection/list', async (req, res, next) => {
+    const pagination = null;
+    const orderings = null;
+    const filters = [
+      {
+        column: 'owner_id',
+        value: [req.decoded.id],
+        operator: 'EQUAL'
+      }
+    ];
+
+    try {
+      const collections = await collectionRepository.getCollections(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json(collections);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch collections.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
+  router.post('/collection', verify, async (req, res, next) => {
+    req.body.ownerId = req.decoded.id;
+
+    try {
+      const id = await collectionRepository.create(req.body);
+      const collection = await collectionRepository.getCollectionById(id);
+      return res.json(collection);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to create the collection.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
+  router.delete('/collection/:id', verify, async (req, res, next) => {
+    const { id } = req.params;
+    const collection = await collectionRepository.getCollectionById(id);
+
+    if (collection.ownerId === req.decoded.id)
+      try {
+        await collectionRepository.delete(id);
+        return res.status(200).end();
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to delete the collection.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
+      return next(
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
+          data: { extra: err.message }
+        })
+      );
+  });
+
+  router.put('/collection/:id', verify, async (req, res, next) => {
+    const { id } = req.params;
+    const collection = await collectionRepository.getCollectionById(id);
+
+    if (collection.ownerId === req.decoded.id)
+      try {
+        await collectionRepository.update(id, req.body);
+        const collection = await collectionRepository.getCollectionById(id);
+        return res.json(collection);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to update the collection.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
+      return next(
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
+          data: { extra: err.message }
+        })
+      );
+  });
+
+  router.put(
+    '/collection/:collectionId/add-product/:productId',
+    verify,
+    async (req, res, next) => {
+      const { collectionId, productId } = req.params;
+      const collection = await collectionRepository.getCollectionById(
+        collectionId
+      );
+
+      if (collection.ownerId === req.decoded.id)
+        try {
+          await collectionRepository.addProductIntoCollection(
+            collectionId,
+            productId
+          );
+          return res.stautus(200).end();
+        } catch (err) {
+          return next(
+            new Error.BadRequestError({
+              data: { extra: err.message }
+            })
+          );
+        }
+      else
+        return next(
+          new Error.AuthenticationError({
+            message: "You don't have access to perform this operation.",
+            data: { extra: err.message }
+          })
+        );
+    }
+  );
+
+  router.put(
+    '/collection/:collectionId/remove-product/:productId',
+    verify,
+    async (req, res, next) => {
+      const { collectionId, productId } = req.params;
+      const collection = await collectionRepository.getCollectionById(
+        collectionId
+      );
+
+      if (collection.ownerId === req.decoded.id)
+        try {
+          await collectionRepository.removeProductFromCollection(
+            collection_id,
+            product_id
+          );
+          return res.status(200).end();
+        } catch (err) {
+          return next(
+            new Error.BadRequestError({
+              data: { extra: err.message }
+            })
+          );
+        }
+      else
+        return next(
+          new Error.AuthenticationError({
+            message: "You don't have access to perform this operation.",
+            data: { extra: err.message }
+          })
+        );
+    }
+  );
 
   return router;
 };

@@ -36,6 +36,7 @@ CREATE TABLE user (
   reset_password_token VARCHAR(50) CHARACTER SET utf8 COLLATE utf8_unicode_ci NULL,
   reset_password_expires_at TIMESTAMP NULL,
   is_active BOOLEAN NOT NULL DEFAULT 1,
+  is_admin BOOLEAN NOT NULL DEFAULT 0,
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
