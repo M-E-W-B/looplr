@@ -38,35 +38,35 @@ module.exports = (
     }
   });
 
-  router.get('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = decode(req.query.q);
+  // router.get('/list', async (req, res, next) => {
+  //   const { pagination, orderings, filters } = decode(req.query.q);
 
-    try {
-      const edges = await userRepository.getUsers(
-        pagination,
-        orderings,
-        filters
-      );
+  //   try {
+  //     const edges = await userRepository.getUsers(
+  //       pagination,
+  //       orderings,
+  //       filters
+  //     );
 
-      const pageInfo = await userRepository.getPageInfo(
-        pagination,
-        orderings,
-        filters
-      );
+  //     const pageInfo = await userRepository.getPageInfo(
+  //       pagination,
+  //       orderings,
+  //       filters
+  //     );
 
-      return res.json({
-        edges,
-        pageInfo
-      });
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch users.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
+  //     return res.json({
+  //       edges,
+  //       pageInfo
+  //     });
+  //   } catch (err) {
+  //     return next(
+  //       new Error.BadRequestError({
+  //         message: 'Unable to fetch users.',
+  //         data: { extra: err.message }
+  //       })
+  //     );
+  //   }
+  // });
 
   router.get('/', async (req, res, next) => {
     let user;

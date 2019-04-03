@@ -101,7 +101,6 @@ module.exports = ({ addressRepository }, { verify }) => {
   });
 
   router.get('/:id', verify, async (req, res, next) => {
-    // @TODO: only his own address a user can get
     const { id } = req.params;
     let address;
 
