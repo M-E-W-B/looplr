@@ -9,7 +9,6 @@ const compression = require('compression');
 const knexClient = require('./knex-client');
 const config = require('./config');
 const mainRouter = require('./routes');
-const authRouter = require('./routes/auth');
 const middlewares = require('./middlewares');
 
 const app = express();
@@ -22,9 +21,7 @@ app.use(helmet());
 app.use(cors());
 app.use(compression());
 
-app.use('/', authRouter(knexClient));
-middlewares(app);
-app.use('/', mainRouter(knexClient));
+app.use('/', mainRouter(knexClient, middlewares));
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

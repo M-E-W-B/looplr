@@ -1,8 +1,8 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
 
-module.exports = ({ addressRepository }) => {
-  router.post('/', async (req, res, next) => {
+module.exports = ({ addressRepository }, { verify }) => {
+  router.post('/', verify, async (req, res, next) => {
     req.body.userId = req.decoded.id;
 
     try {
@@ -19,39 +19,60 @@ module.exports = ({ addressRepository }) => {
     }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
+    const address = await addressRepository.getAddressById(id);
 
-    try {
-      await addressRepository.delete(id);
-      return res.status(200).end();
-    } catch (err) {
+    // user should only be able to delete their own address
+    if (address.userId === req.decoded.id)
+      try {
+        await addressRepository.delete(id);
+        return res.status(200).end();
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to delete the address.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to delete the address.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  router.put('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
+    const address = await addressRepository.getAddressById(id);
 
-    try {
-      await addressRepository.update(id, req.body);
-      const address = await addressRepository.getAddressById(id);
-      return res.json(address);
-    } catch (err) {
-      throw new Error.BadRequestError({
-        message: 'Unable to update the address.',
-        data: { extra: err.message }
-      });
-    }
+    // user should only be able to update their own address
+    if (address.userId === req.decoded.id)
+      try {
+        await addressRepository.update(id, req.body);
+        const address = await addressRepository.getAddressById(id);
+        return res.json(address);
+      } catch (err) {
+        throw new Error.BadRequestError({
+          message: 'Unable to update the address.',
+          data: { extra: err.message }
+        });
+      }
+    else
+      return next(
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
+          data: { extra: err.message }
+        })
+      );
   });
 
   // { id, user_id, street_address, landmark, state, postal_code, type, created_at, updated_at, deleted_at }
-  router.get('/:id', async (req, res, next) => {
+  router.get('/:id', verify, async (req, res, next) => {
+    // @TODO: only his own address a user can get
     const { id } = req.params;
     let address;
 
@@ -66,8 +87,16 @@ module.exports = ({ addressRepository }) => {
       );
     }
 
-    if (address) return res.json(address);
-    else
+    if (address) {
+      if (address.userId === req.decoded.id) return res.json(address);
+      else
+        return next(
+          new Error.AuthenticationError({
+            message: "You don't have access to perform this operation.",
+            data: { extra: err.message }
+          })
+        );
+    } else
       return next(
         new Error.BadRequestError({
           message: 'Address not found.',
@@ -76,8 +105,26 @@ module.exports = ({ addressRepository }) => {
       );
   });
 
-  router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
+  router.post('/list', verify, async (req, res, next) => {
+    const pagination = {
+      pageNumber: 1,
+      pageSize: 10
+    };
+
+    const orderings = [
+      {
+        column: 'id',
+        direction: 'ASC'
+      }
+    ];
+
+    const filters = [
+      {
+        column: 'user_id',
+        value: [req.decoded.id],
+        operator: 'EQUAL'
+      }
+    ];
 
     try {
       const edges = await addressRepository.getAddresses(

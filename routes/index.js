@@ -4,6 +4,7 @@ const router = require('express').Router();
 const { layout } = require('../config.json');
 
 // routers
+const authRouter = require('./auth');
 const addressRouter = require('./address');
 const badgeRouter = require('./badge');
 const colorRouter = require('./color');
@@ -31,7 +32,7 @@ const {
   UserRepositoryFactory
 } = require('../models');
 
-module.exports = knexClient => {
+module.exports = (knexClient, middlewares) => {
   const addressRepository = AddressRepositoryFactory(knexClient);
   const badgeRepository = BadgeRepositoryFactory(knexClient);
   const colorRepository = ColorRepositoryFactory(knexClient);
@@ -62,17 +63,18 @@ module.exports = knexClient => {
     res.json(layout);
   });
 
-  router.use('/address', addressRouter(ctx));
-  router.use('/badge', badgeRouter(ctx));
-  router.use('/color', colorRouter(ctx));
-  router.use('/comment', commentRouter(ctx));
-  router.use('/category', categoryRouter(ctx));
-  router.use('/collection', collectionRouter(ctx));
-  router.use('/product', productRouter(ctx));
-  router.use('/size', sizeRouter(ctx));
-  router.use('/sku', skuRouter(ctx));
-  router.use('/coupon', couponRouter(ctx));
-  router.use('/user', userRouter(ctx));
+  router.use('/', authRouter(ctx));
+  router.use('/address', addressRouter(ctx, middlewares));
+  router.use('/badge', badgeRouter(ctx, middlewares));
+  router.use('/color', colorRouter(ctx, middlewares));
+  router.use('/comment', commentRouter(ctx, middlewares));
+  router.use('/category', categoryRouter(ctx, middlewares));
+  router.use('/collection', collectionRouter(ctx, middlewares));
+  router.use('/product', productRouter(ctx, middlewares));
+  router.use('/size', sizeRouter(ctx, middlewares));
+  router.use('/sku', skuRouter(ctx, middlewares));
+  router.use('/coupon', couponRouter(ctx, middlewares));
+  router.use('/user', userRouter(ctx, middlewares));
 
   return router;
 };
