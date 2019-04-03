@@ -2,57 +2,79 @@ const router = require('express').Router();
 const Error = require('../utils/errors');
 
 // @TODO: delegation: skus
-
-module.exports = ({ productRepository }) => {
-  router.post('/', async (req, res, next) => {
-    try {
-      const id = await productRepository.create(req.body);
-      const product = await productRepository.getProductById(id);
-      return res.json(product);
-    } catch (err) {
+module.exports = ({ productRepository }, { verify }) => {
+  router.post('/', verify, async (req, res, next) => {
+    if (req.decoded.isAdmin)
+      try {
+        const id = await productRepository.create(req.body);
+        const product = await productRepository.getProductById(id);
+        return res.json(product);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to create the product.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to create the product.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
 
-    try {
-      await productRepository.delete(id);
-      return res.status(200).end();
-    } catch (err) {
+    if (req.decoded.isAdmin)
+      try {
+        await productRepository.delete(id);
+        return res.status(200).end();
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to delete the product.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to delete the product.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  router.put('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
 
-    try {
-      await productRepository.update(id, req.body);
-      const product = await productRepository.getProductById(id);
-      return res.json(product);
-    } catch (err) {
+    if (req.decoded.isAdmin)
+      try {
+        await productRepository.update(id, req.body);
+        const product = await productRepository.getProductById(id);
+        return res.json(product);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to update the product.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to update the product.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  // { id, name, category, subcategory, description, image, sizechart, storename, gender, tags, promotional_text, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     const { id } = req.params;
     let product;

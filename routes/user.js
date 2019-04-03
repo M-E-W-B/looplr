@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Error = require('../utils/errors');
 
 module.exports = (
-  { userRepository, badgeRepository, collectionRepository },
+  { userRepository, badgeRepository, collectionRepository, commentRepository },
   { verify }
 ) => {
   router.delete('/', async (req, res, next) => {
@@ -332,6 +332,44 @@ module.exports = (
             data: { extra: err.message }
           })
         );
+    }
+  );
+
+  // list comments on collection, product, order
+  router.post(
+    '/comment/list/entity/:entityId',
+    verify,
+    async (req, res, next) => {
+      const pagination = null;
+      const orderings = null;
+      const filter = [
+        {
+          column: 'entity_id',
+          value: [req.params.entityId],
+          operator: 'EQUAL'
+        },
+        {
+          column: 'user_id',
+          value: [req.decoded.id],
+          operator: 'EQUAL'
+        }
+      ];
+
+      try {
+        const comments = await commentRepository.getComments(
+          pagination,
+          orderings,
+          filters
+        );
+        return res.json(comments);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to fetch comments.',
+            data: { extra: err.message }
+          })
+        );
+      }
     }
   );
 

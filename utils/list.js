@@ -13,13 +13,10 @@ const operatorMapping = {
   LIKE: 'like'
 };
 
-module.exports = (
-  pagination,
-  orderings = [],
-  filters = [],
-  query,
-  tableName
-) => {
+module.exports = (pagination, orderings, filters, query, tableName) => {
+  orderings = orderings || [];
+  filters = filters || [];
+
   if (filters.length) {
     const filterParams = filters.reduce(
       (acc, { column, operator, value }) =>

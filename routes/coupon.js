@@ -1,56 +1,79 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
 
-module.exports = ({ couponRepository }) => {
-  router.post('/', async (req, res, next) => {
-    try {
-      const [id] = await couponRepository.create(req.body);
-      const coupon = await couponRepository.getCouponById(id);
-      return res.json(coupon);
-    } catch (err) {
+module.exports = ({ couponRepository }, { verify }) => {
+  router.post('/', verify, async (req, res, next) => {
+    if (req.decoded.isAdmin)
+      try {
+        const [id] = await couponRepository.create(req.body);
+        const coupon = await couponRepository.getCouponById(id);
+        return res.json(coupon);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to create the coupon.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to create the coupon.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  router.delete('/:id', async (req, res, next) => {
+  router.delete('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
 
-    try {
-      await couponRepository.delete(id);
-      return res.status(200).end();
-    } catch (err) {
+    if (req.decoded.isAdmin)
+      try {
+        await couponRepository.delete(id);
+        return res.status(200).end();
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to delete the coupon.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to delete the coupon.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  router.put('/:id', async (req, res, next) => {
+  router.put('/:id', verify, async (req, res, next) => {
     const { id } = req.params;
 
-    try {
-      await couponRepository.update(id, req.body);
-      const coupon = await couponRepository.getCouponById(id);
-      return res.json(coupon);
-    } catch (err) {
+    if (req.decoded.isAdmin)
+      try {
+        await couponRepository.update(id, req.body);
+        const coupon = await couponRepository.getCouponById(id);
+        return res.json(coupon);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to update the coupon.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    else
       return next(
-        new Error.BadRequestError({
-          message: 'Unable to update the coupon.',
+        new Error.AuthenticationError({
+          message: "You don't have access to perform this operation.",
           data: { extra: err.message }
         })
       );
-    }
   });
 
-  // { id, code, description, max_uses, max_uses_per_user, min_order, is_percentage, discount, start_at, expires_at, created_at, updated_at, deleted_at }
   router.get('/:id', async (req, res, next) => {
     let coupon;
     const { id } = req.params;
@@ -77,22 +100,25 @@ module.exports = ({ couponRepository }) => {
   });
 
   router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
+    const pagination = null;
+    const orderings = null;
+    // @TODO: pass cartId and then calculate totalOrder value
+    const filters = [
+      {
+        column: 'min_order',
+        value: [req.body.orderValue],
+        operator: 'GREATER_THAN_OR_EQUAL'
+      }
+    ];
 
     try {
-      const edges = await couponRepository.getCoupons(
+      const coupons = await couponRepository.getCoupons(
         pagination,
         orderings,
         filters
       );
 
-      const pageInfo = await couponRepository.getPageInfo(
-        pagination,
-        orderings,
-        filters
-      );
-
-      return res.json({ edges, pageInfo });
+      return res.json(coupons);
     } catch (err) {
       return next(
         new Error.BadRequestError({
