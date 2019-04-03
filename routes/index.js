@@ -10,6 +10,7 @@ const badgeRouter = require('./badge');
 const colorRouter = require('./color');
 const commentRouter = require('./comment');
 const collectionRouter = require('./collection');
+const wishlistRouter = require('./wishlist');
 const categoryRouter = require('./category');
 const productRouter = require('./product');
 const sizeRouter = require('./size');
@@ -24,6 +25,7 @@ const {
   ColorRepositoryFactory,
   CommentRepositoryFactory,
   CategoryRepositoryFactory,
+  WishlistRepositoryFactory,
   CollectionRepositoryFactory,
   ProductRepositoryFactory,
   SizeRepositoryFactory,
@@ -38,6 +40,7 @@ module.exports = (knexClient, middlewares) => {
   const colorRepository = ColorRepositoryFactory(knexClient);
   const commentRepository = CommentRepositoryFactory(knexClient);
   const categoryRepository = CategoryRepositoryFactory(knexClient);
+  const wishlistRepository = WishlistRepositoryFactory(knexClient);
   const collectionRepository = CollectionRepositoryFactory(knexClient);
   const productRepository = ProductRepositoryFactory(knexClient);
   const sizeRepository = SizeRepositoryFactory(knexClient);
@@ -52,6 +55,7 @@ module.exports = (knexClient, middlewares) => {
     colorRepository,
     commentRepository,
     collectionRepository,
+    wishlistRepository,
     productRepository,
     sizeRepository,
     skuRepository,
@@ -70,6 +74,7 @@ module.exports = (knexClient, middlewares) => {
   router.use('/comment', commentRouter(ctx, middlewares));
   router.use('/category', categoryRouter(ctx, middlewares));
   router.use('/collection', collectionRouter(ctx, middlewares));
+  router.use('/wishlist', wishlistRouter(ctx, middlewares));
   router.use('/product', productRouter(ctx, middlewares));
   router.use('/size', sizeRouter(ctx, middlewares));
   router.use('/sku', skuRouter(ctx, middlewares));

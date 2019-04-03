@@ -157,6 +157,22 @@ module.exports = (
     }
   });
 
+  router.get('/wishlist/list', async (req, res, next) => {
+    try {
+      const wishlist = await wishlistRepository.getWishlistByUserId(
+        req.decoded.id
+      );
+      return res.json(wishlist);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch wishlist.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   router.get('/badge/list', async (req, res, next) => {
     try {
       const badges = await badgeRepository.getBadgesByUserId(req.decoded.id);
