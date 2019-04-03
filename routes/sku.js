@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
-// @TODO: delegation: size, color
+const decode = require('../utils/decode');
 
+// @TODO: delegation: size, color
 module.exports = ({ skuRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
     if (req.decoded.isAdmin)
@@ -75,6 +76,30 @@ module.exports = ({ skuRepository }, { verify }) => {
       );
   });
 
+  router.get('/list/product/:productId', async (req, res, next) => {
+    const pagination = null;
+    const orderings = null;
+    const filters = [
+      {
+        column: 'product_id',
+        value: [req.params.productId],
+        operator: 'EQUAL'
+      }
+    ];
+
+    try {
+      const skus = await skuRepository.getSkus(pagination, orderings, filters);
+      return res.json(skus);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch skus.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   // { id, product_id, sku_attribute_id, stock, price, discount, is_active, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
@@ -100,30 +125,6 @@ module.exports = ({ skuRepository }, { verify }) => {
   //       })
   //     );
   // });
-
-  router.post('/list/product/:productId', async (req, res, next) => {
-    const pagination = null;
-    const orderings = null;
-    const filters = [
-      {
-        column: 'product_id',
-        value: [req.params.productId],
-        operator: 'EQUAL'
-      }
-    ];
-
-    try {
-      const skus = await skuRepository.getSkus(pagination, orderings, filters);
-      return res.json(skus);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch skus.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
 
   return router;
 };

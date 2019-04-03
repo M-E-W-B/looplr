@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 // @TODO: delegation: skus
 module.exports = ({ productRepository }, { verify }) => {
@@ -75,34 +76,9 @@ module.exports = ({ productRepository }, { verify }) => {
       );
   });
 
-  router.get('/:id', async (req, res, next) => {
-    const { id } = req.params;
-    let product;
-
-    try {
-      // @TODO
-      product = await productRepository.getProductById(id);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch the product.',
-          data: { extra: err.message }
-        })
-      );
-    }
-
-    if (product) return res.json(product);
-    else
-      return next(
-        new Error.BadRequestError({
-          message: 'Product not found.',
-          data: { extra: err.message }
-        })
-      );
-  });
-
-  router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters, collectionId } = req.body;
+  router.get('/list/collection/:collectionId', async (req, res, next) => {
+    const { collectionId } = req.params;
+    const { pagination, orderings, filters } = decode(req.query.q);
 
     try {
       const edges = await productRepository.getProducts(
@@ -129,6 +105,32 @@ module.exports = ({ productRepository }, { verify }) => {
         })
       );
     }
+  });
+
+  router.get('/:id', async (req, res, next) => {
+    const { id } = req.params;
+    let product;
+
+    try {
+      // @TODO
+      product = await productRepository.getProductById(id);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch the product.',
+          data: { extra: err.message }
+        })
+      );
+    }
+
+    if (product) return res.json(product);
+    else
+      return next(
+        new Error.BadRequestError({
+          message: 'Product not found.',
+          data: { extra: err.message }
+        })
+      );
   });
 
   return router;

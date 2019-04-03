@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ categoryRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -74,33 +75,8 @@ module.exports = ({ categoryRepository }, { verify }) => {
       );
   });
 
-  // { id, name, parent_category_id, created_at, updated_at, deleted_at }
-  // router.get('/:id', async (req, res, next) => {
-  //   const { id } = req.params;
-  //   let category;
-
-  //   try {
-  //     category = await categoryRepository.getCategoryById(id);
-  //   } catch (err) {
-  //     return next(
-  //       new Error.BadRequestError({
-  //         message: 'Unable to fetch the category.',
-  //         data: { extra: err.message }
-  //       })
-  //     );
-  //   }
-
-  //   if (category) return res.json(category);
-  //   else
-  //     return next(
-  //       new Error.BadRequestError({
-  //         message: 'category not found.'
-  //       })
-  //     );
-  // });
-
-  router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
+  router.get('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = decode(req.query.q);
 
     try {
       const edges = await categoryRepository.getCategories(
@@ -125,6 +101,31 @@ module.exports = ({ categoryRepository }, { verify }) => {
       );
     }
   });
+
+  // { id, name, parent_category_id, created_at, updated_at, deleted_at }
+  // router.get('/:id', async (req, res, next) => {
+  //   const { id } = req.params;
+  //   let category;
+
+  //   try {
+  //     category = await categoryRepository.getCategoryById(id);
+  //   } catch (err) {
+  //     return next(
+  //       new Error.BadRequestError({
+  //         message: 'Unable to fetch the category.',
+  //         data: { extra: err.message }
+  //       })
+  //     );
+  //   }
+
+  //   if (category) return res.json(category);
+  //   else
+  //     return next(
+  //       new Error.BadRequestError({
+  //         message: 'category not found.'
+  //       })
+  //     );
+  // });
 
   return router;
 };

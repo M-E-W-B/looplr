@@ -38,34 +38,8 @@ module.exports = (
     }
   });
 
-  // { id, first_name, last_name, handle, email, gender, phonenumber, image, about, reset_password_token, reset_password_expires_at, is_active, created_at, updated_at, deleted_at }
-  router.get('/', async (req, res, next) => {
-    let user;
-    const { id } = req.decoded;
-
-    try {
-      user = await userRepository.getUserById(id);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch the user.',
-          data: { extra: err.message }
-        })
-      );
-    }
-
-    if (user) return res.json(user);
-    else
-      return next(
-        new Error.BadRequestError({
-          message: 'User not found.',
-          data: { extra: err.message }
-        })
-      );
-  });
-
-  router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
+  router.get('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = decode(req.query.q);
 
     try {
       const edges = await userRepository.getUsers(
@@ -92,6 +66,31 @@ module.exports = (
         })
       );
     }
+  });
+
+  router.get('/', async (req, res, next) => {
+    let user;
+    const { id } = req.decoded;
+
+    try {
+      user = await userRepository.getUserById(id);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch the user.',
+          data: { extra: err.message }
+        })
+      );
+    }
+
+    if (user) return res.json(user);
+    else
+      return next(
+        new Error.BadRequestError({
+          message: 'User not found.',
+          data: { extra: err.message }
+        })
+      );
   });
 
   router.post('/follow/:id', async (req, res, next) => {
@@ -336,7 +335,7 @@ module.exports = (
   );
 
   // list comments on collection, product, order
-  router.post(
+  router.get(
     '/comment/list/entity/:entityId',
     verify,
     async (req, res, next) => {

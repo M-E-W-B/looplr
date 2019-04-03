@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ couponRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -74,32 +75,7 @@ module.exports = ({ couponRepository }, { verify }) => {
       );
   });
 
-  router.get('/:id', async (req, res, next) => {
-    let coupon;
-    const { id } = req.params;
-
-    try {
-      coupon = await couponRepository.getCouponById(id);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch the coupon.',
-          data: { extra: err.message }
-        })
-      );
-    }
-
-    if (coupon) return res.json(coupon);
-    else
-      return next(
-        new Error.BadRequestError({
-          message: 'Coupon not found.',
-          data: { extra: err.message }
-        })
-      );
-  });
-
-  router.post('/list', async (req, res, next) => {
+  router.get('/list/:cartId', async (req, res, next) => {
     const pagination = null;
     const orderings = null;
     // @TODO: pass cartId and then calculate totalOrder value
@@ -127,6 +103,31 @@ module.exports = ({ couponRepository }, { verify }) => {
         })
       );
     }
+  });
+
+  router.get('/:id', async (req, res, next) => {
+    let coupon;
+    const { id } = req.params;
+
+    try {
+      coupon = await couponRepository.getCouponById(id);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch the coupon.',
+          data: { extra: err.message }
+        })
+      );
+    }
+
+    if (coupon) return res.json(coupon);
+    else
+      return next(
+        new Error.BadRequestError({
+          message: 'Coupon not found.',
+          data: { extra: err.message }
+        })
+      );
   });
 
   return router;

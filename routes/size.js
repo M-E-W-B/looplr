@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ sizeRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -74,6 +75,20 @@ module.exports = ({ sizeRepository }, { verify }) => {
       );
   });
 
+  router.get('/list', async (req, res, next) => {
+    try {
+      const sizes = await sizeRepository.getSizes();
+      return res.json(sizes);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch sizes.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   // { id, name, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
@@ -99,20 +114,6 @@ module.exports = ({ sizeRepository }, { verify }) => {
   //       })
   //     );
   // });
-
-  router.post('/list', async (req, res, next) => {
-    try {
-      const sizes = await sizeRepository.getSizes();
-      return res.json(sizes);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch sizes.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
 
   return router;
 };

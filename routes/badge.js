@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ badgeRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -74,6 +75,34 @@ module.exports = ({ badgeRepository }, { verify }) => {
       );
   });
 
+  //  list all badges
+  router.get('/list', async (req, res, next) => {
+    const { pagination, orderings, filters } = decode(req.query.q);
+
+    try {
+      const edges = await badgeRepository.getBadges(
+        pagination,
+        orderings,
+        filters
+      );
+
+      const pageInfo = await badgeRepository.getPageInfo(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json({ edges, pageInfo });
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch badges.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   // { id, name, description, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
@@ -99,34 +128,6 @@ module.exports = ({ badgeRepository }, { verify }) => {
   //       })
   //     );
   // });
-
-  //  list all badges
-  router.post('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = req.body;
-
-    try {
-      const edges = await badgeRepository.getBadges(
-        pagination,
-        orderings,
-        filters
-      );
-
-      const pageInfo = await badgeRepository.getPageInfo(
-        pagination,
-        orderings,
-        filters
-      );
-
-      return res.json({ edges, pageInfo });
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch badges.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
 
   return router;
 };

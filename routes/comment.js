@@ -1,7 +1,6 @@
 const router = require('express').Router();
-const pick = require('lodash/pick');
-
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ commentRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -72,32 +71,7 @@ module.exports = ({ commentRepository }, { verify }) => {
       );
   });
 
-  // router.get('/:id', async (req, res, next) => {
-  //   const { id } = req.params;
-  //   let comment;
-
-  //   try {
-  //     comment = await commentRepository.getCommentById(id);
-  //   } catch (err) {
-  //     return next(
-  //       new Error.BadRequestError({
-  //         message: 'Unable to fetch the comment.',
-  //         data: { extra: err.message }
-  //       })
-  //     );
-  //   }
-
-  //   if (comment) return res.json(comment);
-  //   else
-  //     return next(
-  //       new Error.BadRequestError({
-  //         message: 'Comment not found.',
-  //         data: { extra: err.message }
-  //       })
-  //     );
-  // });
-
-  router.post('/list/entity/:entityId', async (req, res, next) => {
+  router.get('/list/entity/:entityId', async (req, res, next) => {
     const pagination = null;
     const orderings = null;
     const filter = [
@@ -124,6 +98,31 @@ module.exports = ({ commentRepository }, { verify }) => {
       );
     }
   });
+
+  // router.get('/:id', async (req, res, next) => {
+  //   const { id } = req.params;
+  //   let comment;
+
+  //   try {
+  //     comment = await commentRepository.getCommentById(id);
+  //   } catch (err) {
+  //     return next(
+  //       new Error.BadRequestError({
+  //         message: 'Unable to fetch the comment.',
+  //         data: { extra: err.message }
+  //       })
+  //     );
+  //   }
+
+  //   if (comment) return res.json(comment);
+  //   else
+  //     return next(
+  //       new Error.BadRequestError({
+  //         message: 'Comment not found.',
+  //         data: { extra: err.message }
+  //       })
+  //     );
+  // });
 
   return router;
 };

@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ colorRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -74,6 +75,20 @@ module.exports = ({ colorRepository }, { verify }) => {
       );
   });
 
+  router.get('/list', async (req, res, next) => {
+    try {
+      const colors = await colorRepository.getColors();
+      return res.json(colors);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch colors.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   // { id, hexcode, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   let color;
@@ -99,20 +114,6 @@ module.exports = ({ colorRepository }, { verify }) => {
   //       })
   //     );
   // });
-
-  router.post('/list', async (req, res, next) => {
-    try {
-      const colors = await colorRepository.getColors();
-      return res.json(colors);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch colors.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
 
   return router;
 };

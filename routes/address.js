@@ -1,5 +1,6 @@
 const router = require('express').Router();
 const Error = require('../utils/errors');
+const decode = require('../utils/decode');
 
 module.exports = ({ addressRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
@@ -70,7 +71,35 @@ module.exports = ({ addressRepository }, { verify }) => {
       );
   });
 
-  // { id, user_id, street_address, landmark, state, postal_code, type, created_at, updated_at, deleted_at }
+  router.get('/list', verify, async (req, res, next) => {
+    const pagination = null;
+    const orderings = null;
+    const filters = [
+      {
+        column: 'user_id',
+        value: [req.decoded.id],
+        operator: 'EQUAL'
+      }
+    ];
+
+    try {
+      const addresses = await addressRepository.getAddresses(
+        pagination,
+        orderings,
+        filters
+      );
+
+      return res.json(addresses);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch addresses.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   router.get('/:id', verify, async (req, res, next) => {
     // @TODO: only his own address a user can get
     const { id } = req.params;
@@ -103,35 +132,6 @@ module.exports = ({ addressRepository }, { verify }) => {
           data: { extra: err.message }
         })
       );
-  });
-
-  router.post('/list', verify, async (req, res, next) => {
-    const pagination = null;
-    const orderings = null;
-    const filters = [
-      {
-        column: 'user_id',
-        value: [req.decoded.id],
-        operator: 'EQUAL'
-      }
-    ];
-
-    try {
-      const addresses = await addressRepository.getAddresses(
-        pagination,
-        orderings,
-        filters
-      );
-
-      return res.json(addresses);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch addresses.',
-          data: { extra: err.message }
-        })
-      );
-    }
   });
 
   return router;
