@@ -1,4 +1,5 @@
 const router = require('express').Router();
+const groupBy = require('lodash.groupBy');
 const Error = require('../utils/errors');
 const decode = require('../utils/decode');
 
@@ -76,22 +77,11 @@ module.exports = ({ categoryRepository }, { verify }) => {
   });
 
   router.get('/list', async (req, res, next) => {
-    const { pagination, orderings, filters } = decode(req.query.q);
-
     try {
-      const edges = await categoryRepository.getCategories(
-        pagination,
-        orderings,
-        filters
-      );
+      const categories = await categoryRepository.getCategories();
+      const groupedCategories = gropuBy(categories, 'parentCategoryId');
 
-      const pageInfo = await categoryRepository.getPageInfo(
-        pagination,
-        orderings,
-        filters
-      );
-
-      return res.json({ edges, pageInfo });
+      return res.json(groupedCategories);
     } catch (err) {
       return next(
         new Error.BadRequestError({
