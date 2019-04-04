@@ -12,12 +12,13 @@ VALUES
   ('100th_order', 'when a user orders for the 100th time'),
   ('total_order_price_above_Rs2000', 'when a user''s order value is more than Rs. 2000');
 
+-- password is `password`
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO user
-  (id, first_name, last_name, handle, phonenumber, gender, image, email, password, is_active)
+  (id, first_name, last_name, handle, phonenumber, gender, image, email, password, is_active, is_admin)
 VALUES
-  (1, 'John', 'Doe', 'johhny21', '9876382710', 'M', 'https://picsum.photos/600/600/?random', 'john@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1),
-  (2, 'Eli', 'Barkovich', 'elie', '9385002793', 'F', 'https://picsum.photos/600/600/?random', 'eli@example.com', '$2a$08$3BxHbhf0LX..5gMuzhP9nehnbeeKKTQ7qzu5byemoeJFD6blEtLWa', 1);
+  (1, 'John', 'Doe', 'johhny21', '9876382710', 'M', 'https://picsum.photos/600/600/?random', 'john@example.com', '$2a$08$48a/.H6UBWo1pOEIHHl47u1o8uxBsYzklAww9X1XQBh11UTOwT9Mq', 1, 1),
+  (2, 'Eli', 'Barkovich', 'elie', '9385002793', 'F', 'https://picsum.photos/600/600/?random', 'eli@example.com', '$2a$08$48a/.H6UBWo1pOEIHHl47u1o8uxBsYzklAww9X1XQBh11UTOwT9Mq', 1, 0);
 
 INSERT INTO follow
   (follower_id, followed_id)
@@ -56,13 +57,21 @@ VALUES
   (1, 'GF-25,29, Paramount Spectrum', 'Crossing Republic', 'Ghaziabad', 'Uttar Pradesh', '201016', 'other'),
   (2, 'Shyama Prasad Mukherji Marg', 'Bees Dukaan', 'Jaipur', 'Rajasthan', '302004', 'other');
 
+INSERT INTO category
+  (id, name, parent_category_id)
+VALUES
+  (1, 'Electronics', NULL), 
+  (2, 'Clothing', NULL),
+  (3, 'T-Shirt', 2),
+  (4, 'Trouser', 2);
+
 INSERT INTO entity(id) VALUES (NULL), (NULL);
 INSERT INTO product
-  (id, name, category, subcategory, description, storename, gender, image, sizechart, tags, promotional_text)
+  (id, name, subcategory_id, description, storename, gender, sizechart, image, tags, promotional_text)
 VALUES
-  (5, 'Greysh Green Jogger Pants', 'Clothing', 'Joggers and tracks', 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
-  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL),
-  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 'Clothing', 'T-Shirt', 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL);
+  (5, 'Greysh Green Jogger Pants', 4, 'Jogger Pants in Greysh Green Colour', 'ATORSe', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('joggers', 'blue'), 'This offer is only for a couple of days.'),
+  (6, 'Charcoal Solid Slim Fit Long Sleeve T-Shirt', 3, 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'M', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL),
+  (7, 'Maroon Solid Slim Fit Long Sleeve T-Shirt', 3, 'Don ''t be like the rest of the guys, wear unique and stylish outfits from #PAUSE and be different from rest of the crowd', 'Pause', 'U', 'https://picsum.photos/600/600/?random', JSON_ARRAY('https://picsum.photos/600/600/?random', 'https://picsum.photos/600/600/?random'), JSON_ARRAY('tshirt', 'slim'), NULL);
 
 INSERT INTO sku
   (product_id, sku_attribute_id, stock, price, discount)
