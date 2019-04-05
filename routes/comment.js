@@ -39,8 +39,7 @@ module.exports = ({ commentRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -65,8 +64,7 @@ module.exports = ({ commentRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -74,7 +72,7 @@ module.exports = ({ commentRepository }, { verify }) => {
   router.get('/list/entity/:entityId', async (req, res, next) => {
     const pagination = null;
     const orderings = null;
-    const filter = [
+    const filters = [
       {
         column: 'entity_id',
         value: [req.params.entityId],
@@ -118,8 +116,7 @@ module.exports = ({ commentRepository }, { verify }) => {
   //   else
   //     return next(
   //       new Error.BadRequestError({
-  //         message: 'Comment not found.',
-  //         data: { extra: err.message }
+  //         message: 'Comment not found.'
   //       })
   //     );
   // });

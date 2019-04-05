@@ -14,8 +14,7 @@ class Repository {
         [
           'id',
           'name',
-          'category',
-          'subcategory',
+          'subcategory_id',
           'description',
           'storename',
           'sizechart',
@@ -39,60 +38,26 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
-  // getProductsByCollectionId = (
-  //   collectionId,
-  //   pagination,
-  //   orderings,
-  //   filters
-  // ) => {
-  //   const query = this.knexClient
-  //     .select([
-  //       'product.id AS id',
-  //       'product.name AS name',
-  //       'product.category AS category',
-  //       'product.subcategory AS subcategory',
-  //       'product.description AS description',
-  //       'product.storename AS storename',
-  // 'product.gender AS gender',
-  // 'product.sizechart AS sizechart',
-  // 'product.image AS image',
-  //       'product.tags AS tags',
-  //       'product.promotional_text AS promotionalText',
-  //       'product.created_at AS createdAt',
-  //       'product.updated_at AS updatedAt'
-  //     ])
-  //     .from('collection_product')
-  //     .innerJoin(this.tableName, 'product.id', 'collection_product.product_id');
-
-  //   query.joinRaw(
-  //     'where collection_product.collection_id = ? and collection_product.deleted_at is null and product.deleted_at is null',
-  //     [collectionId]
-  //   );
-
-  //   return list(pagination, orderings, filters, query, this.tableName);
-  // };
-
   getFullProductById = id =>
     this.knexClient
       .select([
         'product.id AS id',
         'product.name AS name',
-        'product.category AS',
-        'product.subcategory AS subcategory',
+        'product.subcategory_id AS subcategoryId',
         'product.description AS description',
         'product.storename AS storename',
         'product.gender AS gender',
         'product.sizechart AS sizechart',
         'product.image AS image',
         'product.tags AS tags',
-        'product.promotional_text AS promotional_text',
-        'product.created_at AS created_at',
-        'product.updated_at AS updated_at',
+        'product.promotional_text AS promotionalText',
+        'product.created_at AS createdAt',
+        'product.updated_at AS updatedAt',
         'sku.id AS sku_id',
         'sku.stock AS stock',
         'sku.price AS price',
         'sku.discount AS discount',
-        'sku.is_active AS is_active',
+        'sku.is_active AS isActive',
         'color.hexcode AS color',
         'size.name AS size'
       ])
@@ -114,8 +79,7 @@ class Repository {
         [
           'id',
           'name',
-          'category',
-          'subcategory',
+          'subcategory_id',
           'description',
           'storename',
           'gender',
@@ -132,10 +96,31 @@ class Repository {
       .whereNull('deleted_at')
       .first();
 
+  getProductsByCollectionId = collectionId =>
+    this.knexClient
+      .select([
+        'product.id AS id',
+        'product.name AS name',
+        'product.subcategory_id AS subcategoryId',
+        'product.description AS description',
+        'product.storename AS storename',
+        'product.gender AS gender',
+        'product.sizechart AS sizechart',
+        'product.image AS image',
+        'product.tags AS tags',
+        'product.promotional_text AS promotionalText',
+        'product.created_at AS createdAt',
+        'product.updated_at AS updatedAt'
+      ])
+      .from('collection_product')
+      .innerJoin(this.tableName, 'product.id', 'collection_product.product_id')
+      .where('collection_product.collection_id', collectionId)
+      .whereNull('collection_product.deleted_at')
+      .whereNull('product.deleted_at');
+
   create = ({
     name,
-    category = null,
-    subcategory = null,
+    subcategoryId: subcategory_id = null,
     description = null,
     image,
     sizechart,
@@ -150,8 +135,7 @@ class Repository {
       await trx(this.tableName).insert({
         id,
         name,
-        category,
-        subcategory,
+        subcategory_id,
         description,
         image,
         sizechart,
@@ -168,8 +152,7 @@ class Repository {
     id,
     {
       name,
-      category,
-      subcategory,
+      subcategoryId: subcategory_id,
       description,
       image,
       sizechart,
@@ -183,8 +166,7 @@ class Repository {
       trx(this.tableName)
         .update({
           name,
-          category,
-          subcategory,
+          subcategory_id,
           description,
           image,
           sizechart,

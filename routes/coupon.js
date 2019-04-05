@@ -20,8 +20,7 @@ module.exports = ({ couponRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -44,8 +43,7 @@ module.exports = ({ couponRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -57,6 +55,7 @@ module.exports = ({ couponRepository }, { verify }) => {
       try {
         await couponRepository.update(id, req.body);
         const coupon = await couponRepository.getCouponById(id);
+
         return res.json(coupon);
       } catch (err) {
         return next(
@@ -69,8 +68,7 @@ module.exports = ({ couponRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -124,8 +122,7 @@ module.exports = ({ couponRepository }, { verify }) => {
     else
       return next(
         new Error.BadRequestError({
-          message: 'Coupon not found.',
-          data: { extra: err.message }
+          message: 'Coupon not found.'
         })
       );
   });

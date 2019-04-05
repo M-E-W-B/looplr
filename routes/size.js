@@ -20,8 +20,7 @@ module.exports = ({ sizeRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -44,8 +43,7 @@ module.exports = ({ sizeRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -69,8 +67,7 @@ module.exports = ({ sizeRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -110,7 +107,6 @@ module.exports = ({ sizeRepository }, { verify }) => {
   //     return next(
   //       new Error.BadRequestError({
   //         message: 'Size not found.',
-  //         data: { extra: err.message }
   //       })
   //     );
   // });

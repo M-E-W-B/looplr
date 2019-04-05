@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const groupBy = require('lodash.groupBy');
+const groupBy = require('lodash.groupby');
 const Error = require('../utils/errors');
 const decode = require('../utils/decode');
 
@@ -21,8 +21,7 @@ module.exports = ({ categoryRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -45,8 +44,7 @@ module.exports = ({ categoryRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -70,8 +68,7 @@ module.exports = ({ categoryRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });

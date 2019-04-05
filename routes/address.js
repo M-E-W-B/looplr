@@ -40,8 +40,7 @@ module.exports = ({ addressRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -65,8 +64,7 @@ module.exports = ({ addressRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -127,8 +125,7 @@ module.exports = ({ addressRepository }, { verify }) => {
     } else
       return next(
         new Error.BadRequestError({
-          message: 'Address not found.',
-          data: { extra: err.message }
+          message: 'Address not found.'
         })
       );
   });

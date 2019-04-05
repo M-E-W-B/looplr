@@ -50,7 +50,7 @@ module.exports = (pagination, orderings, filters, query, tableName) => {
   }
 
   if (pagination) {
-    const { pageNumber, pageSize } = pagination;
+    const { pageNumber = 1, pageSize = 10 } = pagination;
     const offset = (pageNumber - 1) * pageSize;
 
     query.joinRaw('limit ?', [pageSize]);

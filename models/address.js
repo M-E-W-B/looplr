@@ -14,6 +14,7 @@ class Repository {
         [
           'id',
           'street_address',
+          'user_id',
           'landmark',
           'city',
           'state',
@@ -41,6 +42,7 @@ class Repository {
         [
           'id',
           'street_address',
+          'user_id',
           'landmark',
           'city',
           'state',
@@ -79,7 +81,6 @@ class Repository {
   update = (
     id,
     {
-      userId: user_id,
       streetAddress: street_address,
       landmark,
       city,
@@ -91,7 +92,6 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          user_id,
           street_address,
           landmark,
           city,

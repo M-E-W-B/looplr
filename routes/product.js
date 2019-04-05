@@ -21,8 +21,7 @@ module.exports = ({ productRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -45,8 +44,7 @@ module.exports = ({ productRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -70,14 +68,12 @@ module.exports = ({ productRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
 
-  router.get('/list/collection/:collectionId', async (req, res, next) => {
-    const { collectionId } = req.params;
+  router.get('/list', async (req, res, next) => {
     const { pagination, orderings, filters } = decode(req.query.q);
 
     try {
@@ -127,8 +123,7 @@ module.exports = ({ productRepository }, { verify }) => {
     else
       return next(
         new Error.BadRequestError({
-          message: 'Product not found.',
-          data: { extra: err.message }
+          message: 'Product not found.'
         })
       );
   });

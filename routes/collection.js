@@ -2,7 +2,7 @@ const router = require('express').Router();
 const Error = require('../utils/errors');
 const decode = require('../utils/decode');
 
-module.exports = ({ collectionRepository }, { verify }) => {
+module.exports = ({ collectionRepository, productRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
     if (req.decoded.isAdmin)
       try {
@@ -20,8 +20,7 @@ module.exports = ({ collectionRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -44,8 +43,7 @@ module.exports = ({ collectionRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -69,8 +67,7 @@ module.exports = ({ collectionRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -98,8 +95,7 @@ module.exports = ({ collectionRepository }, { verify }) => {
       else
         return next(
           new Error.AuthenticationError({
-            message: "You don't have access to perform this operation.",
-            data: { extra: err.message }
+            message: "You don't have access to perform this operation."
           })
         );
     }
@@ -128,12 +124,29 @@ module.exports = ({ collectionRepository }, { verify }) => {
       else
         return next(
           new Error.AuthenticationError({
-            message: "You don't have access to perform this operation.",
-            data: { extra: err.message }
+            message: "You don't have access to perform this operation."
           })
         );
     }
   );
+
+  router.get('/:collectionId/list/product', async (req, res, next) => {
+    const { collectionId } = req.params;
+
+    try {
+      const products = await productRepository.getProductsByCollectionId(
+        collectionId
+      );
+      return res.json(products);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch collections.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
 
   router.get('/list', async (req, res, next) => {
     const { pagination, orderings, filters } = decode(req.query.q);

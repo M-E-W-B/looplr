@@ -2,12 +2,9 @@ const jwt = require('jsonwebtoken');
 const router = require('express').Router();
 
 const Error = require('../utils/errors');
-const { UserRepositoryFactory } = require('../models');
 const config = require('../config.json');
 
-module.exports = knexClient => {
-  const userRepository = UserRepositoryFactory(knexClient);
-
+module.exports = ({ userRepository }) => {
   router.post('/login', async (req, res, next) => {
     const { email, password } = req.body;
     const user = await userRepository.getUserByEmail(email);

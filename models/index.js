@@ -1,4 +1,6 @@
 const AddressRepositoryFactory = require('./address');
+const CategoryRepositoryFactory = require('./category');
+const WishlistRepositoryFactory = require('./wishlist');
 const BadgeRepositoryFactory = require('./badge');
 const ColorRepositoryFactory = require('./color');
 const CommentRepositoryFactory = require('./comment');
@@ -8,10 +10,11 @@ const SizeRepositoryFactory = require('./size');
 const SkuRepositoryFactory = require('./sku');
 const CouponRepositoryFactory = require('./coupon');
 const UserRepositoryFactory = require('./user');
-const ImageRepositoryFactory = require('./image');
 
 module.exports = {
   AddressRepositoryFactory,
+  CategoryRepositoryFactory,
+  WishlistRepositoryFactory,
   BadgeRepositoryFactory,
   ColorRepositoryFactory,
   CommentRepositoryFactory,
@@ -20,6 +23,5 @@ module.exports = {
   SizeRepositoryFactory,
   SkuRepositoryFactory,
   CouponRepositoryFactory,
-  UserRepositoryFactory,
-  ImageRepositoryFactory
+  UserRepositoryFactory
 };

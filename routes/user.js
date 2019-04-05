@@ -21,7 +21,7 @@ module.exports = (
     }
   });
 
-  router.put('/', async (req, res, next) => {
+  router.put('/', verify, async (req, res, next) => {
     const { id } = req.decoded;
 
     try {
@@ -68,7 +68,7 @@ module.exports = (
   //   }
   // });
 
-  router.get('/', async (req, res, next) => {
+  router.get('/', verify, async (req, res, next) => {
     let user;
     const { id } = req.decoded;
 
@@ -87,13 +87,12 @@ module.exports = (
     else
       return next(
         new Error.BadRequestError({
-          message: 'User not found.',
-          data: { extra: err.message }
+          message: 'User not found.'
         })
       );
   });
 
-  router.post('/follow/:id', async (req, res, next) => {
+  router.post('/follow/:id', verify, async (req, res, next) => {
     const { id: toFollowUserId } = req.params;
     const { id } = req.decoded;
 
@@ -109,7 +108,7 @@ module.exports = (
     }
   });
 
-  router.post('/unfollow/:id', async (req, res, next) => {
+  router.post('/unfollow/:id', verify, async (req, res, next) => {
     const { id: toUnfollowUserId } = req.params;
     const { id } = req.decoded;
 
@@ -125,7 +124,7 @@ module.exports = (
     }
   });
 
-  router.get('/followings', async (req, res, next) => {
+  router.get('/followings', verify, async (req, res, next) => {
     const { id } = req.decoded;
 
     try {
@@ -141,7 +140,7 @@ module.exports = (
     }
   });
 
-  router.get('/followers', async (req, res, next) => {
+  router.get('/followers', verify, async (req, res, next) => {
     const { id } = req.decoded;
 
     try {
@@ -157,7 +156,7 @@ module.exports = (
     }
   });
 
-  router.get('/wishlist/list', async (req, res, next) => {
+  router.get('/wishlist/list', verify, async (req, res, next) => {
     try {
       const wishlist = await wishlistRepository.getWishlistByUserId(
         req.decoded.id
@@ -173,7 +172,7 @@ module.exports = (
     }
   });
 
-  router.get('/badge/list', async (req, res, next) => {
+  router.get('/badge/list', verify, async (req, res, next) => {
     try {
       const badges = await badgeRepository.getBadgesByUserId(req.decoded.id);
       return res.json(badges);
@@ -187,7 +186,7 @@ module.exports = (
     }
   });
 
-  router.get('/collection/list', async (req, res, next) => {
+  router.get('/collection/list', verify, async (req, res, next) => {
     const pagination = null;
     const orderings = null;
     const filters = [
@@ -222,6 +221,7 @@ module.exports = (
     try {
       const id = await collectionRepository.create(req.body);
       const collection = await collectionRepository.getCollectionById(id);
+
       return res.json(collection);
     } catch (err) {
       return next(
@@ -252,8 +252,7 @@ module.exports = (
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -266,6 +265,7 @@ module.exports = (
       try {
         await collectionRepository.update(id, req.body);
         const collection = await collectionRepository.getCollectionById(id);
+
         return res.json(collection);
       } catch (err) {
         return next(
@@ -278,8 +278,7 @@ module.exports = (
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -310,8 +309,7 @@ module.exports = (
       else
         return next(
           new Error.AuthenticationError({
-            message: "You don't have access to perform this operation.",
-            data: { extra: err.message }
+            message: "You don't have access to perform this operation."
           })
         );
     }
@@ -343,8 +341,7 @@ module.exports = (
       else
         return next(
           new Error.AuthenticationError({
-            message: "You don't have access to perform this operation.",
-            data: { extra: err.message }
+            message: "You don't have access to perform this operation."
           })
         );
     }

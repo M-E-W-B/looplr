@@ -21,8 +21,7 @@ module.exports = ({ skuRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -45,8 +44,7 @@ module.exports = ({ skuRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -70,8 +68,7 @@ module.exports = ({ skuRepository }, { verify }) => {
     else
       return next(
         new Error.AuthenticationError({
-          message: "You don't have access to perform this operation.",
-          data: { extra: err.message }
+          message: "You don't have access to perform this operation."
         })
       );
   });
@@ -120,8 +117,7 @@ module.exports = ({ skuRepository }, { verify }) => {
   //   else
   //     return next(
   //       new Error.BadRequestError({
-  //         message: 'Sku not found.',
-  //         data: { extra: err.message }
+  //         message: 'Sku not found.'
   //       })
   //     );
   // });
