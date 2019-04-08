@@ -10,22 +10,23 @@ class Repository {
 
   getSkus = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select(
-        [
-          'id',
-          'product_id',
-          'sku_attribute_id',
-          'stock',
-          'price',
-          'discount',
-          'is_active',
-          'created_at',
-          'updated_at'
-        ].map(i => `${i} AS ${camelCase(i)}`)
-      )
-      .from(this.tableName);
+      .select([
+        'sku.id AS id',
+        'color.hexcode AS color',
+        'size.name AS size',
+        'sku.stock AS stock',
+        'sku.price AS price',
+        'sku.discount AS discount',
+        'sku.created_at AS createdAt',
+        'sku.updated_at AS updatedAt'
+      ])
+      .from(this.tableName)
+      .leftJoin('size', 'size.id', `${this.tableName}.sku_attribute_id`)
+      .leftJoin('color', 'color.id', `${this.tableName}.sku_attribute_id`);
 
-    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+    query.joinRaw(
+      'WHERE sku.is_active = 1 AND sku.deleted_at IS NULL AND size.deleted_at IS NULL AND color.deleted_at IS NULL'
+    );
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -34,6 +35,29 @@ class Repository {
     const query = this.getSkus(null, orderings, filters);
     return pageInfo(pagination, query);
   };
+
+  getSkusByProductId = productId =>
+    this.knexClient
+      .select([
+        'sku.id AS id',
+        'color.hexcode AS color',
+        'size.name AS size',
+        'sku.stock AS stock',
+        'sku.price AS price',
+        'sku.discount AS discount',
+        'sku.created_at AS createdAt',
+        'sku.updated_at AS updatedAt'
+      ])
+      .from(this.tableName)
+      .leftJoin('product', 'product.id', `${this.tableName}.product_id`)
+      .leftJoin('size', 'size.id', `${this.tableName}.sku_attribute_id`)
+      .leftJoin('color', 'color.id', `${this.tableName}.sku_attribute_id`)
+      .where(`${this.tableName}.product_id`, productId)
+      .where(`${this.tableName}.is_active`, 1)
+      .whereNull('product.deleted_at')
+      .whereNull('size.deleted_at')
+      .whereNull('color.deleted_at')
+      .whereNull(`${this.tableName}.deleted_at`);
 
   getSkuById = id =>
     this.knexClient

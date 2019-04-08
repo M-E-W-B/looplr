@@ -97,6 +97,20 @@ module.exports = ({ skuRepository }, { verify }) => {
     }
   });
 
+  router.get('/list', async (req, res, next) => {
+    try {
+      const skus = await skuRepository.getSkus();
+      return res.json(skus);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch skus.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
   // { id, product_id, sku_attribute_id, stock, price, discount, is_active, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;

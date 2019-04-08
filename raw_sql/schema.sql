@@ -130,7 +130,9 @@ CREATE TABLE sku (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  UNIQUE(product_id, sku_attribute_id, deleted_at)
+  UNIQUE(product_id, sku_attribute_id, deleted_at),
+  FOREIGN KEY (product_id) REFERENCES product(id),
+  FOREIGN KEY (sku_attribute_id) REFERENCES sku_attribute(id)
 );
 
 DROP TABLE IF EXISTS sku_attribute;
@@ -152,8 +154,8 @@ CREATE TABLE color (
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES sku_attribute(id),
-  UNIQUE(hexcode, deleted_at)
+  UNIQUE(hexcode, deleted_at),
+  FOREIGN KEY (id) REFERENCES sku_attribute(id)
 );
 
 DROP TABLE IF EXISTS size;
@@ -164,9 +166,9 @@ CREATE TABLE size (
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
   deleted_at TIMESTAMP NULL,
-  PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES sku_attribute(id),
-  UNIQUE(name, deleted_at)
+  PRIMARY KEY (id),  
+  UNIQUE(name, deleted_at),
+  FOREIGN KEY (id) REFERENCES sku_attribute(id)
 );
 
 DROP TABLE IF EXISTS address;

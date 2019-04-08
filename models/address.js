@@ -26,7 +26,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+    query.joinRaw('WHERE address.deleted_at IS NULL');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };

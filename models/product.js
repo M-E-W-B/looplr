@@ -28,7 +28,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+    query.joinRaw('WHERE product.deleted_at IS NULL');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -38,12 +38,12 @@ class Repository {
     return pageInfo(pagination, query);
   };
 
-  getFullProductById = id =>
+  getProductById = id =>
     this.knexClient
       .select([
         'product.id AS id',
         'product.name AS name',
-        'product.subcategory_id AS subcategoryId',
+        'category.name AS subcategory',
         'product.description AS description',
         'product.storename AS storename',
         'product.gender AS gender',
@@ -52,48 +52,13 @@ class Repository {
         'product.tags AS tags',
         'product.promotional_text AS promotionalText',
         'product.created_at AS createdAt',
-        'product.updated_at AS updatedAt',
-        'sku.id AS sku_id',
-        'sku.stock AS stock',
-        'sku.price AS price',
-        'sku.discount AS discount',
-        'sku.is_active AS isActive',
-        'color.hexcode AS color',
-        'size.name AS size'
+        'product.updated_at AS updatedAt'
       ])
       .from(this.tableName)
-      .leftJoin('sku', 'product.id', 'sku.product_id')
-      .leftJoin('color', 'color.id', 'sku.sku_attribute_id')
-      .leftJoin('size', 'size.id', 'sku.sku_attribute_id')
-      .where('product.id', id)
-      .whereNull('product.deleted_at')
-      .whereNull('sku.deleted_at')
-      .whereNull('color.deleted_at')
-      .whereNull('size.deleted_at')
-      .orderBy('sku.created_at', 'desc')
-      .first();
-
-  getProductById = id =>
-    this.knexClient
-      .select(
-        [
-          'id',
-          'name',
-          'subcategory_id',
-          'description',
-          'storename',
-          'gender',
-          'sizechart',
-          'image',
-          'tags',
-          'promotional_text',
-          'created_at',
-          'updated_at'
-        ].map(i => `${i} AS ${camelCase(i)}`)
-      )
-      .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .leftJoin('category', 'category.id', `${this.tableName}.subcategory_id`)
+      .where(`${this.tableName}.id`, id)
+      .whereNull(`${this.tableName}.deleted_at`)
+      .whereNull('category.deleted_at')
       .first();
 
   getProductsByCollectionId = collectionId =>

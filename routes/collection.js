@@ -130,24 +130,6 @@ module.exports = ({ collectionRepository, productRepository }, { verify }) => {
     }
   );
 
-  router.get('/:collectionId/list/product', async (req, res, next) => {
-    const { collectionId } = req.params;
-
-    try {
-      const products = await productRepository.getProductsByCollectionId(
-        collectionId
-      );
-      return res.json(products);
-    } catch (err) {
-      return next(
-        new Error.BadRequestError({
-          message: 'Unable to fetch collections.',
-          data: { extra: err.message }
-        })
-      );
-    }
-  });
-
   router.get('/list', async (req, res, next) => {
     const { pagination, orderings, filters } = decode(req.query.q);
 
@@ -190,8 +172,21 @@ module.exports = ({ collectionRepository, productRepository }, { verify }) => {
       );
     }
 
-    if (collection) return res.json(collection);
-    else
+    if (collection) {
+      try {
+        const products = await productRepository.getProductsByCollectionId(id);
+        collection.products = products;
+
+        return res.json(collection);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to fetch the products of this collection.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    } else
       return next(
         new Error.BadRequestError({
           message: 'Collection not found.'

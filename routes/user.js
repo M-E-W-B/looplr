@@ -2,7 +2,13 @@ const router = require('express').Router();
 const Error = require('../utils/errors');
 
 module.exports = (
-  { userRepository, badgeRepository, collectionRepository, commentRepository },
+  {
+    userRepository,
+    badgeRepository,
+    collectionRepository,
+    commentRepository,
+    wishlistRepository
+  },
   { verify }
 ) => {
   router.delete('/', async (req, res, next) => {

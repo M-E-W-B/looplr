@@ -3,7 +3,7 @@ const Error = require('../utils/errors');
 const decode = require('../utils/decode');
 
 // @TODO: delegation: skus
-module.exports = ({ productRepository }, { verify }) => {
+module.exports = ({ productRepository, skuRepository }, { verify }) => {
   router.post('/', verify, async (req, res, next) => {
     if (req.decoded.isAdmin)
       try {
@@ -108,7 +108,6 @@ module.exports = ({ productRepository }, { verify }) => {
     let product;
 
     try {
-      // @TODO
       product = await productRepository.getProductById(id);
     } catch (err) {
       return next(
@@ -119,8 +118,21 @@ module.exports = ({ productRepository }, { verify }) => {
       );
     }
 
-    if (product) return res.json(product);
-    else
+    if (product) {
+      try {
+        const skus = await skuRepository.getSkusByProductId(id);
+        product.skus = skus;
+
+        res.json(product);
+      } catch (err) {
+        return next(
+          new Error.BadRequestError({
+            message: 'Unable to fetch the skus for this product.',
+            data: { extra: err.message }
+          })
+        );
+      }
+    } else
       return next(
         new Error.BadRequestError({
           message: 'Product not found.'

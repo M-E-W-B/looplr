@@ -10,21 +10,26 @@ class Repository {
 
   getCollections = (pagination, orderings, filters) => {
     const query = this.knexClient
-      .select(
-        [
-          'id',
-          'name',
-          'owner_id',
-          'image',
-          'description',
-          'tags',
-          'created_at',
-          'updated_at'
-        ].map(i => `${i} AS ${camelCase(i)}`)
-      )
-      .from(this.tableName);
+      .select([
+        'collection.id AS id',
+        'collection.name AS name',
+        'user.id AS userId',
+        'user.first_name AS firstName',
+        'user.last_name AS lastName',
+        'user.handle AS handle',
+        'user.image AS userImage',
+        'collection.image AS image',
+        'collection.description AS description',
+        'collection.tags AS tags',
+        'collection.created_at AS created_at',
+        'collection.updated_at AS updated_at'
+      ])
+      .from(this.tableName)
+      .leftJoin('user', 'user.id', `${this.tableName}.owner_id`);
 
-    query.joinRaw('where ?? is null', [`${this.tableName}.deleted_at`]);
+    query.joinRaw(
+      'WHERE collection.deleted_at IS NULL AND user.deleted_at IS NULL'
+    );
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -36,21 +41,25 @@ class Repository {
 
   getCollectionById = id =>
     this.knexClient
-      .select(
-        [
-          'id',
-          'name',
-          'owner_id',
-          'image',
-          'description',
-          'tags',
-          'created_at',
-          'updated_at'
-        ].map(i => `${i} AS ${camelCase(i)}`)
-      )
+      .select([
+        'collection.id AS id',
+        'collection.name AS name',
+        'user.id AS userId',
+        'user.first_name AS firstName',
+        'user.last_name AS lastName',
+        'user.handle AS handle',
+        'user.image AS userImage',
+        'collection.image AS image',
+        'collection.description AS description',
+        'collection.tags AS tags',
+        'collection.created_at AS created_at',
+        'collection.updated_at AS updated_at'
+      ])
       .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .leftJoin('user', 'user.id', `${this.tableName}.owner_id`)
+      .where(`${this.tableName}.id`, id)
+      .whereNull('user.deleted_at')
+      .whereNull('collection.deleted_at')
       .first();
 
   create = ({
