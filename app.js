@@ -1,4 +1,5 @@
 const express = require('express');
+const Recaptcha = require('express-recaptcha').RecaptchaV3;
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -12,6 +13,15 @@ const mainRouter = require('./routes');
 const middlewares = require('./middlewares');
 
 const app = express();
+const recaptcha = new Recaptcha(
+  config.reCaptcha.siteKey,
+  config.reCaptcha.secretKey,
+  { callback: 'cb' }
+);
+
+// @TODO: use these methods
+// recaptcha.middleware.render
+// recaptcha.middleware.verify
 
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
