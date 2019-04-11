@@ -32,7 +32,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('WHERE user.deleted_at IS NULL');
+    query.joinRaw('WHERE user.is_deleted = 0');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -64,8 +64,7 @@ class Repository {
         ].map(i => `${i} AS ${camelCase(i)}`)
       )
       .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .where({ id, is_deleted: 0 })
       .first();
 
   getUserByEmail = email =>
@@ -91,8 +90,7 @@ class Repository {
         ].map(i => `${i} AS ${camelCase(i)}`)
       )
       .from(this.tableName)
-      .where('email', email)
-      .whereNull('deleted_at')
+      .where({ email, is_deleted: 0 })
       .first();
 
   getUserByHandle = handle =>
@@ -117,8 +115,7 @@ class Repository {
         ].map(i => `${i} AS ${camelCase(i)}`)
       )
       .from(this.tableName)
-      .where('handle', handle)
-      .whereNull('deleted_at')
+      .where({ handle, is_deleted: 0 })
       .first();
 
   generateHash = password =>
@@ -148,10 +145,11 @@ class Repository {
       ])
       .from('follow')
       .innerJoin(this.tableName, 'user.id', 'follow.followed_id')
-      .where('follow.followed_id', userId)
-      .whereNull('follow.deleted_at')
-      .whereNull('user.deleted_at')
-      .orderBy('follow.created_at', 'desc');
+      .where({
+        'follow.followed_id': userId,
+        'follow.is_deleted': 0,
+        'user.is_deleted': 0
+      });
 
   getFollowings = userId =>
     this.knexClient
@@ -174,10 +172,11 @@ class Repository {
       ])
       .from('follow')
       .innerJoin(this.tableName, 'user.id', 'follow.followed_id')
-      .where('follow.follower_id', userId)
-      .whereNull('follow.deleted_at')
-      .whereNull('user.deleted_at')
-      .orderBy('follow.created_at', 'desc');
+      .where({
+        'follow.follower_id': userId,
+        'follow.is_deleted': 0,
+        'user.is_deleted': 0
+      });
 
   create = ({
     firstName: first_name,
@@ -248,7 +247,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx('follow')
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where({ follower_id, followed_id })
     );
@@ -275,7 +274,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

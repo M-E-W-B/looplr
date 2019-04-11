@@ -28,9 +28,11 @@ class Repository {
       .from(this.tableName)
       .leftJoin('sku', 'sku.id', `${this.tableName}.sku_id`)
       .leftJoin('product', 'product.id', 'sku.product_id')
-      .where(`${this.tableName}.user_id`, userId)
-      .whereNull(`${this.tableName}.deleted_at`)
-      .whereNull('sku.deleted_at')
+      .where({
+        [`${this.tableName}.user_id`]: userId,
+        [`${this.tableName}.is_deleted`]: 0,
+        'sku.is_deleted': 0
+      })
       .first();
 
   addProductSkuIntoWishlist = (user_id, sku_id) =>
@@ -45,7 +47,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where({
           user_id,

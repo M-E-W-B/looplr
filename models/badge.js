@@ -17,7 +17,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('WHERE badge.deleted_at IS NULL');
+    query.joinRaw('WHERE badge.is_deleted = 0');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -38,10 +38,11 @@ class Repository {
       ])
       .from('user_badge')
       .innerJoin(this.tableName, 'badge.id', 'user_badge.badge_id')
-      .where('user_badge.user_id', userId)
-      .whereNull('user_badge.deleted_at')
-      .whereNull('badge.deleted_at')
-      .orderBy('user_badge.created_at', 'desc');
+      .where({
+        'user_badge.user_id': userId,
+        'user_badge.is_deleted': 0,
+        'badge.is_deleted': 0
+      });
 
   getBadgeById = id =>
     this.knexClient
@@ -51,8 +52,10 @@ class Repository {
         )
       )
       .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .where({
+        id,
+        is_deleted: 0
+      })
       .first();
 
   create = ({ name, description = null }) =>
@@ -77,7 +80,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

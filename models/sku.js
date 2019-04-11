@@ -25,7 +25,7 @@ class Repository {
       .leftJoin('color', 'color.id', `${this.tableName}.sku_attribute_id`);
 
     query.joinRaw(
-      'WHERE sku.is_active = 1 AND sku.deleted_at IS NULL AND size.deleted_at IS NULL AND color.deleted_at IS NULL'
+      'WHERE sku.is_active = 1 AND sku.is_deleted = 0 AND size.is_deleted = 0 AND color.is_deleted = 0'
     );
 
     return list(pagination, orderings, filters, query, this.tableName);
@@ -52,12 +52,14 @@ class Repository {
       .leftJoin('product', 'product.id', `${this.tableName}.product_id`)
       .leftJoin('size', 'size.id', `${this.tableName}.sku_attribute_id`)
       .leftJoin('color', 'color.id', `${this.tableName}.sku_attribute_id`)
-      .where(`${this.tableName}.product_id`, productId)
-      .where(`${this.tableName}.is_active`, 1)
-      .whereNull('product.deleted_at')
-      .whereNull('size.deleted_at')
-      .whereNull('color.deleted_at')
-      .whereNull(`${this.tableName}.deleted_at`);
+      .where({
+        [`${this.tableName}.product_id`]: productId,
+        [`${this.tableName}.is_active`]: 1,
+        'product.is_deleted': 0,
+        'size.is_deleted': 0,
+        'color.is_deleted': 0,
+        [`${this.tableName}.is_deleted`]: 0
+      });
 
   getSkuById = id =>
     this.knexClient
@@ -75,8 +77,7 @@ class Repository {
         ].map(i => `${i} AS ${camelCase(i)}`)
       )
       .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .where({ id, is_deleted: 0 })
       .first();
 
   create = ({
@@ -126,7 +127,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

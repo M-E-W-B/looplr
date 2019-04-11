@@ -28,7 +28,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('WHERE coupon.deleted_at IS NULL');
+    query.joinRaw('WHERE coupon.is_deleted = 0');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -57,8 +57,10 @@ class Repository {
         ].map(i => `${i} AS ${camelCase(i)}`)
       )
       .from(this.tableName)
-      .where('id', id)
-      .whereNull('deleted_at')
+      .where({
+        id,
+        is_deleted: 0
+      })
       .first();
 
   create = ({
@@ -120,7 +122,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

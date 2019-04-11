@@ -111,7 +111,6 @@ module.exports = ({ skuRepository }, { verify }) => {
     }
   });
 
-  // { id, product_id, sku_attribute_id, stock, price, discount, is_active, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
   //   let sku;

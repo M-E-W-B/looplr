@@ -100,7 +100,6 @@ module.exports = ({ badgeRepository }, { verify }) => {
     }
   });
 
-  // { id, name, description, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
   //   let badge;

@@ -17,7 +17,8 @@ CREATE TABLE entity (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id)
 );
 
@@ -40,12 +41,14 @@ CREATE TABLE user (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
+  
   PRIMARY KEY (id),
-  FOREIGN KEY (id) REFERENCES entity(id),
-  UNIQUE(phonenumber, deleted_at),
-  UNIQUE(email, deleted_at),
-  UNIQUE(handle, deleted_at)
+  UNIQUE KEY `uc_phonenumber`(phonenumber, is_deleted),
+  UNIQUE KEY `uc_email`(email, is_deleted),
+  UNIQUE KEY `uc_handle`(handle, is_deleted),
+  FOREIGN KEY (id) REFERENCES entity(id)
 );
 
 DROP TABLE IF EXISTS collection;
@@ -60,7 +63,8 @@ CREATE TABLE collection (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
   FOREIGN KEY (owner_id) REFERENCES user(id)
@@ -74,7 +78,8 @@ CREATE TABLE category (
   
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
   FOREIGN KEY (parent_category_id) REFERENCES category(id)
@@ -88,9 +93,10 @@ CREATE TABLE collection_product (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(collection_id, product_id, deleted_at),
+  UNIQUE KEY `uc_product_in_collection` (collection_id, product_id, is_deleted),
   FOREIGN KEY (collection_id) REFERENCES collection(id),
   FOREIGN KEY (product_id) REFERENCES product(id)
 );
@@ -110,7 +116,8 @@ CREATE TABLE product (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (id) REFERENCES entity(id),
   FOREIGN KEY (subcategory_id) REFERENCES category(id)
@@ -128,9 +135,10 @@ CREATE TABLE sku (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(product_id, sku_attribute_id, deleted_at),
+  UNIQUE KEY `uc_sku_in_product`(product_id, sku_attribute_id, is_deleted),
   FOREIGN KEY (product_id) REFERENCES product(id),
   FOREIGN KEY (sku_attribute_id) REFERENCES sku_attribute(id)
 );
@@ -141,7 +149,8 @@ CREATE TABLE sku_attribute (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY(id)
 );
 
@@ -152,9 +161,10 @@ CREATE TABLE color (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(hexcode, deleted_at),
+  UNIQUE KEY `uc_color`(hexcode, is_deleted),
   FOREIGN KEY (id) REFERENCES sku_attribute(id)
 );
 
@@ -165,9 +175,10 @@ CREATE TABLE size (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),  
-  UNIQUE(name, deleted_at),
+  UNIQUE KEY `uc_size`(name, is_deleted),
   FOREIGN KEY (id) REFERENCES sku_attribute(id)
 );
 
@@ -188,7 +199,8 @@ CREATE TABLE address (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY(id),
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -204,7 +216,8 @@ CREATE TABLE comment (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),  
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (entity_id) REFERENCES entity(id)
@@ -218,9 +231,10 @@ CREATE TABLE follow (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(follower_id, followed_id, deleted_at),
+  UNIQUE (follower_id, followed_id, is_deleted),
   FOREIGN KEY (follower_id) REFERENCES user(id),
   FOREIGN KEY (followed_id) REFERENCES user(id)
 );
@@ -233,7 +247,8 @@ CREATE TABLE wishlist (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (sku_id) REFERENCES sku(id)
@@ -246,7 +261,8 @@ CREATE TABLE cart (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id)
 );
@@ -260,9 +276,10 @@ CREATE TABLE cart_item (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(cart_id, sku_id, deleted_at),
+  UNIQUE KEY `uc_sku_in_cart` (cart_id, sku_id, is_deleted),
   FOREIGN KEY (cart_id) REFERENCES cart(id),
   FOREIGN KEY (sku_id) REFERENCES sku(id)
 );
@@ -278,7 +295,8 @@ CREATE TABLE orders (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (address_id) REFERENCES address(id),
@@ -305,7 +323,8 @@ CREATE TABLE order_item (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
   FOREIGN KEY (order_id) REFERENCES orders(id),
   FOREIGN KEY (sku_id) REFERENCES sku(id)
@@ -326,9 +345,10 @@ CREATE TABLE coupon (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(code, deleted_at)
+  UNIQUE KEY `uc_code`(code, is_deleted)
 );
 
 DROP TABLE IF EXISTS badge;
@@ -339,7 +359,8 @@ CREATE TABLE badge (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id)
 );
 
@@ -351,9 +372,10 @@ CREATE TABLE user_badge (
 
   created_at TIMESTAMP NOT NULL DEFAULT NOW(),
   updated_at TIMESTAMP NULL ON UPDATE NOW(),
-  deleted_at TIMESTAMP NULL,
+  is_deleted INT UNSIGNED NOT NULL DEFAULT 0,
+
   PRIMARY KEY (id),
-  UNIQUE(user_id, badge_id, deleted_at),
+  UNIQUE KEY `uc_badge_for_user`(user_id, badge_id, is_deleted),
   FOREIGN KEY (user_id) REFERENCES user(id),
   FOREIGN KEY (badge_id) REFERENCES badge(id)
 );

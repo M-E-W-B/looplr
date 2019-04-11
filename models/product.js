@@ -28,7 +28,7 @@ class Repository {
       )
       .from(this.tableName);
 
-    query.joinRaw('WHERE product.deleted_at IS NULL');
+    query.joinRaw('WHERE product.is_deleted = 0');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -56,9 +56,11 @@ class Repository {
       ])
       .from(this.tableName)
       .leftJoin('category', 'category.id', `${this.tableName}.subcategory_id`)
-      .where(`${this.tableName}.id`, id)
-      .whereNull(`${this.tableName}.deleted_at`)
-      .whereNull('category.deleted_at')
+      .where({
+        [`${this.tableName}.id`]: id,
+        [`${this.tableName}.is_deleted`]: 0,
+        'category.is_deleted': 0
+      })
       .first();
 
   getProductsByCollectionId = collectionId =>
@@ -79,9 +81,11 @@ class Repository {
       ])
       .from('collection_product')
       .innerJoin(this.tableName, 'product.id', 'collection_product.product_id')
-      .where('collection_product.collection_id', collectionId)
-      .whereNull('collection_product.deleted_at')
-      .whereNull('product.deleted_at');
+      .where({
+        'collection_product.collection_id': collectionId,
+        'collection_product.is_deleted': 0,
+        'product.is_deleted': 0
+      });
 
   create = ({
     name,
@@ -147,7 +151,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

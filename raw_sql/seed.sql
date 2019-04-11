@@ -109,3 +109,14 @@ INSERT INTO wishlist
 VALUES
   (1, 1),
   (2, 3);
+
+INSERT INTO cart
+  (id, user_id)
+VALUES
+  (1, 1);
+
+INSERT INTO cart_item
+  (cart_id, sku_id, quantity)
+VALUES
+  (1, 2, 1),
+  (1, 1, 4);

@@ -27,9 +27,7 @@ class Repository {
       .from(this.tableName)
       .leftJoin('user', 'user.id', `${this.tableName}.owner_id`);
 
-    query.joinRaw(
-      'WHERE collection.deleted_at IS NULL AND user.deleted_at IS NULL'
-    );
+    query.joinRaw('WHERE collection.is_deleted = 0 AND user.is_deleted = 0');
 
     return list(pagination, orderings, filters, query, this.tableName);
   };
@@ -57,9 +55,11 @@ class Repository {
       ])
       .from(this.tableName)
       .leftJoin('user', 'user.id', `${this.tableName}.owner_id`)
-      .where(`${this.tableName}.id`, id)
-      .whereNull('user.deleted_at')
-      .whereNull('collection.deleted_at')
+      .where({
+        [`${this.tableName}.id`]: id,
+        'user.is_deleted': 0,
+        'collection.is_deleted': 0
+      })
       .first();
 
   create = ({
@@ -108,7 +108,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx('collection_product')
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where({
           collection_id,
@@ -120,7 +120,7 @@ class Repository {
     this.knexClient.transaction(trx =>
       trx(this.tableName)
         .update({
-          deleted_at: this.knexClient.fn.now()
+          is_deleted: 1
         })
         .where('id', id)
     );

@@ -86,7 +86,6 @@ module.exports = ({ colorRepository }, { verify }) => {
     }
   });
 
-  // { id, hexcode, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   let color;
   //   const { id } = req.params;

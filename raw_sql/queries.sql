@@ -10,7 +10,7 @@ SELECT
 FROM collection_product AS cp
 INNER JOIN product AS p
 ON cp.product_id = p.id
-WHERE cp.collection_id = 3 AND cp.deleted_at IS NULL AND p.deleted_at IS NULL;
+WHERE cp.collection_id = 3 AND cp.is_deleted = 0 AND p.is_deleted = 0;
 
 -- List all products along with skus
 SELECT
@@ -26,13 +26,13 @@ LEFT JOIN color AS c
 ON c.id = s.sku_attribute_id
 LEFT JOIN size AS sz
 ON sz.id = s.sku_attribute_id
-WHERE p.deleted_at IS NULL;
+WHERE p.is_deleted = 0;
 
 -- List all addresses of a user
 SELECT
   id, street_address, landmark, city, state, postal_code
 FROM address
-WHERE user_id = 1 AND deleted_at IS NULL;
+WHERE user_id = 1 AND is_deleted = 0;
 
 -- List all comments of a user
 SELECT
@@ -40,10 +40,10 @@ SELECT
 FROM comment AS c
 INNER JOIN user AS u
 ON u.id = c.user_id
-WHERE c.entity_id = 3 AND c.deleted_at IS NULL AND u.deleted_at IS NULL;
+WHERE c.entity_id = 3 AND c.is_deleted = 0 AND u.is_deleted = 0;
 
 -- List all followers of a user
 SELECT
   follower_id
 FROM follow
-WHERE followed_id = 2 AND deleted_at IS NULL;
+WHERE followed_id = 2 AND is_deleted = 0;

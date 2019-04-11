@@ -89,7 +89,6 @@ module.exports = ({ categoryRepository }, { verify }) => {
     }
   });
 
-  // { id, name, parent_category_id, created_at, updated_at, deleted_at }
   // router.get('/:id', async (req, res, next) => {
   //   const { id } = req.params;
   //   let category;

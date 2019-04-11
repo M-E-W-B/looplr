@@ -7,7 +7,8 @@ module.exports = (
     badgeRepository,
     collectionRepository,
     commentRepository,
-    wishlistRepository
+    wishlistRepository,
+    cartRepository
   },
   { verify }
 ) => {
@@ -162,7 +163,7 @@ module.exports = (
     }
   });
 
-  router.get('/wishlist/list', verify, async (req, res, next) => {
+  router.get('/wishlist', verify, async (req, res, next) => {
     try {
       const wishlist = await wishlistRepository.getWishlistByUserId(
         req.decoded.id
@@ -172,6 +173,20 @@ module.exports = (
       return next(
         new Error.BadRequestError({
           message: 'Unable to fetch wishlist.',
+          data: { extra: err.message }
+        })
+      );
+    }
+  });
+
+  router.get('/cart', verify, async (req, res, next) => {
+    try {
+      const cart = await cartRepository.getCartByUserId(req.decoded.id);
+      return res.json(cart);
+    } catch (err) {
+      return next(
+        new Error.BadRequestError({
+          message: 'Unable to fetch cart.',
           data: { extra: err.message }
         })
       );

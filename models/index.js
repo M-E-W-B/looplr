@@ -1,6 +1,7 @@
 const AddressRepositoryFactory = require('./address');
 const CategoryRepositoryFactory = require('./category');
 const WishlistRepositoryFactory = require('./wishlist');
+const CartRepositoryFactory = require('./cart');
 const BadgeRepositoryFactory = require('./badge');
 const ColorRepositoryFactory = require('./color');
 const CommentRepositoryFactory = require('./comment');
@@ -14,6 +15,7 @@ const UserRepositoryFactory = require('./user');
 module.exports = {
   AddressRepositoryFactory,
   CategoryRepositoryFactory,
+  CartRepositoryFactory,
   WishlistRepositoryFactory,
   BadgeRepositoryFactory,
   ColorRepositoryFactory,
