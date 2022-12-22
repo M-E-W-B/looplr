@@ -31,7 +31,7 @@
     "express": "^4.16.3",
     "express-recaptcha": "^4.2.0",
     "helmet": "^3.16.0",
-    "jsonwebtoken": "^8.5.1",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^0.19.5",
     "lodash.camelcase": "^4.3.0",
     "lodash.get": "^4.4.2",
